@@ -1,0 +1,189 @@
+200 : success / ok
+400 : bad request
+403 : forbidden
+500 : server error
+all error will include 'err' field
+
+GET /ping - check health
+
+SITEWIDE SETTINGS
+
+	GET /v1/hajimemashite - get sitewide settings
+	res: { site_name, site_description }
+
+	PUT /v1/hajimemashite - update sitewide settings
+	req: { site_name, site_description }
+	res: { the modified settings }
+
+AUTHOR
+
+	GET /api/v1/author - get all authors
+	res: [{ id, created_at, updated_at, deleted_at,
+		name, bio }]
+
+	POST /api/v1/author - create a new author
+	req: { name* string, bio string }
+	res: { the created author }
+
+	PUT /api/v1/author/:id - update an author
+	req: { name string, bio string }
+	res: { the updated author }
+
+	DELETE /api/v1/author/:id - delete the author
+	res: {}
+
+TAG
+
+	GET /api/v1/tag - get all tags
+	res: [{ id, created_at, updated_at, deleted_at,
+		name, description }]
+
+	POST /api/v1/tag - create a new tag
+	req: { name* string, description string }
+	res: { the created tag }
+
+	PUT /api/v1/tag/:id - update an tag
+	req: { name string, description string }
+	res: { the updated tag }
+
+	DELETE /api/v1/tag/:id - delete the tag
+	res: {}
+
+LANGUAGE
+
+	GET /api/v1/language - get all languages
+	res: [{ id, created_at, updated_at, deleted_at,
+		name }]
+
+	POST /api/v1/language - create a new language
+	req: { name* string }
+	res: { the created language }
+
+	PUT /api/v1/language/:id - update an language
+	req: { name string, description string }
+	res: { the updated language }
+
+	DELETE /api/v1/language/:id - delete the language
+	res: {}
+
+BOOK
+
+	GET /api/v1/book - get many books - no params will get ALL books
+			?title			search by title // NOT IMPLEMENTED. TODO.
+			?authorid[int]		filter by these authors id
+			?tagid[int]		filter by these tags id
+			?languageid[int]	filter by these languages id
+			?order			order results by: title/titleR/date/dateR/language/languageR (R means reversed)
+		res: [{ id, created_at, updated_at, deleted_at,
+			title string,
+			isbn_10 string,
+			isbn_13 string,
+			pub_month int, pub_year int,
+			//image string,
+			language string
+			description string,
+			tags [ { id, created_at, updated_at, name } ]
+			authors [ { id, created_at, updated_at, name } ]
+			shelf string }]
+
+	GET /api/v1/book/:id - get one book
+		res { a book }
+
+	POST /api/v1/book - create a new book
+		req: {
+			title* string,
+			authors [int],
+			isbn10 string,
+			isbn13 string,
+			pub_month int,
+			pub_year int,
+			//image string,
+			language_id uint,
+			description string,
+			shelf string,
+			author_ids [ uint ],
+			tag_ids [ uint ]
+		}
+		res: { the created book }
+
+	PUT /api/v1/book/:id - update a book
+	res: { the updated book }
+
+	DELETE /api/v1/book/:id - delete a book (doesn't unlink relations)
+	res: {}
+
+BOOK - TAG
+
+	GET /api/v1/book/:id/tag - get tags of a book
+		res: [ { id, created_at, updated_at, deleted_at, name }]
+
+	POST /api/v1/book/:id/tag - add a tag to a book
+		req: { tagid int }
+		res: [ { same as get }]
+
+	DELETE /api/v1/book/:id/tag/:id - remove a tag from book
+		req: [ { same as get }]
+
+BOOK - AUTHOR
+
+	GET /api/v1/book/:id/author - get authors of a book
+	POST /api/v1/book/:id/author - add author to book
+	DELETE /api/v1/book/:id/author/:id - remove tag from book
+
+BOOK - LANGUAGE
+
+	POST /api/v1/book/:id/language - assign language to book
+	DELETE /api/v1/book/:id/language - unassign language from book
+
+CATEGORY
+
+	GET /api/v1/category - get all categories
+	res: [{ id, created_at, updated_at, deleted_at,
+		name, description }]
+
+	POST /api/v1/category - create a new category
+	req: { name* string, description string }
+	res: { the created category }
+
+	PUT /api/v1/category/:id - update an category
+	req: { name string, description string }
+	res: { the updated category }
+
+	DELETE /api/v1/category/:id - delete the category
+	res: {}
+
+ARTICLE
+
+	GET /api/v1/article - get many articles - no params will get all articles
+			?categoryid[int]	filter by these category ids
+			?order			title/titleR/date/dateR/category/categoryR
+		res: [{ id, created_at, updated_at, deleted_at,
+			title string,
+			summary string,
+			content string,
+			category string }]
+
+	GET /api/v1/article/:id - get one article
+		res { an article object }
+
+	POST /api/v1/article - create a new article
+		req: {
+			title* string,
+			summary string,
+			content string,
+			category_id uint,
+		}
+		res: { the created article }
+
+	PUT /api/v1/article/:id - update an article
+	res: { the updated article }
+
+	DELETE /api/v1/article/:id - delete an article (doesn't unlink relations)
+	res: {}
+
+ARTICLE - CATEGORY
+
+	POST /api/v1/article/:id/language - assign language to book
+	DELETE /api/v1/book/:id/language - unassign language from book
+
+	// TODO:

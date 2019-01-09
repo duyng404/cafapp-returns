@@ -1,0 +1,5 @@
+web:
+	image: 'duyng404/lestartpage:latest'
+	autoredeploy: true
+	ports:
+		- 9000:9000

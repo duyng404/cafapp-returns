@@ -1,0 +1,5 @@
+data
+config/config.json
+govendor
+tmp
+tmp/*
