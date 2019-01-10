@@ -1,0 +1,67 @@
+{{ define "content" }}
+<div id="spotlight">
+	<div id="spotlight-inner">
+		<h1><img /> CafApp</h1>
+		<h2>Gustavus Marketplace<br /> Delivery Service</h2>
+		<a id="order" href="/order">Order Now</a>
+		<a id="info" href="javascript:void(0);" onclick="scrollToInfo()"><i class="fa fa-angle-down" aria-hidden="true"></i> More Info <i class="fa fa-angle-down" aria-hidden="true"></i></a>
+	</div>
+</div>
+
+<div id="how">
+	<a id="howw"></a>
+	<h2>HOW THIS WORKS</h2>
+	<div id="how-container">
+		<div class="how-item">
+			<div class="number">1</div>
+			<div class="how-item-content">
+				<h3>Log in using your Gustavus account</h3>
+				<p>By Gusties, exclusively for Gusties.</p>
+			</div>
+		</div>
+		<div class="how-item">
+			<div class="number">2</div>
+			<div class="how-item-content">
+				<h3>Choose your order</h3>
+				<p>Sandwiches, Fries, or Chicken? And did we mention free drinks?</p>
+			</div>
+		</div>
+		<div class="how-item">
+			<div class="number">3</div>
+			<div class="how-item-content">
+				<h3>Pay using Caf Account</h3>
+				<p>Orders are charged directly to your caf declining balance.</p>
+			</div>
+		</div>
+		<div class="how-item">
+			<div class="number">4</div>
+			<div class="how-item-content">
+				<h3>Receive food at the front door</h3>
+				<p>We will work hard to deliver it right to your dorm!</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="who">
+	<h2>WHO WE ARE</h2>
+	<div id="who-content">
+		<div id="enactuslogo"><img /></div><!--
+		--><div id="who-desc">
+			<p>Enactus is a bunch of cool and elitist people. Lorem ipsum dolor sit amet, est recteque periculis te, has in illud voluptatibus, vim verear atomorum consequat ad. Nec ex iusto voluptatum. <a href="/about">Learn more</a></p>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function() {
+      $(window).on('scroll', function() {
+        if (Math.round($(window).scrollTop()) > 100) {
+          $('#navbar').addClass('scrolled');
+        } else {
+          $('#navbar').removeClass('scrolled');
+        }
+      });
+    });
+</script>
+{{ end }}

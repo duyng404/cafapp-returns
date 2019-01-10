@@ -40,6 +40,9 @@ func InitRoutes() *gin.Engine {
 	router.Use(static.Serve("/static", static.LocalFile("./static", true)))
 
 	router.GET("/ping", handlePing)
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(200, "landing-top.html", gin.H{})
+	})
 	router.GET("/about", func(c *gin.Context) {
 		c.HTML(200, "landing-about.html", gin.H{})
 	})

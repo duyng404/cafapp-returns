@@ -1,9 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		{{ if .Title }}
+			{{ .Title }} | CafApp
+		{{ else }}
+			CafApp
+		{{ end }}
+	</title>
+	<link rel="stylesheet" href="/static/css/akizuki.css" type="text/css" />
+	<link href="https://fonts.googleapis.com/css?family=Raleway:900|Source+Sans+Pro:400,700" rel="stylesheet">
+	<link rel="stylesheet" href="/static/css/fontawesome/css/font-awesome.min.css" type="text/css" />
+	<script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
 
-hello world. This is landing-base
-calling content:
-{{ template "content" . }}
-calling scripts:
-{{ template "scripts" . }}
+</head>
+<body>
 
+	{{ template "topbar" . }}
 
+	{{ template "content" . }}
+
+	{{ template "footer" . }}
+
+	{{ template "scripts" . }}
+
+	<script type="text/javascript" src="static/js/ui.js"></script>
+
+</body>
+</html>
+
+{{ define "content" }}{{ end }}
 {{ define "scripts" }}{{ end }}

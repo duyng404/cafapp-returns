@@ -9,7 +9,7 @@ import (
 )
 
 const TEMPLATE_DIR = "./templates"
-const INCLUDE_DIR = "./templates/include"
+const INCLUDE_DIR = "./templates/includes/*.html"
 
 func initViews(router *gin.Engine) {
 	templateList := []string{

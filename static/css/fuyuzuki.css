@@ -1,0 +1,568 @@
+/* ----------- RESET ---------------*/
+
+	html, body, div, span, applet, object, iframe,
+	h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+	a, abbr, acronym, address, big, cite, code,
+	del, dfn, em, img, ins, kbd, q, s, samp,
+	small, strike, strong, sub, sup, tt, var,
+	b, u, i, center,
+	dl, dt, dd, ol, ul, li,
+	fieldset, form, label, legend,
+	table, caption, tbody, tfoot, thead, tr, th, td,
+	article, aside, canvas, details, embed,
+	figure, figcaption, footer, header, hgroup,
+	menu, nav, output, ruby, section, summary,
+	time, mark, audio, video {
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline;
+		box-sizing: border-box;
+	}
+	/* HTML5 display-role reset for older browsers */
+	article, aside, details, figcaption, figure,
+	footer, header, hgroup, menu, nav, section {
+		display: block;
+	}
+	body {
+		line-height: 1;
+	}
+	ol, ul {
+		list-style: none;
+	}
+	blockquote, q {
+		quotes: none;
+	}
+	blockquote:before, blockquote:after,
+	q:before, q:after {
+		content: '';
+		content: none;
+	}
+	table {
+		border-collapse: collapse;
+		border-spacing: 0;
+	}
+
+/* ----------- GLOBAL --------------- */
+
+	html{
+		background-color: #eee;
+	}
+	body {
+		position: relative;
+	}
+
+	#all {
+	}
+
+/* ----------- NAVBAR -------------- */
+
+	#navbar {
+		position: fixed;
+		top:0; right:0;
+		width: 100%;
+		height: 3.5rem;
+		line-height: 3.5rem;
+		background: rgba(238,238,238,1);
+		z-index: 100;
+		-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+		-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+		box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+	}
+
+	#navbar nav{
+		width: 96%; height:100%;
+		margin: 0 auto;
+	}
+
+	#logo{
+		position: absolute;
+		height: 100%;
+		top:0; left: 5%;
+		width: 25%;
+		background-image: url('/static/img/enactuslogo.png');
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: center center; }
+		#logo a {
+			display:block;
+			height: 100%; width: 100%; }
+
+	#nav-mainmenu{
+		position: absolute;
+		height: 100%;
+		top: 0; right: 50%;
+		transform: translateX(50%);
+		transition: all .3s ease;
+		white-space: nowrap;
+		overflow: visible;
+		text-align: center;
+	}
+
+	#nav-mainmenu li{ display:inline-block;	}
+
+	.nav-link{
+		display: block;
+		text-decoration: none;
+		color: #515356;
+		font-family: "Source Sans Pro", sans-serif;
+		line-height: 3.5rem;
+		font-size: 1rem;
+		padding: 0 .5rem;
+		transition: .15s ease; }
+		.nav-link:hover{ color: #C88A12; }
+
+	.nav-resmenu{
+		display: none;
+		position: absolute;
+		top: 0; right:50%;
+		transform: translateX(50%);
+		text-decoration: none;
+		color: #515356;
+		font-family: "Source Sans Pro", sans-serif;
+		line-height: 3.5rem;
+		font-size: 1rem;
+		padding: 0 3rem;
+		transition: .15s ease; }
+		.nav-resmenu:hover{	color: #C88A12; }
+
+	.nav-user{
+		position: absolute;
+		top: 0; right:10%;
+		text-decoration: none;
+		color: #515356;
+		font-family: "Source Sans Pro", sans-serif;
+		line-height: 3.5rem;
+		font-size: 1rem;
+		padding: 0 1rem 0 3rem;
+		transition: .15s ease; }
+		.nav-user:hover{ color: #C88A12; }
+		#navbar.scrolled .nav-user{ color: #515356; }
+
+	#nav-usermenu{
+		position: absolute;
+		display:block;
+		opacity: 0;
+		visibility: hidden;
+		height: auto; width: auto;
+		top: 3.5rem; right: 10%;
+		transition: .2s ease;
+		white-space: nowrap;
+		overflow: visible;
+		text-align: center;
+		background-color: #eee;
+		-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+		-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+		box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+		text-align: center; }
+		#nav-usermenu.show{ opacity: 1; visibility: visible; }
+
+	.nav-userlink{
+		display: block;
+		text-decoration: none;
+		color: #222;
+		font-family: "Source Sans Pro", sans-serif;
+		line-height: 3.5rem;
+		font-size: 1rem;
+		padding: 0 2rem;
+		transition: .15s ease; }
+		.nav-userlink:hover{
+			color: white;
+			background-color: #C88A12;
+		}
+
+	.nav-button{
+		display: block;
+		position: absolute;
+		top: 50%; right: 10%;
+		transform: translateY(-50%);
+		line-height: 2rem;
+		box-sizing: content-box;
+		color: white;
+		text-transform: uppercase;
+		background-color: #C88A12;
+		border: 5px solid rgba(0,0,0,0);
+		color: white;
+		text-decoration: none;
+		font-family: "Source Sans Pro", sans-serif;
+		font-weight: bold;
+		font-size: 1rem;
+		padding: 0 .5rem;
+		cursor: pointer;
+		transition: .15s ease; }
+		.nav-button:hover{
+			background: none;
+			border: 5px solid rgba(200,138,18,1);
+			color: #C88A12;
+		}
+
+	/* responsive navbar */
+	@media (max-width: 600px){
+		#nav-mainmenu{
+			display: block;
+			visibility: hidden;
+			opacity: 0;
+			top: 3.5rem;
+			background-color: #eee;
+			height: auto; width: auto;
+			transition: .2s ease;
+			-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+			-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+			box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
+		}
+		#nav-mainmenu.show {
+			visibility: visible;
+			opacity: 1;
+			transition: opacity .2s ease;
+		}
+		#nav-mainmenu li{ display: block; }
+		.nav-link { color: #222; padding: 0 3rem; }
+		.nav-link:hover{ color: white; background-color: #C88A12; }
+		#navbar.scrolled .nav-link { color: #222; }
+		#navbar.scrolled .nav-link:hover{ color: white; background-color: #C88A12; }
+		.nav-resmenu{ display: block; }
+		.username { display: none; }
+	}
+
+/* ----------- COOL BACKGROUND ---------- */
+
+	#imagefade{
+		width:100%;
+		height: 60vh;
+		background:
+			linear-gradient(
+			  rgba(238, 238, 238, 0.5),
+			  rgba(238, 238, 238, 1)
+			),
+			url("/static/img/spotlight.jpg");
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center center;
+		margin: 3.5rem auto -40vh auto;
+	}
+
+/* ----------- ENACTUS INFO -------------*/
+
+	#enactus{
+		width: 80%;
+		max-width: 1000px;
+		margin: 3rem auto 4rem;
+		text-align: center;
+	}
+
+	#enactuslogo{
+		display:inline-block;
+		vertical-align: middle;
+		width:30%;
+		min-width: 150px;
+	}
+
+	#enactuslogo img{
+		content: url("/static/img/enactuslogo.png");
+		width:100%;
+	}
+
+	#enactus-desc{
+		display: inline-block;
+		vertical-align: middle;
+		width:65%;
+		min-width: 325px;
+		margin: 0 0 0 5%;
+		text-align: left;
+		line-height:1.2rem;
+		color: #515356;
+	}
+
+/* ----------- MEMBERS INFO -------------*/
+
+	#members{
+		width:85%;
+		max-width: 930px;
+		margin: 3rem auto;
+	}
+
+	#mem-grid{
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.mem{
+		width: 200px;
+		margin: 5px;
+		text-align:center;
+	}
+
+	.mem img{
+		height: 5rem;
+		width: 5rem;
+		border-radius: 50%;
+		background-color: yellow;
+	}
+
+	.mem h3{
+		font-family: "Raleway", "Open Sans", Arial, sans-serif;
+		font-size: 1.2rem;
+		margin: 1rem 0 0;
+		color: #444;
+	}
+
+	.mem p{
+		color: #515356;
+		margin: .5rem 0 2rem;
+	}
+
+/* ----------- PROFILE + ORDER HIST ----------- */
+
+	#profile{
+		width: 60%;
+		max-width: 800px;
+		margin: 3rem auto 4rem;
+	}
+
+	#profile p{
+		margin: .5rem 0;
+	}
+
+	#order-hist{
+		width: 90%;
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+
+	#order-hist table{
+		table-layout: fixed;
+		width: 100%;
+		margin: 2rem auto 4rem;
+		text-align: left;
+		line-height: 2rem;
+	}
+
+	#order-hist th{
+		font-family: "Raleway", "Open Sans", Arial, sans-serif;
+		font-size: 1.25rem;
+		color: #C88A12;
+		border-bottom: 2px solid #C88A12;
+		padding: 0 .5rem .25rem;
+	}
+
+	#order-hist td{
+		font-size: .9rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		padding: 0 .5rem .25rem;
+	}
+
+	.row-time{ width: 9.5rem; }
+	.row-dest{ width: 6rem; }
+	.row-order{ width: auto; }
+	.row-total{ width: 4rem; }
+	.row-status	{ width: 5.5rem; }
+
+	#invoice{
+		width: 60%;
+		max-width: 800px;
+		margin: 3rem auto 4rem;
+	}
+
+	#invoice p{
+		margin: .5rem 0;
+	}
+
+/* ----------- MENU ----------------- */
+
+	.desc{
+		width: 60%;
+		margin: 2rem auto;
+		line-height: 1.5rem;
+		color: #515356;
+	}
+
+	#menu{
+		width:85%;
+		max-width: 800px;
+		margin: 3rem auto;
+	}
+
+	#menu-grid{
+		display: flex;
+		flex-wrap: wrap;
+	}
+
+	.menu-item{
+		flex-basis: 300px;
+		flex-grow: 1;
+		height: 200px;
+		margin: 10px;
+		position: relative;
+	}
+
+	.menu-item img{
+		position:absolute;
+		top:0; right:0;
+		width: 100%; height:100%;
+		object-fit: cover;
+		z-index: 1;
+	}
+
+	.overlay{
+		position:absolute;
+		top:0; right:0;
+		width: 100%; height:100%;
+		background: linear-gradient(
+			rgba(0, 0, 0, .6),
+			rgba(0, 0, 0, .9)
+		);
+		z-index: 2;
+	}
+
+	.menu-item .price{
+		position: absolute;
+		top: 10%; right: 5%;
+		font-family: "Raleway", "Open Sans", Arial, sans-serif;
+		font-size: 3rem;
+		z-index: 10;
+		color: #FFC222;
+	}
+
+	.menu-item-desc{
+		position: absolute;
+		bottom: 10%; left: 5%;
+		z-index: 10;
+	}
+
+	.menu-item h3{
+		font-family: "Source Sans Pro", sans-serif;
+		font-size: 1.5rem;
+		font-weight: 600;
+		margin: 0 0 .7rem 0;
+		color: #FFC222;
+	}
+
+	.menu-item p{
+		color: #eee;
+	}
+
+/* ------------- ORDER ------------- */
+
+	.order .menu-item{
+		cursor: pointer;
+	}
+
+	.order .cart-overlay{
+		position: absolute;
+		top: 0; right: 0;
+		width: 100%; height: 100%;
+		opacity: 0;
+		transition: .2s ease;
+		z-index: 20;
+		background-color: rgba(255,194,34,.8);
+		font-size: 10rem;
+		color: white;
+	}
+
+	.order .cart-overlay:hover{
+		opacity: 1;
+		transition: .2s ease;
+	}
+
+	.order .cart-overlay > * {
+		position: absolute;
+		top: 50%; left: 50%;
+		transform: translate(-50%, -50%);
+	}
+
+	#cart{
+		width: 60%;
+		max-width: 800px;
+		margin: 2rem auto;
+	}
+
+	.cart-item{
+		width: 100%; height: 3rem;
+		line-height: 3rem;
+		position: relative;
+	}
+
+	.cart-item-name{ position: absolute; left: 0; }
+	.cart-item-price{ position: absolute; right: 20% }
+
+	.cart-item-delete{
+		position: absolute;
+		top: 50%; right: 0;
+		transform: translateY(-50%);
+		width: 2rem;
+		height: 2rem;
+		line-height: 2rem;
+		background-color: #C88A12;
+		color: white;
+		font-size: 1.5rem;
+		text-align: center;
+		border-radius: 5px;
+	}
+
+/* ------------- FOOTER ------------- */
+
+	#footer{
+		position: relative;
+		margin: 4rem 0 0 0;
+		height: 200px;
+		background-color: #515356;
+		border-top: 15px #C88A12 solid;
+	}
+
+	#footer-inner{
+		position: absolute;
+		top: 50%; left: 50%;
+		transform:translate(-50%, -50%);
+		color: #aaa;
+	}
+
+/* ------------- RESPONSIVE ---------- */
+	/* tablet & phone */
+	@media (max-width: 800px){
+		html{ font-size: 16px; }
+	}
+
+	/* desktop */
+	@media (min-width: 800px){
+		html{ font-size: 18px; }
+	}
+
+	@media (min-width: 800px) and (max-width: 1500px) {
+	}
+
+	@media (min-width: 1500px){
+		html{ font-size: 20px; }
+	}
+
+/* -------------- FONTS -------------- */
+
+body{
+	font-family: "Source Sans Pro", sans-serif;
+}
+
+h1,h2,h3,h4,h5,h6{
+	font-family: "Raleway", "Open Sans", Arial, sans-serif;
+}
+
+h1{
+	font-size: 3rem;
+	text-align: center;
+	color: #FFC222;
+	text-shadow: 3px 3px 5px rgba(150, 150, 150, 1);
+}
+
+h2{
+	font-size: 2.5rem;
+	text-align: center;
+	color: #FFC222;
+	text-shadow: 2px 2px 5px rgba(150, 150, 150, 1);
+}
+
+/* --------------- UTILITY ---------------- */
