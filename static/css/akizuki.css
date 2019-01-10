@@ -9,8 +9,8 @@
 	dl, dt, dd, ol, ul, li,
 	fieldset, form, label, legend,
 	table, caption, tbody, tfoot, thead, tr, th, td,
-	article, aside, canvas, details, embed, 
-	figure, figcaption, footer, header, hgroup, 
+	article, aside, canvas, details, embed,
+	figure, figcaption, footer, header, hgroup,
 	menu, nav, output, ruby, section, summary,
 	time, mark, audio, video {
 		margin: 0;
@@ -22,7 +22,7 @@
 		box-sizing: border-box;
 	}
 	/* HTML5 display-role reset for older browsers */
-	article, aside, details, figcaption, figure, 
+	article, aside, details, figcaption, figure,
 	footer, header, hgroup, menu, nav, section {
 		display: block;
 	}
@@ -270,7 +270,7 @@
 		background-image: url("/static/img/spotlight.jpg");
 		background-size: cover;
 		background-position: center center;
-		border-bottom: 10px #C88A12 solid2
+		border-bottom: 10px #C88A12 solid;
 		-webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
 		-moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);
 		box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.5);

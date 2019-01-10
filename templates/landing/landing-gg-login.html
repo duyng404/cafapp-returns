@@ -1,0 +1,48 @@
+{{ define "head-extra" }}
+<link rel="stylesheet" href="/static/css/fuyuzuki.css" type="text/css" />
+<meta name="google-signin-client_id" content="280013982487-hc437vjocskjol7subj3psn03o39fn8e.apps.googleusercontent.com">
+{{ end }}
+
+{{ define "content" }}
+<h1>Log In</h1>
+
+<a href="{{ .GGLoginUrl }}" id="gg-signin-button">
+	<img src="/static/img/googlesignin.png" />
+</a>
+
+<!-- <button id="signout" type="button" onClick="logout()">Log out</button> -->
+
+{{ end }}
+
+{{ define "scripts" }}
+<!-- <script>
+function onSuccess(googleUser) {
+	var profile = googleUser.getBasicProfile();
+	console.log('ID: ' + profile.getId());
+	console.log('Name: ' + profile.getName());
+	console.log('Image URL: ' + profile.getImageUrl());
+	console.log('Email: ' + profile.getEmail());
+
+}
+function onFailure(error) {
+	console.log(error);
+}
+function renderButton() {
+	gapi.signin2.render('g-signin2', {
+	'scope': 'profile email',
+	'width': 250,
+	'height': 50,
+	'longtitle': true,
+	'onsuccess': onSuccess,
+	'onfailure': onFailure
+	});
+}
+function logout() {
+	var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log('User signed out.');
+    });
+}
+</script>
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script> -->
+{{ end }}

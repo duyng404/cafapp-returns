@@ -226,6 +226,14 @@
 		.username { display: none; }
 	}
 
+/* ----------- LOG IN ------------------ */
+
+#gg-signin-button {
+	display: block;
+	text-align: center;
+	margin: 20px auto;
+}
+
 /* ----------- COOL BACKGROUND ---------- */
 
 	#imagefade{
