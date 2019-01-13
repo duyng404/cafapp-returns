@@ -26,11 +26,11 @@ func loadTemplates(list []string) multitemplate.Renderer {
 		base := filepath.Join(TEMPLATE_DIR, name+".html")
 		includes, err := filepath.Glob(INCLUDE_DIR)
 		if err != nil {
-			logger.Panic(err)
+			logger.Fatal(err)
 		}
 		views, err := filepath.Glob(filepath.Join(TEMPLATE_DIR, name, "*.html"))
 		if err != nil {
-			logger.Panic(err)
+			logger.Fatal(err)
 		}
 
 		for _, v := range views {

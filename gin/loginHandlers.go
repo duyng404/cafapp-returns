@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
@@ -102,8 +104,9 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		err = googleUser.Create()
 		if err != nil {
 			logger.Error("error adding new *google* user", user.Email, "to db:", err)
-			loginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
-			return
+			logger.Info("gg user dump:", spew.Sdump(googleUser))
+			// loginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
+			// return
 		}
 	}
 
@@ -148,6 +151,10 @@ func handleLogout(c *gin.Context) {
 		HttpOnly: true,
 	})
 
+	ok := checkJWT(c)
+	if !ok {
+		logger.Error("weird error: no valid jwt when logging out an user")
+	}
 	user, ok := c.Get("currentUser")
 	if ok {
 		logger.Info(fmt.Sprintf("user %s just logged out", user.(*gorm.User).Email))
@@ -162,6 +169,7 @@ func loginFailed(errmsg string, c *gin.Context, session sessions.Session) {
 	session.Set("error", errmsg)
 	session.Save()
 	c.Redirect(http.StatusFound, "/login")
+	c.Abort()
 	return
 }
 
@@ -180,7 +188,6 @@ func stashThisPath(c *gin.Context, session sessions.Session) {
 	}
 	session.Set("next", path)
 	session.Save()
-	c.Redirect(http.StatusFound, "/gg-login")
 	return
 }
 

@@ -16,10 +16,12 @@ func authMiddleware() gin.HandlerFunc {
 		ok := checkJWT(c)
 		if !ok {
 			s := sessions.Default(c)
-			logger.Error("Accessing a restricted place unauthorized, bouncing back to /login")
+			logger.Info("JWT check failed. Assuming not logged in. Bouncing back to /login")
 			stashThisPath(c, s)
 			loginFailed("Please log in before accessing this page", c, s)
+			return
 		}
+
 		c.Next()
 	}
 }
@@ -28,19 +30,19 @@ func checkJWT(c *gin.Context) bool {
 	// get the raw jwt from cookie
 	tokenString, err := c.Cookie("auth")
 	if err != nil {
-		logger.Error("error getting jwt from cookies:", err)
+		logger.Info("error getting jwt from cookies:", err, ". Assuming not logged in.")
 		return false
 	}
 
 	if tokenString == "" {
-		logger.Error("blank cookie")
+		logger.Warning("blank cookie. assuming not logged in")
 		return false
 	}
 
 	// validate and stuff
 	claims, err := jwt.ParseToken(tokenString)
 	if err != nil {
-		logger.Error("error parsing jwt:", err)
+		logger.Warning("error parsing jwt:", err)
 		return false
 	}
 

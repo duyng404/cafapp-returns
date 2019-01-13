@@ -20,11 +20,10 @@ func Fatal(args ...interface{}) {
 	os.Exit(1)
 }
 
-// Panic :
-func Panic(args ...interface{}) {
-	fmt.Print(a(), "[PANIC] ")
+// Warning :
+func Warning(args ...interface{}) {
+	fmt.Print(a(), "[WARNING] ")
 	fmt.Println(args...)
-	panic("panicking!")
 }
 
 // Error :

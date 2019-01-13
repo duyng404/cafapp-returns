@@ -44,7 +44,7 @@ func ParseToken(tokenString string) (*Claims, error) {
 		return []byte(config.JWTSigningKey), nil
 	})
 	if err != nil {
-		logger.Error("error while parsing jwt token:", err)
+		logger.Info("error while parsing jwt token:", err)
 		return nil, ErrInvalidToken
 	}
 
