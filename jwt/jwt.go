@@ -41,7 +41,7 @@ func NewToken(userID uint, gusUsername string, isAdmin bool, expiration int64) (
 func ParseToken(tokenString string) (*Claims, error) {
 	// Parse the token
 	token, err := jwtgo.ParseWithClaims(tokenString, &Claims{}, func(token *jwtgo.Token) (interface{}, error) {
-		return config.JWTSigningKey, nil
+		return []byte(config.JWTSigningKey), nil
 	})
 	if err != nil {
 		logger.Error("error while parsing jwt token:", err)

@@ -14,6 +14,7 @@ const INCLUDE_DIR = "./templates/includes/*.html"
 func initViews(router *gin.Engine) {
 	templateList := []string{
 		"landing",
+		"404",
 	}
 	router.HTMLRender = loadTemplates(templateList)
 }
@@ -37,8 +38,16 @@ func loadTemplates(list []string) multitemplate.Renderer {
 			tmp = append(tmp, base)
 			tmp = append(tmp, includes...)
 			tmp = append(tmp, v)
-			t := r.AddFromFiles(filepath.Base(v), tmp...)
-			logger.Info("Loaded template", filepath.Base(v), t.DefinedTemplates())
+			r.AddFromFiles(filepath.Base(v), tmp...)
+			logger.Info("Loaded template", filepath.Base(v))
+		}
+
+		if len(views) == 0 {
+			var tmp []string
+			tmp = append(tmp, base)
+			tmp = append(tmp, includes...)
+			r.AddFromFiles(filepath.Base(name+".html"), tmp...)
+			logger.Info("Loaded template", filepath.Base(name+".html"))
 		}
 	}
 

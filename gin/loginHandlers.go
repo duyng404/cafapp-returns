@@ -16,6 +16,14 @@ import (
 // Render the login button, when clicked will prompt user to log in through Google.
 func handleGoogleLogin(c *gin.Context) {
 	session := sessions.Default(c)
+	// check if user already logged in
+	ok := checkJWT(c)
+	if ok {
+		// already logged in, redirect to next
+		redirectToNext(c)
+		return
+	}
+
 	// check if any pending error
 	displayError := session.Get("error")
 	if displayError != nil {
@@ -45,7 +53,7 @@ func handleGoogleLoginCallback(c *gin.Context) {
 	// validate state
 	if state != c.Query("state") {
 		logger.Error("Invalid session state")
-		ggLoginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
+		loginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
 		return
 	}
 
@@ -55,11 +63,11 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		logger.Error("unable to get user info from google:", err)
 		if err == ggoauth.ErrInvalidDomain {
 			// not gustavus.edu? gtfo plz
-			ggLoginFailed(fmt.Sprintf("You just logged in using the email %s. Please use your @gustavus.edu email!", oauthResponse.Email), c, session)
+			loginFailed(fmt.Sprintf("You just logged in using the email %s. Please use your @gustavus.edu email!", oauthResponse.Email), c, session)
 			return
 		}
 		// other errors
-		ggLoginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
+		loginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
 		return
 	}
 
@@ -68,7 +76,7 @@ func handleGoogleLoginCallback(c *gin.Context) {
 	err = user.PopulateByEmail(oauthResponse.Email)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logger.Error("error querying db for email", oauthResponse.Email, ":", err)
-		ggLoginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
+		loginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
 		return
 	}
 	if err == gorm.ErrRecordNotFound {
@@ -83,7 +91,7 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		err = user.Create()
 		if err != nil {
 			logger.Error("error adding new user", user.Email, "to db:", err)
-			ggLoginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
+			loginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
 			return
 		}
 		// also save the oauth response
@@ -94,7 +102,7 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		err = googleUser.Create()
 		if err != nil {
 			logger.Error("error adding new *google* user", user.Email, "to db:", err)
-			ggLoginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
+			loginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
 			return
 		}
 	}
@@ -103,7 +111,7 @@ func handleGoogleLoginCallback(c *gin.Context) {
 	token, err := user.GenerateJWT()
 	if err != nil {
 		logger.Error("error generating jwt for user", user.Email, ":", err)
-		ggLoginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
+		loginFailed("Oh no! Login was unsuccessful. Maybe try again?", c, session)
 		return
 	}
 
@@ -117,25 +125,43 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		HttpOnly: true,
 	})
 
+	logger.Info(fmt.Sprintf("user %s just logged in", user.Email))
+
 	// login finished. redirect to next
-	next := session.Get("next")
-	if next == nil {
-		next = "/"
-	}
-	// remember to unset next
-	session.Delete("next")
-	session.Save()
-	c.Redirect(http.StatusFound, next.(string))
+	redirectToNext(c)
 
 	return
 }
 
+// logs the user out
+func handleLogout(c *gin.Context) {
+	s := sessions.Default(c)
+	s.Clear()
+	s.Save()
+
+	// log out the user by clearing the auth cookie
+	http.SetCookie(c.Writer, &http.Cookie{
+		Name:     "auth",
+		Value:    "",
+		Path:     "/",
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+	})
+
+	user, ok := c.Get("currentUser")
+	if ok {
+		logger.Info(fmt.Sprintf("user %s just logged out", user.(*gorm.User).Email))
+	}
+
+	c.Redirect(http.StatusFound, "/")
+}
+
 // a helper func to use when error during login.
 // will redirect user to login page and display an err msg.
-func ggLoginFailed(errmsg string, c *gin.Context, session sessions.Session) {
+func loginFailed(errmsg string, c *gin.Context, session sessions.Session) {
 	session.Set("error", errmsg)
 	session.Save()
-	c.Redirect(http.StatusFound, "/gg-login")
+	c.Redirect(http.StatusFound, "/login")
 	return
 }
 
@@ -155,5 +181,23 @@ func stashThisPath(c *gin.Context, session sessions.Session) {
 	session.Set("next", path)
 	session.Save()
 	c.Redirect(http.StatusFound, "/gg-login")
+	return
+}
+
+// a helper func to use after user is logged in
+// will redirect to next, if next is empty, redirect to homepage
+func redirectToNext(c *gin.Context) {
+	s := sessions.Default(c)
+
+	next := s.Get("next")
+	if next == nil {
+		next = "/"
+	}
+
+	// remember to unset next
+	s.Delete("next")
+	s.Save()
+	c.Redirect(http.StatusFound, next.(string))
+
 	return
 }

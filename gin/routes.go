@@ -1,7 +1,6 @@
 package gin
 
 import (
-	"cafapp-returns/logger"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -50,22 +49,37 @@ func InitRoutes() *gin.Engine {
 	// static
 	router.Use(static.Serve("/static", static.LocalFile("./static", true)))
 
+	// ping
 	router.GET("/ping", handlePing)
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(200, "landing-top.html", gin.H{})
+
+	//404
+	router.NoRoute(func(c *gin.Context) {
+		c.HTML(404, "404.html", gin.H{})
 	})
-	router.GET("/login", func(c *gin.Context) {
-		c.Redirect(http.StatusFound, "/gg-login")
-	})
-	router.GET("/gg-login", handleGoogleLogin)
-	router.GET("/gg-login-cb", handleGoogleLoginCallback)
-	router.GET("/about", func(c *gin.Context) {
-		logger.Info(c.Request.URL)
-		c.HTML(200, "landing-about.html", gin.H{})
-	})
-	router.GET("/func", func(c *gin.Context) {
-		c.HTML(200, "landing-func.html", gin.H{})
-	})
+
+	// landing group contains public-facing paths, aka, anyone can see without logging in
+	landing := router.Group("/")
+	{
+		landing.GET("/", handleLandingTop)
+		landing.GET("/about", handleLandingAbout)
+	}
+
+	// login group will handle logging users in and out
+	login := router.Group("/")
+	{
+		login.GET("/login", func(c *gin.Context) {
+			c.Redirect(http.StatusFound, "/gg-login")
+		})
+		login.GET("/gg-login", handleGoogleLogin)
+		login.GET("/gg-login-cb", handleGoogleLoginCallback)
+		login.GET("/logout", handleLogout)
+	}
+
+	// restricted group requires loggin in before accessing
+	restricted := router.Group("/", authMiddleware())
+	{
+		restricted.GET("/dash", handleUserDash)
+	}
 
 	return router
 }
