@@ -1,10 +1,7 @@
 package gin
 
 import (
-	"cafapp-returns/ggoauth"
 	"cafapp-returns/logger"
-	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -57,42 +54,13 @@ func InitRoutes() *gin.Engine {
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(200, "landing-top.html", gin.H{})
 	})
-	router.GET("/gg-login", func(c *gin.Context) {
-		state := ggoauth.GenerateNewState()
-		session := sessions.Default(c)
-		session.Set("state", state)
-		session.Save()
-		c.HTML(200, "landing-gg-login.html", gin.H{
-			"GGLoginUrl": ggoauth.GetLoginURL(state),
-		})
+	router.GET("/login", func(c *gin.Context) {
+		c.Redirect(http.StatusFound, "/gg-login")
 	})
-	router.GET("/gg-login-cb", func(c *gin.Context) {
-		session := sessions.Default(c)
-		state := session.Get("state")
-		if state != c.Query("state") {
-			logger.Error("Invalid session state")
-			c.AbortWithError(http.StatusUnauthorized, fmt.Errorf("Invalid session state"))
-			return
-		}
-		token, err := ggoauth.GetTokenFromCode(c.Query("code"))
-		if err != nil {
-			logger.Error(err)
-			c.AbortWithError(http.StatusBadRequest, err)
-			return
-		}
-		client := ggoauth.GetClientFromToken(token)
-		email, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
-		if err != nil {
-			logger.Error(err)
-			c.AbortWithError(http.StatusBadRequest, err)
-			return
-		}
-		defer email.Body.Close()
-		data, _ := ioutil.ReadAll(email.Body)
-		logger.Info("email body: ", string(data))
-		c.Status(200)
-	})
+	router.GET("/gg-login", handleGoogleLogin)
+	router.GET("/gg-login-cb", handleGoogleLoginCallback)
 	router.GET("/about", func(c *gin.Context) {
+		logger.Info(c.Request.URL)
 		c.HTML(200, "landing-about.html", gin.H{})
 	})
 	router.GET("/func", func(c *gin.Context) {

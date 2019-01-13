@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cafapp-returns/gorm"
 	_ "net/http/pprof"
 
 	"cafapp-returns/gin"
@@ -8,22 +9,22 @@ import (
 )
 
 func main() {
-	// // Initalize db
-	// logger.Info("Initalizing db...")
-	// db, err := gorm.InitDB()
-	// if err != nil {
-	// 	logger.Fatal("Could not initalize db", err.Error())
-	// }
+	// Initalize db
+	logger.Info("Initalizing db...")
+	db, err := gorm.InitDB()
+	if err != nil {
+		logger.Fatal("Could not initalize db", err.Error())
+	}
 
-	// //Defer this so that if our application exits, we close the db.
-	// defer db.Close()
+	//Defer this so that if our application exits, we close the db.
+	defer db.Close()
 
-	// logger.Info("Initalizing Models...")
+	logger.Info("Initalizing Models...")
 
-	// err = gorm.Migrate()
-	// if err != nil {
-	// 	logger.Info("Could not run object migrations.")
-	// }
+	err = gorm.Migrate()
+	if err != nil {
+		logger.Info("Could not run object migrations.")
+	}
 
 	logger.Info(`
 

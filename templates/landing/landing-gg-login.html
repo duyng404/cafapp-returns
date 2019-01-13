@@ -6,6 +6,12 @@
 {{ define "content" }}
 <h1>Log In</h1>
 
+{{ if .error }}
+<div id="error">
+	{{ .error }}
+</div>
+{{ end }}
+
 <a href="{{ .GGLoginUrl }}" id="gg-signin-button">
 	<img src="/static/img/googlesignin.png" />
 </a>
