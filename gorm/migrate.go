@@ -23,12 +23,20 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Product Table")
+	err = DB.AutoMigrate(&Product{}).Error
+	if err != nil {
+		logger.Error("Error migrating AppSettings table:", err)
+		return err
+	}
+
 	// init data
-	// _, err = GetAppSettings()
-	// if err != nil {
-	// 	logger.Info("Database is empty, generating sample data")
-	// 	InitData()
-	// }
+	var tmp Product
+	err = tmp.PopulateByID(1)
+	if err != nil {
+		logger.Info("Database is empty, generating sample data")
+		initData()
+	}
 
 	return nil
 }

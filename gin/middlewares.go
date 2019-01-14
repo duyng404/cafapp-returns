@@ -48,7 +48,7 @@ func checkJWT(c *gin.Context) bool {
 
 	// we have the claims. does this user actually exist in db?
 	user := gorm.User{}
-	err = user.PopulateById(claims.UserID)
+	err = user.PopulateByID(claims.UserID)
 	if err != nil {
 		logger.Error("error looking up user from jwt:", err)
 		return false

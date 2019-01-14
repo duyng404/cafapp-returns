@@ -5,6 +5,7 @@ import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
 	"fmt"
+	"html/template"
 	"net/http"
 	"strings"
 	"time"
@@ -27,9 +28,13 @@ func handleGoogleLogin(c *gin.Context) {
 	}
 
 	// check if any pending error
-	displayError := session.Get("error")
-	if displayError != nil {
+	var displayError string
+	tmp := session.Get("error")
+	if tmp != nil {
 		session.Delete("error")
+		if displayError, ok = tmp.(string); !ok {
+			displayError = ""
+		}
 	}
 	// generate a state and save it to the current session
 	state := ggoauth.GenerateNewState()
@@ -39,7 +44,7 @@ func handleGoogleLogin(c *gin.Context) {
 	// render template, pass in the url to redirect the user after login
 	renderHTML(c, "landing-gg-login.html", gin.H{
 		"GGLoginUrl": ggoauth.GetLoginURL(state),
-		"error":      displayError,
+		"error":      template.HTML(displayError),
 	})
 }
 
@@ -65,7 +70,7 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		logger.Error("unable to get user info from google:", err)
 		if err == ggoauth.ErrInvalidDomain {
 			// not gustavus.edu? gtfo plz
-			loginFailed(fmt.Sprintf("You attempted to log in as %s. Please try again using your @gustavus.edu email.", oauthResponse.Email), c, session)
+			loginFailed(fmt.Sprintf(`You attempted to log in as <strong>`+oauthResponse.Email+`</strong>. Please try again using your @gustavus.edu email.`), c, session)
 			return
 		}
 		// other errors

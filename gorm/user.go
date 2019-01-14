@@ -25,8 +25,8 @@ func (u *User) Create() error {
 	return DB.Create(u).Error
 }
 
-// PopulateById : query the db to get object by email
-func (u *User) PopulateById(id uint) error {
+// PopulateByID : query the db to get object by id
+func (u *User) PopulateByID(id uint) error {
 	return DB.Where("id = ?", id).Last(&u).Error
 }
 

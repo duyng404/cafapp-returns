@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+		{{ if .Title }}
+			{{ .Title }} | CafApp
+		{{ else }}
+			CafApp
+		{{ end }}
+	</title>
+
+	<link rel="stylesheet" href="/static/css/cafapp.min.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/fontawesome/css/font-awesome.min.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/pachimari.css" type="text/css" />
+	<script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.bundle.min.js"></script>
+
+	{{ template "head-extra" . }}
+
+</head>
+
+<body>
+
+	{{ template "topbar" . }}
+
+	{{ template "content" . }}
+
+	{{ template "footer" . }}
+
+	{{ template "scripts" . }}
+
+</body>
+</html>
+
+{{ define "head-extra" }}{{ end }}
+{{ define "content" }}{{ end }}
+{{ define "scripts" }}{{ end }}

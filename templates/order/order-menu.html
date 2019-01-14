@@ -1,0 +1,39 @@
+{{ define "content" }}
+
+<section class="jumbotron jumbotron-fluid text-center bg-light">
+	<div class="container">
+		<h1 class="jumbotron-heading text-ca-yellow2"><strong>Build Your Order</strong></h1>
+	</div>
+</section>
+
+<section class="container-fluid">
+	<h2 class="text-center my-5"><strong>Step 1: Choose a meal</strong></h2>
+	<p>At the moment, we can only offer one combo per purchase. More food choices as well as build-your-own's will come soon! Thanks for your understanding!</p>
+
+	{{ if and (.menu) (len .menu) }}
+	<div class="row mt-5">
+
+		{{ range .menu }}
+		<div class="col-12 col-md-6 col-lg-4">
+			<div class="card mb-4 shadow-sm text-center">
+				<div class="card-header">
+					<h5 class="my-0 font-weight-bold">{{ .DisplayName }}</h5>
+				</div>
+				<div class="card-body">
+					<h3 class="card-title pricing-card-title">{{ formatMoney .PriceInCents }}</h3>
+					<div class="mt-3 mb-4">
+						{{ rawHTML .DescriptionHTML }}
+					</div>
+					<button type="button" class="btn btn-lg btn-block btn-outline-ca-yellow2">Order</button>
+				</div>
+			</div>
+		</div>
+		{{ end }}
+
+	</div>
+	{{ else }}
+	<p>there is nothing on sale</p>
+	{{ end }}
+</section>
+
+{{ end }}
