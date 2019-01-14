@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>
+	</title>
+	<!-- {{ if .Title }}
+			{{ .Title }} | CafApp
+		{{ else }}
+			CafApp
+		{{ end }} -->
+
+	<link rel="stylesheet" href="/static/css/cafapp.min.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/fontawesome/css/font-awesome.min.css" type="text/css" />
+	<link rel="stylesheet" href="/static/css/pachimari.css" type="text/css" />
+	<script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+	<script type="text/javascript" src="/static/js/bootstrap.bundle.min.js"></script>
+
+	<!-- {{ template "head-extra" . }} -->
+
+</head>
+
+<body>
+
+	<!-- nav bar -->
+	<nav class="navbar navbar-expand-md navbar-dark bg-ca-dark">
+		<a class="navbar-brand" href="#">
+			<img src="/static/favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+			<span class="ca-logo-text text-ca-yellow1"><strong>&nbsp;CafApp</strong></span>
+		</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMainContent" aria-controls="navbarMainContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarMainContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="#">Menu</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">News</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">About</a>
+				</li>
+			</ul>
+			<button class="btn btn-ca-yellow1 my-2 my-sm-0" type="submit">Log In</button>
+		</div>
+	</nav>
+
+	<section id="spotlight" class="jumbotron jumbotron-fluid text-center">
+		<div class="container">
+			<h1 class="jumbotron-heading text-ca-yellow1"><img src="/static/favicon.png" width="50" height="50" class="d-inline-block align-middle" alt=""><strong>&nbsp;CafApp</strong></h1>
+			<h4 class="text-light">Gustavus Marketplace Delivery Service</h4>
+			<p class="text-white-50">By students, for students</p>
+			<div class="my-5"></div>
+			<a href="#" class="btn btn-ca-yellow2 my-2">Log In</a>
+			<a href="#" class="btn btn-secondary my-2">More info</a>
+			</p>
+		</div>
+	</section>
+
+	<section class="container">
+		<div id="how-container">
+			<h2 class="text-center my-5"><strong>How It Works</strong></h2>
+			<div class="d-flex align-items-center">
+				<div class="order-1 how-icon px-4"><i class="fa fa-sign-in" aria-hidden="true"></i></div>
+				<div class="order-2 flex-grow-1">
+					<h4><strong>Log in using your Gustavus account</strong></h3>
+					<span>Only open to Gustavus members</span>
+				</div>
+			</div>
+			<div class="d-flex align-items-center mt-4">
+				<div class="order-1 how-icon px-4"><i class="fa fa-cutlery" aria-hidden="true"></i></div>
+				<div class="order-2 flex-grow-1">
+					<h4><strong>Choose your order</strong></h3>
+					<span>Sandwiches, Fries, or Chicken? And did we mention free drinks?</span>
+				</div>
+			</div>
+			<div class="d-flex align-items-center mt-4">
+				<div class="order-1 how-icon px-4"><i class="fa fa-id-card" aria-hidden="true"></i></div>
+				<div class="order-2 flex-grow-1">
+					<h4><strong>Pay with your Caf account</strong></h3>
+					<span>Orders are charged directly to your caf declining balance.</span>
+				</div>
+			</div>
+			<div class="d-flex align-items-center mt-4">
+				<div class="order-1 how-icon px-4"><i class="fa fa-car" aria-hidden="true"></i></div>
+				<div class="order-2 flex-grow-1">
+					<h4><strong>Receive food at the front door</strong></h3>
+					<span>We work hard to deliver it right to your dorm!</span>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<hr />
+
+	<section class="container">
+		<h2 class="text-center my-5"><strong>Who We Are</strong></h2>
+		<div class="row">
+			<div class="col-12 col-md-4">
+				<img src="/static/img/enactuslogo.png" class="img-fluid" alt="Enactus">
+			</div>
+			<div class="col-12 col-md-8">
+				<p>Enactus is a bunch of cool and elitist people. Lorem ipsum dolor sit amet, est recteque periculis te, has in illud voluptatibus, vim verear atomorum consequat ad. Nec ex iusto voluptatum. <a href="/about">Learn more</a></p>
+			</div>
+		</div>
+	</section>
+
+	<footer id="footer" class="bg-dark">
+		<p id="footer-inner" class="text-white-50">CafApp (c) Enactus Gustavus 2018</div>
+	</footer>
+	<!-- {{ template "topbar" . }}
+
+	{{ template "content" . }}
+
+	{{ template "footer" . }}
+
+	{{ template "scripts" . }} -->
+
+</body>
+</html>
+
+<!-- {{ define "head-extra" }}{{ end }}
+{{ define "content" }}{{ end }}
+{{ define "scripts" }}{{ end }} -->

@@ -1,20 +1,22 @@
-{{ define "head-extra" }}
-<link rel="stylesheet" href="/static/css/fuyuzuki.css" type="text/css" />
-<meta name="google-signin-client_id" content="280013982487-hc437vjocskjol7subj3psn03o39fn8e.apps.googleusercontent.com">
-{{ end }}
-
 {{ define "content" }}
-<h1>Log In</h1>
 
-{{ if .error }}
-<div id="error">
-	{{ .error }}
-</div>
-{{ end }}
-
-<a href="{{ .GGLoginUrl }}" id="gg-signin-button">
-	<img src="/static/img/googlesignin.png" />
-</a>
+<section id="loginform" class="container text-center">
+	<img class="mb-4" src="/static/favicon.png" alt="" width="100" height="100">
+	<h1 class="h3 mb-3 font-weight-normal">Log In to CafApp</h1>
+	<div class="mt-4"></div>
+	{{ if .error }}
+		<div class="alert alert-danger" role="alert">
+			{{ .error }}
+		</div>
+	{{ else }}
+		<div class="alert alert-light" role="alert">
+			Please use your <strong>GusMail account</strong> ending with @gustavus.edu to log in
+		</div>
+	{{ end }}
+	<a class="d-block mt-5" href="{{ .GGLoginUrl }}" id="gg-signin-button">
+		<img src="/static/img/googlesignin.png" width="250" />
+	</a>
+</section>
 
 <!-- <button id="signout" type="button" onClick="logout()">Log out</button> -->
 

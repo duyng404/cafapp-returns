@@ -1,0 +1,38 @@
+
+#spotlight {
+	height: 50vh;
+	background-image: url("/static/img/spotlight.jpg");
+	background-size: cover;
+	background-position: center center;
+	border-bottom: 10px #C88A12 solid;
+}
+
+#how-container {
+	max-width: 600px;
+	margin: 0 auto;
+}
+
+.how-icon {
+	text-align: center;
+	font-size: 3rem;
+	font-weight: 700;
+	color: #C88A12;
+}
+
+#footer{
+	position: relative;
+	margin: 4rem 0 0 0;
+	height: 200px;
+	border-top: 15px #C88A12 solid;
+}
+
+#footer-inner{
+	position: absolute;
+	top: 50%; left: 50%;
+	transform:translate(-50%, -50%);
+}
+
+#loginform {
+	height:70vh;
+	padding-top: 10vh;
+}

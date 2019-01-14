@@ -44,10 +44,15 @@ func InitRoutes() *gin.Engine {
 
 	// Sessions middleware
 	store := cookie.NewStore([]byte("secret")) // TODO: change secret & possible refactor
+	store.Options(sessions.Options{
+		HttpOnly: true,
+		MaxAge:   604800, // a week
+	})
 	router.Use(sessions.Sessions("mysession", store))
 
 	// static
 	router.Use(static.Serve("/static", static.LocalFile("./static", true)))
+	router.StaticFile("/favicon.ico", "./static/favicon.ico")
 
 	// ping
 	router.GET("/ping", handlePing)
@@ -62,6 +67,8 @@ func InitRoutes() *gin.Engine {
 	{
 		landing.GET("/", handleLandingTop)
 		landing.GET("/about", handleLandingAbout)
+		landing.GET("/news", handleLandingNews)
+		landing.GET("/menu", handleLandingMenu)
 	}
 
 	// login group will handle logging users in and out

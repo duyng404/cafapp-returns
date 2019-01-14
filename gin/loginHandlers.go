@@ -37,7 +37,7 @@ func handleGoogleLogin(c *gin.Context) {
 	session.Save()
 
 	// render template, pass in the url to redirect the user after login
-	c.HTML(200, "landing-gg-login.html", gin.H{
+	renderHTML(c, "landing-gg-login.html", gin.H{
 		"GGLoginUrl": ggoauth.GetLoginURL(state),
 		"error":      displayError,
 	})
@@ -65,7 +65,7 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		logger.Error("unable to get user info from google:", err)
 		if err == ggoauth.ErrInvalidDomain {
 			// not gustavus.edu? gtfo plz
-			loginFailed(fmt.Sprintf("You just logged in using the email %s. Please use your @gustavus.edu email!", oauthResponse.Email), c, session)
+			loginFailed(fmt.Sprintf("You attempted to log in as %s. Please try again using your @gustavus.edu email.", oauthResponse.Email), c, session)
 			return
 		}
 		// other errors
@@ -128,6 +128,10 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		HttpOnly: true,
 	})
 
+	// save login state to session
+	session.Set("loggedIn", true)
+	session.Save()
+
 	logger.Info(fmt.Sprintf("user %s just logged in", user.Email))
 
 	// login finished. redirect to next
@@ -151,60 +155,20 @@ func handleLogout(c *gin.Context) {
 		HttpOnly: true,
 	})
 
+	// save login state to session
+	s.Set("loggedIn", false)
+	s.Save()
+
+	// all these for a simple line of logging "user xyz just logged out"
 	ok := checkJWT(c)
 	if !ok {
 		logger.Error("weird error: no valid jwt when logging out an user")
 	}
-	user, ok := c.Get("currentUser")
-	if ok {
-		logger.Info(fmt.Sprintf("user %s just logged out", user.(*gorm.User).Email))
+	if user, ok := c.Get("currentUser"); ok && user != nil {
+		if user2, ok2 := user.(*gorm.User); ok2 && user2 != nil {
+			logger.Info(fmt.Sprintf("user %s just logged out", user2.Email))
+		}
 	}
 
 	c.Redirect(http.StatusFound, "/")
-}
-
-// a helper func to use when error during login.
-// will redirect user to login page and display an err msg.
-func loginFailed(errmsg string, c *gin.Context, session sessions.Session) {
-	session.Set("error", errmsg)
-	session.Save()
-	c.Redirect(http.StatusFound, "/login")
-	c.Abort()
-	return
-}
-
-// a helper func to use when accessing restricted pages without being logged in
-// will save the current path in session, so after loggin in will be redirected
-func stashThisPath(c *gin.Context, session sessions.Session) {
-	// get current path, removing everything before the slash
-	url := c.Request.URL
-	url.Scheme = ""
-	url.Opaque = ""
-	url.User = nil
-	url.Host = ""
-	path := url.String()
-	if path == "/gg-login" {
-		return
-	}
-	session.Set("next", path)
-	session.Save()
-	return
-}
-
-// a helper func to use after user is logged in
-// will redirect to next, if next is empty, redirect to homepage
-func redirectToNext(c *gin.Context) {
-	s := sessions.Default(c)
-
-	next := s.Get("next")
-	if next == nil {
-		next = "/"
-	}
-
-	// remember to unset next
-	s.Delete("next")
-	s.Save()
-	c.Redirect(http.StatusFound, next.(string))
-
-	return
 }
