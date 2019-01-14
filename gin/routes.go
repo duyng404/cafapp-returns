@@ -86,7 +86,8 @@ func InitRoutes() *gin.Engine {
 	restricted := router.Group("/", authMiddleware())
 	{
 		restricted.GET("/dash", handleUserDash)
-		restricted.GET("/order", handleOrder)
+		restricted.GET("/order", handleOrderGet)
+		restricted.POST("/order", handleOrderPost)
 	}
 
 	return router

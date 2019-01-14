@@ -63,7 +63,7 @@ func loadTemplates(list []string) multitemplate.Renderer {
 	return r
 }
 
-func formatMoney(a uint) string {
+func formatMoney(a int) string {
 	l := a / 100
 	r := a % 100
 	ls := strconv.FormatUint(uint64(l), 10)

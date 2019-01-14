@@ -1,6 +1,7 @@
 package gin
 
 import (
+	"cafapp-returns/gorm"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -63,4 +64,24 @@ func redirectToNext(c *gin.Context) {
 	c.Redirect(http.StatusFound, next.(string))
 
 	return
+}
+
+// helper func to get string from session
+func getStringFromSession(s sessions.Session, name string) string {
+	if a := s.Get(name); a != nil {
+		if b, ok := a.(string); ok {
+			return b
+		}
+	}
+	return ""
+}
+
+// get current user from gin store. Only works on authenticated endpoints
+func getCurrentAuthUser(c *gin.Context) *gorm.User {
+	if user, ok := c.Get("currentUser"); ok && user != nil {
+		if user2, ok2 := user.(*gorm.User); ok2 && user2 != nil {
+			return user2
+		}
+	}
+	return nil
 }
