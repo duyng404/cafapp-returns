@@ -11,11 +11,10 @@ import (
 // helper func to render html with all the necessary info for a template
 func renderHTML(c *gin.Context, template string, data map[string]interface{}) {
 	// extracting common data
-	s := sessions.Default(c)
-	if tmp := s.Get("loggedIn"); tmp != nil {
-		if loggedIn, ok := tmp.(bool); ok && loggedIn {
-			data["loggedIn"] = true
-		}
+	u := getCurrentAuthUser(c)
+	if u != nil {
+		data["loggedIn"] = true
+		data["currentUser"] = u
 	}
 	c.HTML(200, template, data)
 }
@@ -76,7 +75,7 @@ func getStringFromSession(s sessions.Session, name string) string {
 	return ""
 }
 
-// get current user from gin store. Only works on authenticated endpoints
+// get current user from gin store. If not logged in, will return a nil pointer
 func getCurrentAuthUser(c *gin.Context) *gorm.User {
 	if user, ok := c.Get("currentUser"); ok && user != nil {
 		if user2, ok2 := user.(*gorm.User); ok2 && user2 != nil {

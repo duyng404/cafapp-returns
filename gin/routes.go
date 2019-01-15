@@ -50,6 +50,9 @@ func InitRoutes() *gin.Engine {
 	})
 	router.Use(sessions.Sessions("mysession", store))
 
+	// login detector
+	router.Use(loginDetector())
+
 	// static
 	router.Use(static.Serve("/static", static.LocalFile("./static", true)))
 	router.StaticFile("/favicon.ico", "./static/favicon.ico")
@@ -86,8 +89,8 @@ func InitRoutes() *gin.Engine {
 	restricted := router.Group("/", authMiddleware())
 	{
 		restricted.GET("/dash", handleUserDash)
-		restricted.GET("/order", handleOrderGet)
-		restricted.POST("/order", handleOrderPost)
+		restricted.GET("/order/:stuff", handleOrderGet)
+		restricted.POST("/order/:stuff", handleOrderPost)
 	}
 
 	return router

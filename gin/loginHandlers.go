@@ -133,10 +133,6 @@ func handleGoogleLoginCallback(c *gin.Context) {
 		HttpOnly: true,
 	})
 
-	// save login state to session
-	session.Set("loggedIn", true)
-	session.Save()
-
 	logger.Info(fmt.Sprintf("user %s just logged in", user.Email))
 
 	// login finished. redirect to next
@@ -159,10 +155,6 @@ func handleLogout(c *gin.Context) {
 		Expires:  time.Unix(0, 0),
 		HttpOnly: true,
 	})
-
-	// save login state to session
-	s.Set("loggedIn", false)
-	s.Save()
 
 	// all these for a simple line of logging "user xyz just logged out"
 	ok := checkJWT(c)

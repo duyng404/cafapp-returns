@@ -26,6 +26,22 @@ func authMiddleware() gin.HandlerFunc {
 	}
 }
 
+// if an user is logged in (indicated by the JWT in the cookie), then we check the JWT
+// and extract the user for all handlers to use
+func loginDetector() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ok := checkJWT(c)
+		if !ok {
+			logger.Info("No JWT detected. A Guest!")
+		} else {
+			u := getCurrentAuthUser(c)
+			logger.Info("Browsing as user", u.Email)
+		}
+
+		c.Next()
+	}
+}
+
 func checkJWT(c *gin.Context) bool {
 	// get the raw jwt from cookie
 	tokenString, err := c.Cookie("auth")
