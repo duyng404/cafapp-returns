@@ -62,7 +62,7 @@ func InitRoutes() *gin.Engine {
 
 	//404
 	router.NoRoute(func(c *gin.Context) {
-		c.HTML(404, "404.html", gin.H{})
+		renderHTML(c, 404, "404.html", gin.H{})
 	})
 
 	// landing group contains public-facing paths, aka, anyone can see without logging in

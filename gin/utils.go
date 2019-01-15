@@ -2,21 +2,36 @@ package gin
 
 import (
 	"cafapp-returns/gorm"
+	"cafapp-returns/logger"
+	"html/template"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 // helper func to render html with all the necessary info for a template
-func renderHTML(c *gin.Context, template string, data map[string]interface{}) {
+func renderHTML(c *gin.Context, code int, template string, data map[string]interface{}) {
 	// extracting common data
 	u := getCurrentAuthUser(c)
 	if u != nil {
 		data["loggedIn"] = true
 		data["currentUser"] = u
 	}
-	c.HTML(200, template, data)
+
+	// write to a buffer
+	buf, err := rdr.RenderHTML(template, data)
+	if err != nil {
+		logger.Error("error while generating html:", err)
+		c.String(500, "500 Internal Server Error")
+		c.Abort()
+		return
+	}
+
+	c.Header("Content-Type", "text/html; charset=utf-8")
+	c.Writer.WriteHeader(code)
+	c.Writer.Write(buf.Bytes())
 }
 
 // a helper func to use when error during login.
@@ -63,6 +78,21 @@ func redirectToNext(c *gin.Context) {
 	c.Redirect(http.StatusFound, next.(string))
 
 	return
+}
+
+func formatMoney(a int) string {
+	l := a / 100
+	r := a % 100
+	ls := strconv.FormatUint(uint64(l), 10)
+	rs := strconv.FormatUint(uint64(r), 10)
+	if r < 10 {
+		rs = "0" + rs
+	}
+	return "$" + ls + "." + rs
+}
+
+func rawHTML(s string) template.HTML {
+	return template.HTML(s)
 }
 
 // helper func to get string from session

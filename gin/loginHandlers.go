@@ -42,7 +42,7 @@ func handleGoogleLogin(c *gin.Context) {
 	session.Save()
 
 	// render template, pass in the url to redirect the user after login
-	renderHTML(c, "landing-gg-login.html", gin.H{
+	renderHTML(c, 200, "landing-gg-login.html", gin.H{
 		"GGLoginUrl": ggoauth.GetLoginURL(state),
 		"error":      template.HTML(displayError),
 	})

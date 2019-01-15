@@ -5,17 +5,17 @@ import (
 )
 
 func handleLandingTop(c *gin.Context) {
-	renderHTML(c, "landing-top.html", gin.H{})
+	renderHTML(c, 200, "landing-top.html", gin.H{})
 }
 
 func handleLandingAbout(c *gin.Context) {
-	renderHTML(c, "landing-about.html", gin.H{})
+	renderHTML(c, 200, "landing-about.html", gin.H{})
 }
 
 func handleLandingNews(c *gin.Context) {
-	renderHTML(c, "landing-news.html", gin.H{})
+	renderHTML(c, 200, "landing-news.html", gin.H{})
 }
 
 func handleLandingMenu(c *gin.Context) {
-	renderHTML(c, "landing-menu.html", gin.H{})
+	renderHTML(c, 200, "landing-menu.html", gin.H{})
 }

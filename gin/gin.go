@@ -2,12 +2,15 @@ package gin
 
 import (
 	"cafapp-returns/config"
+	"cafapp-returns/renderer"
+	"html/template"
 
 	"github.com/gin-gonic/gin"
 )
 
 var (
 	router *gin.Engine
+	rdr    *renderer.Rdr
 )
 
 // Run : starts a gin server
@@ -27,6 +30,17 @@ func SetTestMode() {
 }
 
 func init() {
+	// init render
+	views := []string{
+		"landing",
+		"userdash",
+		"order",
+		"404",
+	}
+	f := template.FuncMap{
+		"formatMoney": formatMoney,
+		"rawHTML":     rawHTML,
+	}
+	rdr = renderer.InitRdr(views, f)
 	router = InitRoutes()
-	initViews(router)
 }

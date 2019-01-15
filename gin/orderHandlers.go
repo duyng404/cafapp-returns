@@ -52,7 +52,7 @@ func getOrderMenu(c *gin.Context, s sessions.Session) {
 	s.Set("currentStep", "1")
 	s.Save()
 	// render
-	renderHTML(c, "order-menu.html", gin.H{
+	renderHTML(c, 200, "order-menu.html", gin.H{
 		"menu": menu,
 	})
 }
