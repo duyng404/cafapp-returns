@@ -2,71 +2,92 @@ package gorm
 
 import (
 	"cafapp-returns/logger"
-
-	"github.com/jinzhu/gorm"
 )
 
 // OrderStatus statuses of orders
 type OrderStatus struct {
-	gorm.Model
 	Name        string
 	Description string // for frontend
-	StatusCode  int
+	StatusCode  int    `gorm:"primary_key,unique"`
 	ColorCode   string
 }
 
 var (
 	statusList = []OrderStatus{
 		OrderStatus{
-			Name:        "Incomplete",
+			Name:        "incomplete",
 			Description: "incomplete",
 			StatusCode:  0,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatus{
-			Name:        "Completed",
+			Name:        "need-drink",
+			Description: "incomplete",
+			StatusCode:  1,
+			ColorCode:   "#ffffff",
+		},
+		OrderStatus{
+			Name:        "need-destination",
+			Description: "incomplete",
+			StatusCode:  2,
+			ColorCode:   "#ffffff",
+		},
+		OrderStatus{
+			Name:        "need-gus-id",
+			Description: "incomplete",
+			StatusCode:  3,
+			ColorCode:   "#ffffff",
+		},
+		OrderStatus{
+			Name:        "completed",
 			Description: "completed but not placed",
 			StatusCode:  10,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatus{
-			Name:        "Placed",
+			Name:        "placed",
 			Description: "placed",
 			StatusCode:  20,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatus{
-			Name:        "Queued",
+			Name:        "queued",
 			Description: "queued",
 			StatusCode:  30,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatus{
-			Name:        "Prepping",
+			Name:        "prepping",
 			Description: "prepping",
 			StatusCode:  40,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatus{
-			Name:        "Shipping",
+			Name:        "shipping",
 			Description: "shipping",
 			StatusCode:  50,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatus{
-			Name:        "Settled",
+			Name:        "settled",
 			Description: "settled",
 			StatusCode:  60,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatus{
-			Name:        "General Failure",
+			Name:        "general-failure",
 			Description: "failed",
 			StatusCode:  90,
 			ColorCode:   "#ff0000",
 		},
 		OrderStatus{
-			Name:        "Abandoned",
+			Name:        "unable-to-charge",
+			Description: "failed",
+			StatusCode:  90,
+			ColorCode:   "#ff0000",
+		},
+		OrderStatus{
+			Name:        "abandoned",
 			Description: "failed",
 			StatusCode:  91,
 			ColorCode:   "#ff0000",
