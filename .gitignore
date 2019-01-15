@@ -4,3 +4,4 @@ govendor
 tmp
 tmp/*
 config/config.go
+.vscode
