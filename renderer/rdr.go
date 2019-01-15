@@ -2,6 +2,7 @@ package renderer
 
 import (
 	"bytes"
+	"cafapp-returns/config"
 	"cafapp-returns/logger"
 	"html/template"
 	"path/filepath"
@@ -17,8 +18,11 @@ type Rdr struct {
 }
 
 type view struct {
-	Base string
-	T    *template.Template
+	Base  string
+	Name  string
+	Files []string
+	T     *template.Template
+	r     *Rdr
 }
 
 // InitRdr init the renderer with a list of views and a funcmap
@@ -55,8 +59,11 @@ func (r *Rdr) addView(name string) {
 			logger.Fatal("failed to load template:", propername, err)
 		}
 		r.Views[propername] = view{
-			Base: filepath.Base(base),
-			T:    T,
+			Base:  filepath.Base(base),
+			Name:  propername,
+			Files: tmp,
+			T:     T,
+			r:     r,
 		}
 		logger.Info("Loaded template", propername)
 	}
@@ -72,8 +79,11 @@ func (r *Rdr) addView(name string) {
 			logger.Fatal("failed to load template:", propername, err)
 		}
 		r.Views[propername] = view{
-			Base: filepath.Base(base),
-			T:    T,
+			Base:  filepath.Base(base),
+			Name:  propername,
+			Files: tmp,
+			T:     T,
+			r:     r,
 		}
 		logger.Info("Loaded template", propername)
 	}
@@ -82,10 +92,24 @@ func (r *Rdr) addView(name string) {
 
 // RenderHTML render html
 func (r *Rdr) RenderHTML(name string, data map[string]interface{}) (*bytes.Buffer, error) {
-	logger.Info("executing templte", name)
+	logger.Info("executing template", name)
+
+	// if this is dev environment, hot reload template before executing
+	if config.ENV == "dev" {
+		v := r.Views[name]
+		logger.Info("reloading before executing:", v.Name)
+		tmp := template.New(v.Name)
+		tmp, err := tmp.Funcs(r.Fmap).ParseFiles(v.Files...)
+		if err != nil {
+			logger.Fatal("failed to load template:", v.Name, err)
+		}
+		var buf bytes.Buffer
+		err = tmp.ExecuteTemplate(&buf, r.Views[name].Base, data)
+		return &buf, err
+	}
+
+	// else, render normally
 	var buf bytes.Buffer
-	// err := r.T.ExecuteTemplate(&buf, name, data)
 	err := r.Views[name].T.ExecuteTemplate(&buf, r.Views[name].Base, data)
-	// logger.Info(buf.String())
 	return &buf, err
 }

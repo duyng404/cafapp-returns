@@ -1,6 +1,6 @@
 {{ define "content" }}
 
-<section class="jumbotron jumbotron-fluid text-center bg-light">
+<section class="jumbotron jumbotron-fluid text-center bg-dark">
 	<div class="container">
 		<h1 class="jumbotron-heading text-ca-yellow2"><strong>Build Your Order</strong></h1>
 	</div>
@@ -81,21 +81,18 @@
 			<p>Your CafApp balance is currently <span class="text-info">$2.50</span>. You can add balance by redeeming a CafApp Code Card:</p>
 			<form>
 				<div class="row">
-					<div class="col-md-6 mb-3">
-						<label for="giftcardcode">Redeem code</label>
+					<div class="col-12 mb-3">
+						<label for="giftcardcode">Enter card code</label>
 						<input type="text" class="form-control" id="giftcardcode" placeholder="" required>
-						<small class="text-muted">Full name as displayed on card</small>
 						<div class="invalid-feedback">
-						Name on card is required
+							Name on card is required
 						</div>
 					</div>
 				</div>
 			</form>
 
-
-				<hr class="mb-4">
-				<button class="btn btn-primary btn-lg btn-block" type="submit">Continue</button>
-			</form>
+			<hr class="mb-4">
+			<button class="btn btn-primary btn-lg btn-block" type="submit">Continue</button>
         </div>
 
 	</div>
