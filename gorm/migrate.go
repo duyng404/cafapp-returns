@@ -44,10 +44,10 @@ func Migrate() error {
 		return err
 	}
 
-	logger.Info("Migrating Order Status Table")
-	err = DB.AutoMigrate(&OrderStatus{}).Error
+	logger.Info("Migrating Order Status Code Table")
+	err = DB.AutoMigrate(&OrderStatusCode{}).Error
 	if err != nil {
-		logger.Error("Error migrating Order Status table:", err)
+		logger.Error("Error migrating Order Status Code table:", err)
 		return err
 	}
 
@@ -58,14 +58,15 @@ func Migrate() error {
 		return err
 	}
 
+	initDestinations()
+	initOrderStatusCodes()
+
 	// init data
 	var tmp Product
 	err = tmp.PopulateByID(1)
 	if err != nil {
 		logger.Info("Database is empty, generating sample data")
 		initData()
-		initDestinations()
-		initOrderStatuses()
 	}
 
 	return nil

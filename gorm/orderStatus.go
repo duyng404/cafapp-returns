@@ -2,115 +2,138 @@ package gorm
 
 import (
 	"cafapp-returns/logger"
+
+	"github.com/jinzhu/gorm"
 )
 
-// OrderStatus statuses of orders
-type OrderStatus struct {
+// OrderStatusCode statuses of orders
+type OrderStatusCode struct {
+	StatusCode  int `gorm:"primary_key;unique"`
 	Name        string
-	Description string // for frontend
-	StatusCode  int    `gorm:"primary_key,unique"`
+	DisplayName string // for frontend
 	ColorCode   string
 }
 
+const (
+	OrderStatusIncomplete = 0
+	OrderStatusNeedInfo   = 1
+
+	OrderStatusFinalized         = 10
+	OrderStatusInsufficientFunds = 11
+
+	OrderStatusPlaced = 20
+
+	OrderStatusQueued   = 30
+	OrderStatusRequeued = 31
+
+	OrderStatusPrepping  = 40
+	OrderStatusShipping  = 50
+	OrderStatusDelivered = 60
+
+	OrderStatusGeneralFailure = 90
+	OrderStatusDeliveryFailed = 92
+	OrderStatusFailedToCharge = 93
+)
+
 var (
-	statusList = []OrderStatus{
-		OrderStatus{
+	statusList = []OrderStatusCode{
+		OrderStatusCode{
 			Name:        "incomplete",
-			Description: "incomplete",
-			StatusCode:  0,
+			DisplayName: "Incomplete",
+			StatusCode:  OrderStatusIncomplete,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
-			Name:        "need-drink",
-			Description: "incomplete",
-			StatusCode:  1,
+		OrderStatusCode{
+			Name:        "need-info",
+			DisplayName: "Need Info",
+			StatusCode:  OrderStatusNeedInfo,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
-			Name:        "need-destination",
-			Description: "incomplete",
-			StatusCode:  2,
+		OrderStatusCode{
+			Name:        "finalized",
+			DisplayName: "Finalized",
+			StatusCode:  OrderStatusFinalized,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
-			Name:        "need-gus-id",
-			Description: "incomplete",
-			StatusCode:  3,
+		OrderStatusCode{
+			Name:        "insufficient-funds",
+			DisplayName: "Insufficient Funds",
+			StatusCode:  OrderStatusInsufficientFunds,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
-			Name:        "completed",
-			Description: "completed but not placed",
-			StatusCode:  10,
-			ColorCode:   "#ffffff",
-		},
-		OrderStatus{
+		OrderStatusCode{
 			Name:        "placed",
-			Description: "placed",
-			StatusCode:  20,
+			DisplayName: "Placed",
+			StatusCode:  OrderStatusPlaced,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
+		OrderStatusCode{
 			Name:        "queued",
-			Description: "queued",
-			StatusCode:  30,
+			DisplayName: "Queued",
+			StatusCode:  OrderStatusQueued,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
+		OrderStatusCode{
+			Name:        "requeued",
+			DisplayName: "Re-queued",
+			StatusCode:  OrderStatusRequeued,
+			ColorCode:   "#ffffff",
+		},
+		OrderStatusCode{
 			Name:        "prepping",
-			Description: "prepping",
-			StatusCode:  40,
+			DisplayName: "prepping",
+			StatusCode:  OrderStatusPrepping,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
+		OrderStatusCode{
 			Name:        "shipping",
-			Description: "shipping",
-			StatusCode:  50,
+			DisplayName: "shipping",
+			StatusCode:  OrderStatusShipping,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
-			Name:        "settled",
-			Description: "settled",
-			StatusCode:  60,
+		OrderStatusCode{
+			Name:        "delivered",
+			DisplayName: "Delievered",
+			StatusCode:  OrderStatusDelivered,
 			ColorCode:   "#ffffff",
 		},
-		OrderStatus{
+		OrderStatusCode{
 			Name:        "general-failure",
-			Description: "failed",
-			StatusCode:  90,
+			DisplayName: "failed",
+			StatusCode:  OrderStatusGeneralFailure,
 			ColorCode:   "#ff0000",
 		},
-		OrderStatus{
-			Name:        "unable-to-charge",
-			Description: "failed",
-			StatusCode:  90,
+		OrderStatusCode{
+			Name:        "delivery-failed",
+			DisplayName: "Delivery Failed",
+			StatusCode:  OrderStatusDeliveryFailed,
 			ColorCode:   "#ff0000",
 		},
-		OrderStatus{
-			Name:        "abandoned",
-			Description: "failed",
-			StatusCode:  91,
+		OrderStatusCode{
+			Name:        "failed-to-charge",
+			DisplayName: "Failed To Charge",
+			StatusCode:  OrderStatusFailedToCharge,
 			ColorCode:   "#ff0000",
 		},
 	}
 )
 
 // PopulateByCode query db by code
-func (s *OrderStatus) PopulateByCode(code int) error {
+func (s *OrderStatusCode) PopulateByCode(code int) error {
 	return DB.Where("status_code = ?", code).Last(&s).Error
 }
 
 // FirstOrCreate create if not exist
-func (s *OrderStatus) FirstOrCreate() error {
-	var tmp OrderStatus
-	if err := tmp.PopulateByCode(s.StatusCode); err != nil {
+func (s *OrderStatusCode) FirstOrCreate() error {
+	var tmp OrderStatusCode
+	if err := tmp.PopulateByCode(s.StatusCode); err == gorm.ErrRecordNotFound {
 		return DB.Create(&s).Error
 	}
 	return nil
 }
 
 // create all statuses
-func initOrderStatuses() error {
+func initOrderStatusCodes() error {
 	for i := range statusList {
 		err := statusList[i].FirstOrCreate()
 		if err != nil {
