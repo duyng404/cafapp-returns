@@ -1,8 +1,6 @@
 package gorm
 
 import (
-	"time"
-
 	"github.com/jinzhu/gorm"
 	"github.com/lithammer/shortuuid"
 )
@@ -11,10 +9,7 @@ import (
 type Order struct {
 	gorm.Model
 	UUID            string
-	PlacedAt        *time.Time
-	ShippedAt       *time.Time
-	SettledAt       *time.Time
-	ShortID         string
+	Tag             string
 	UserID          uint
 	User            *User
 	TotalInCents    int

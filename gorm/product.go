@@ -2,7 +2,6 @@ package gorm
 
 import (
 	"cafapp-returns/logger"
-	"errors"
 
 	"github.com/jinzhu/gorm"
 )
@@ -10,12 +9,12 @@ import (
 // Product the basic product that goes on menu and orders
 type Product struct {
 	gorm.Model
-	SKU             string `json:"-" gorm:"index:sku"`
-	Name            string // Full Descriptive Name
-	DisplayName     string // Display Name on frontend
+	Tag             string // Unique tag following our internal convention
+	Name            string // Internal code names
+	DisplayName     string // Full Display Name on frontend
 	PriceInCents    int
 	ImageURL        string
-	Description     string // raw description
+	Description     string // one-line description
 	DescriptionHTML string // html formatted description
 	Status          uint
 }
@@ -25,7 +24,7 @@ const (
 	ProductStatusCreated = 0
 	// ProductStatusOnShelf on sale
 	ProductStatusOnShelf = 10
-	// ProductStatusAddon
+	// ProductStatusAddon is on sale but not displayed on main menu
 	ProductStatusAddon = 11
 	// ProductStatusDiscontinued no longer on sale
 	ProductStatusDiscontinued = 90
@@ -35,12 +34,6 @@ const (
 
 // Create create the object
 func (p *Product) Create() error {
-	if p.SKU == "" {
-		return errors.New("sku is empty")
-	}
-	if p.ID != 0 {
-		return errors.New("id is not zero")
-	}
 	return DB.Create(p).Error
 }
 

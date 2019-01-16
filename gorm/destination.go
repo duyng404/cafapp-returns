@@ -9,36 +9,36 @@ import (
 // Destination of deliveries
 type Destination struct {
 	gorm.Model
-	Name    string
-	ShortID string
+	Name string
+	Tag  string
 }
 
 var (
 	destinationList = []Destination{
 		Destination{
-			Name:    "Sohre",
-			ShortID: "SO",
+			Name: "Sohre",
+			Tag:  "SO",
 		},
 		Destination{
-			Name:    "International Center",
-			ShortID: "IC",
+			Name: "International Center",
+			Tag:  "IC",
 		},
 		Destination{
-			Name:    "Southwest",
-			ShortID: "SW",
+			Name: "Southwest",
+			Tag:  "SW",
 		},
 	}
 )
 
-// PopulateByShortID query db by shortid
-func (d *Destination) PopulateByShortID(shortid string) error {
-	return DB.Where("short_id = ?", shortid).Last(&d).Error
+// PopulateByTag query db by tag
+func (d *Destination) PopulateByTag(tag string) error {
+	return DB.Where("tag = ?", tag).Last(&d).Error
 }
 
 // FirstOrCreate create if not exist
 func (d *Destination) FirstOrCreate() error {
 	var tmp Destination
-	if err := tmp.PopulateByShortID(d.ShortID); err != nil {
+	if err := tmp.PopulateByTag(d.Tag); err == gorm.ErrRecordNotFound {
 		return DB.Create(&d).Error
 	}
 	return nil

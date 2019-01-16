@@ -15,7 +15,7 @@ func initData() {
 
 	// chicken2
 	chicken2 := Product{
-		SKU:          "C2",
+		Tag:          "C2",
 		Name:         fmt.Sprintf("2-chicken"),
 		PriceInCents: 590,
 		Description:  fmt.Sprintf("2 Chicken Strips, French Fries, Cooler Drink"),
@@ -27,7 +27,7 @@ func initData() {
 
 	// chickend4
 	chicken4 := Product{
-		SKU:          "C4",
+		Tag:          "C4",
 		Name:         fmt.Sprintf("4-chicken"),
 		PriceInCents: 790,
 		Description:  fmt.Sprintf("4 Chicken Strips, French Fries, Cooler Drink"),
@@ -39,10 +39,10 @@ func initData() {
 
 	// burger
 	burger := Product{
-		SKU:          "B0",
+		Tag:          "CB",
 		Name:         fmt.Sprintf("burger"),
 		PriceInCents: 715,
-		Description:  fmt.Sprintf("Cheeseburger w/ lettuce & tomato), French Fries, Cooler Drink"),
+		Description:  fmt.Sprintf("Cheeseburger w/ lettuce & tomato, French Fries, Cooler Drink"),
 		Status:       ProductStatusOnShelf,
 	}
 	burger.DisplayName = properFoodName("burger meal")
@@ -51,31 +51,31 @@ func initData() {
 
 	// turkeysandwich
 	turkeysandwich := Product{
-		SKU:          "S0",
+		Tag:          "TS",
 		Name:         fmt.Sprintf("turkey-sandwich"),
 		PriceInCents: 835,
-		Description:  fmt.Sprintf("Turkey Sub Sandwich, French Fries, Cooler Drink, Toppings include: turkey + lettuce + tomato, with mayo & mustard in packets"),
+		Description:  fmt.Sprintf("Turkey Sub Sandwich, French Fries, Cooler Drink **Toppings: turkey, lettuce, tomato, with mayo & mustard in packets"),
 		Status:       ProductStatusOnShelf,
 	}
 	turkeysandwich.DisplayName = properFoodName("turkey sandwich meal")
-	turkeysandwich.DescriptionHTML = strings.Replace(turkeysandwich.Description, ", ", "<br />", -1)
+	turkeysandwich.DescriptionHTML = "Turkey Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: turkey, lettuce, tomato<br />* with mayo & mustard in packets"
 	allFoods = append(allFoods, turkeysandwich)
 
 	// veggiesandwich
 	veggiesandwich := Product{
-		SKU:          "S1",
+		Tag:          "VS",
 		Name:         fmt.Sprintf("veggie-sandwich"),
 		PriceInCents: 835,
-		Description:  fmt.Sprintf("Veggie Sub Sandwich, French Fries, Cooler Drink, Toppings include: hummus + cucumber + lettuce + tomato + green pepper, with mayo & mustard in packets"),
+		Description:  fmt.Sprintf("Veggie Sub Sandwich, French Fries, Cooler Drink **Toppings include: hummus, cucumber, lettuce, tomato, green pepper, with mayo & mustard in packets"),
 		Status:       ProductStatusOnShelf,
 	}
 	veggiesandwich.DisplayName = properFoodName("veggie sandwich meal")
-	veggiesandwich.DescriptionHTML = strings.Replace(veggiesandwich.Description, ", ", "<br />", -1)
+	veggiesandwich.DescriptionHTML = "Veggie Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: hummus, cucumber, lettuce, tomato, green pepper<br />* with mayo & mustard in packets"
 	allFoods = append(allFoods, veggiesandwich)
 
 	// peppizza
 	peppizza := Product{
-		SKU:          "P0",
+		Tag:          "PP",
 		Name:         fmt.Sprintf("pep-pizza"),
 		PriceInCents: 730,
 		Description:  fmt.Sprintf("2 Slices of Pepperoni Pizza, French Fries, Cooler Drink"),
@@ -87,7 +87,7 @@ func initData() {
 
 	// cheesepizza
 	cheesepizza := Product{
-		SKU:          "P1",
+		Tag:          "CP",
 		Name:         fmt.Sprintf("cheese-pizza"),
 		PriceInCents: 730,
 		Description:  fmt.Sprintf("2 Slices of Cheese Pizza, French Fries, Cooler Drink"),
@@ -99,7 +99,7 @@ func initData() {
 
 	// coke
 	coke := Product{
-		SKU:             "D0",
+		Tag:             "CC",
 		Name:            "coca-cola",
 		DisplayName:     "Coca-Cola",
 		PriceInCents:    0,
@@ -111,7 +111,7 @@ func initData() {
 
 	// sprite
 	sprite := Product{
-		SKU:             "D1",
+		Tag:             "SP",
 		Name:            "sprite",
 		DisplayName:     "Sprite",
 		PriceInCents:    0,
@@ -123,7 +123,7 @@ func initData() {
 
 	// dietcoke
 	dietcoke := Product{
-		SKU:             "D2",
+		Tag:             "DC",
 		Name:            "dietcoke",
 		DisplayName:     "Diet Coke",
 		PriceInCents:    0,
@@ -135,7 +135,7 @@ func initData() {
 
 	// orange
 	orange := Product{
-		SKU:             "D3",
+		Tag:             "OJ",
 		Name:            "orange",
 		DisplayName:     "Orange Juice",
 		PriceInCents:    0,
@@ -147,7 +147,7 @@ func initData() {
 
 	// mrpibbs
 	mrpibbs := Product{
-		SKU:             "D4",
+		Tag:             "PB",
 		Name:            "mrpibbs",
 		DisplayName:     "Mr Pibbs",
 		PriceInCents:    0,
