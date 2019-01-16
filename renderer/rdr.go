@@ -97,7 +97,7 @@ func (r *Rdr) RenderHTML(name string, data map[string]interface{}) (*bytes.Buffe
 	// if this is dev environment, hot reload template before executing
 	if config.ENV == "dev" {
 		v := r.Views[name]
-		logger.Info("reloading before executing:", v.Name)
+		logger.Info("[DEV] reloading before executing:", v.Name)
 		tmp := template.New(v.Name)
 		tmp, err := tmp.Funcs(r.Fmap).ParseFiles(v.Files...)
 		if err != nil {

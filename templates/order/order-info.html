@@ -7,12 +7,12 @@
 </section>
 
 <section class="container">
-	<h2 class="text-center my-5"><strong>Step 2: Enter Order Details</strong></h2>
-	<p class="lead">Your order comes with a choice of cooler drink, please select your preference.</p>
+	<h2 class="text-center my-5"><strong>Edit Order Details</strong></h2>
+	<p class="lead text-center">Please add or edit any necessary information. You will have a chance to review your order before placing.</p>
 
 	<div class="row mt-5">
         <div class="col-md-4 order-md-2 mb-4">
-			<h4>Your Order</h4>
+			<h4>Your Cart</h4>
 			<ul class="list-group mb-3">
 				<li class="list-group-item d-flex justify-content-between lh-condensed">
 					<div>
@@ -30,9 +30,22 @@
 		</div>
 
         <div class="col-md-8 order-md-1">
-			<h4>Extra Information</h4>
 			<form class="needs-validation" novalidate>
+				<h4>Main Items</h4>
 				<div class="row">
+					<div class="col-12 mb-3">
+						<label for="drink">Meal Combo</label>
+						<select class="form-control d-block w-100" id="drink" required>
+							<option value="">Choose...</option>
+							<option>Coke</option>
+							<option>Diet Coke</option>
+							<option>Mr Pibbs</option>
+						</select>
+						<div class="invalid-feedback">
+							Please select a valid meal.
+						</div>
+					</div>
+
 					<div class="col-12 mb-3">
 						<label for="drink">Cooler Drink</label>
 						<select class="form-control d-block w-100" id="drink" required>
@@ -45,9 +58,14 @@
 							Please select a valid drink.
 						</div>
 					</div>
+				</div>
 
+				<hr class="mb-4"/>
+
+				<h4>Destination</h4>
+				<div class="row">
 					<div class="col-12 mb-3">
-						<label for="destination">Destination</label>
+						<label for="destination">Deliver To</label>
 						<select class="form-control d-block w-100" id="destination" required>
 							<option value="">Choose...</option>
 							<option>Southwest</option>
@@ -58,17 +76,18 @@
 							Please select a valid destination.
 						</div>
 					</div>
+				</div>
 
+				<hr class="mb-4"/>
+
+				<h4>Extra Information</h4>
+				<div class="row">
 					<div class="col-12 mb-3">
 						<label for="gus-id">Gustavus ID</label>
-						<select class="form-control d-block w-100" id="gus-id" required>
-							<option value="">Choose...</option>
-							<option>Southwest</option>
-							<option>International Center</option>
-							<option>Sohre</option>
-						</select>
+						<input class="form-control" type="number" id="gus-id" name="gus-id">
+						<small class="text-muted">We need your gustavus ID for identifying and charging your account at the caf. This info is saved so you don't have to enter it again next time!</small>
 						<div class="invalid-feedback">
-							Please select a valid destination.
+							Please enter your Gustavus ID.
 						</div>
 					</div>
 				</div>
@@ -78,21 +97,27 @@
 
 			<h4 class="mb-3">Payment</h4>
 
-			<p>Your CafApp balance is currently <span class="text-info">$2.50</span>. You can add balance by redeeming a CafApp Code Card:</p>
-			<form>
+			<p>Your CafApp balance is currently <span class="text-info">$2.50</span>. This order will cost <span class="text-danger">$1.50</span> in delivery charge. You can add balance by <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false" aria-controls="cardRedeemForm">redeeming a CafApp Balance Card</a>.</p>
+			<form class="collapse" id="cardRedeemForm">
 				<div class="row">
 					<div class="col-12 mb-3">
-						<label for="giftcardcode">Enter card code</label>
-						<input type="text" class="form-control" id="giftcardcode" placeholder="" required>
+						<label for="giftcardcode">Enter CafApp Balance Card code</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="giftcardcode" placeholder="" required>
+							<div class="input-group-append">
+								<button class="btn btn-outline-ca-yellow4" type="button">Redeem</button>
+							</div>
+						</div>
+						<small class="text-muted">CafApp Balance Cards can be purchased from the Bookmark</small>
 						<div class="invalid-feedback">
-							Name on card is required
+							Please enter the card code
 						</div>
 					</div>
 				</div>
 			</form>
 
 			<hr class="mb-4">
-			<button class="btn btn-primary btn-lg btn-block" type="submit">Continue</button>
+			<button class="btn btn-primary btn-lg btn-block" type="submit">Continue to Checkout</button>
         </div>
 
 	</div>

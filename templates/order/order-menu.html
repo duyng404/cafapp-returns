@@ -7,8 +7,9 @@
 </section>
 
 <section class="container-fluid">
-	<h2 class="text-center my-5"><strong>Step 1: Choose a meal</strong></h2>
-	<p class="lead">Due to being a new project, we can only offer combo meals at this point. More food choices as well as build-your-own's will come as we grow. Thanks for your understanding and we hope to have your support!</p>
+	<h2 class="text-center my-5"><strong>Choose A Meal</strong></h2>
+	<p class="lead text-center">To start ordering with CafApp, please select a meal combo</p>
+	<p class="w-75 mx-auto">We currently offer a choice of convenient combo meals, each of them with a choice of drink between Coke, Sprite, Diet Coke, Orange Juice and Mr Pibbs. More food choices will come as we grow!</p>
 
 	{{ if and (.menu) (len .menu) }}
 	<div class="row mt-5">
@@ -30,7 +31,7 @@
 							type="submit"
 							name="selected-meal"
 							value="{{ .ID }}">
-							Order
+							Choose
 						</button>
 					</form>
 				</div>
