@@ -24,7 +24,7 @@ func renderHTML(c *gin.Context, code int, template string, data map[string]inter
 	buf, err := rdr.RenderHTML(template, data)
 	if err != nil {
 		logger.Error("error while generating html:", err)
-		c.String(500, "500 Internal Server Error")
+		c.String(500, "500 Internal Server Error.")
 		c.Abort()
 		return
 	}
@@ -58,7 +58,6 @@ func stashThisPath(c *gin.Context, session sessions.Session) {
 		return
 	}
 	session.Set("next", path)
-	session.Save()
 	return
 }
 
@@ -113,4 +112,10 @@ func getCurrentAuthUser(c *gin.Context) *gorm.User {
 		}
 	}
 	return nil
+}
+
+// calculate the delivery of a given order
+// TODO: implement a proper rate
+func calculateDeliveryFee(o *gorm.Order) int {
+	return 75
 }

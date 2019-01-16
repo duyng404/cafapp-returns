@@ -1,10 +1,6 @@
 {{ define "content" }}
 
-<section class="jumbotron jumbotron-fluid text-center bg-dark">
-	<div class="container">
-		<h1 class="jumbotron-heading text-ca-yellow2"><strong>Build Your Order</strong></h1>
-	</div>
-</section>
+{{ template "basicspotlight" . }}
 
 <section class="container-fluid">
 	<h2 class="text-center my-5"><strong>Choose A Meal</strong></h2>
@@ -26,7 +22,6 @@
 						{{ rawHTML .DescriptionHTML }}
 					</div>
 					<form action="" method="post">
-						<input type="hidden" id="step-number" name="step-number" value="1" />
 						<button class="btn btn-lg btn-block btn-outline-ca-yellow2"
 							type="submit"
 							name="selected-meal"

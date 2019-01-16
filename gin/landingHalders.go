@@ -9,13 +9,19 @@ func handleLandingTop(c *gin.Context) {
 }
 
 func handleLandingAbout(c *gin.Context) {
-	renderHTML(c, 200, "landing-about.html", gin.H{})
+	renderHTML(c, 200, "landing-about.html", gin.H{
+		"Title": "About Us",
+	})
 }
 
 func handleLandingNews(c *gin.Context) {
-	renderHTML(c, 200, "landing-news.html", gin.H{})
+	renderHTML(c, 200, "landing-news.html", gin.H{
+		"Title": "News",
+	})
 }
 
 func handleLandingMenu(c *gin.Context) {
-	renderHTML(c, 200, "landing-menu.html", gin.H{})
+	renderHTML(c, 200, "landing-menu.html", gin.H{
+		"Title": "Menu",
+	})
 }

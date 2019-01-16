@@ -55,7 +55,6 @@ func handleGoogleLoginCallback(c *gin.Context) {
 	session := sessions.Default(c)
 	state := session.Get("state")
 	session.Delete("state")
-	session.Save()
 
 	// validate state
 	if state != c.Query("state") {
@@ -145,7 +144,6 @@ func handleGoogleLoginCallback(c *gin.Context) {
 func handleLogout(c *gin.Context) {
 	s := sessions.Default(c)
 	s.Clear()
-	s.Save()
 
 	// log out the user by clearing the auth cookie
 	http.SetCookie(c.Writer, &http.Cookie{
@@ -167,5 +165,6 @@ func handleLogout(c *gin.Context) {
 		}
 	}
 
+	s.Save()
 	c.Redirect(http.StatusFound, "/")
 }

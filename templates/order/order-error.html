@@ -1,0 +1,39 @@
+{{ define "content" }}
+
+{{ template "basicspotlight" . }}
+
+<section class="container text-center mt-4">
+	<h1 class="my-5"><strong>Oh noes!</strong></h1>
+	<p>Some error has happened.</p>
+	<div class="alert alert-danger" role="alert">{{ if .error }}{{ .error }}{{ end }}</div>
+	<p>That's a bummer. Welp. You can try <a href="/">starting over</a> with a new order.</p>
+	<div id="cat" style="display: none"></div>
+</section>
+
+<script>
+function ajax_get(url, callback) {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+      console.log('responseText:' + xmlhttp.responseText);
+      try {
+        var data = JSON.parse(xmlhttp.responseText);
+      } catch (err) {
+        console.log(err.message + " in " + xmlhttp.responseText);
+        return;
+      }
+      callback(data);
+    }
+  };
+
+  xmlhttp.open("GET", url, true);
+  xmlhttp.send();
+}
+
+ajax_get('https://api.thecatapi.com/v1/images/search?size=med', function(data) {
+  var html = '<img src="' + data[0]["url"] + '">';
+  document.getElementById("cat").innerHTML = html;
+});
+</script>
+
+{{ end }}

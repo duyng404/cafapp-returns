@@ -35,6 +35,17 @@ func (d *Destination) PopulateByTag(tag string) error {
 	return DB.Where("tag = ?", tag).Last(&d).Error
 }
 
+// GetAllDestinations : get all destinations
+func GetAllDestinations() ([]Destination, error) {
+	var res []Destination
+	err := DB.Raw(`
+		SELECT d.*
+		FROM destinations d
+		WHERE d.deleted_at IS NULL
+	`).Scan(&res).Error
+	return res, err
+}
+
 // FirstOrCreate create if not exist
 func (d *Destination) FirstOrCreate() error {
 	var tmp Destination

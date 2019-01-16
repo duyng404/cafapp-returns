@@ -1,10 +1,6 @@
 {{ define "content" }}
 
-<section class="jumbotron jumbotron-fluid text-center bg-dark">
-	<div class="container">
-		<h1 class="jumbotron-heading text-ca-yellow2"><strong>Build Your Order</strong></h1>
-	</div>
-</section>
+{{ template "basicspotlight" . }}
 
 <section class="container">
 	<h2 class="text-center my-5"><strong>Edit Order Details</strong></h2>
@@ -14,32 +10,59 @@
         <div class="col-md-4 order-md-2 mb-4">
 			<h4>Your Cart</h4>
 			<ul class="list-group mb-3">
+
 				<li class="list-group-item d-flex justify-content-between lh-condensed">
 					<div>
-						<h6 class="my-0">Product name</h6>
-						<small class="text-muted">Brief description</small>
+						<h6 id="meal-name" class="my-0">{{.selectedMealName }}</h6>
+						<small class="text-muted">Meal Combo</small>
 					</div>
-					<span class="text-muted">$12</span>
+					<span id="meal-price" class="text-muted">{{formatMoney .selectedMealPrice}}</span>
+				</li>
+
+				<li class="list-group-item d-flex justify-content-between lh-condensed">
+					<div>
+						<h6 id="drink-name" class="my-0">{{.selectedDrinkName }}</h6>
+						<small class="text-muted">Drink</small>
+					</div>
+					<span class="text-muted">included</span>
+				</li>
+
+				<li class="list-group-item d-flex justify-content-between lh-condensed">
+					<span>Delivery Fee</span>
+					<span id="delivery-fee" class="text-muted">{{formatMoney .deliveryFee}}</span>
 				</li>
 
 				<li class="list-group-item d-flex justify-content-between">
 					<span>Total (USD)</span>
-					<strong>$20</strong>
+					<span id="order-total" class="text-yellow-3"><strong>{{formatMoney .orderTotal}}</strong></span>
+				</li>
+			</ul>
+
+			<h4>Payment</h4>
+			<ul class="list-group mb-3">
+				<li class="list-group-item d-flex justify-content-between">
+					<span>Your Caf Account</span>
+					<span id="caf-acct-charge-amt" class="text-danger">{{ formatMoney (.cafAccountChargeAmount) }}</span>
+				</li>
+
+				<li class="list-group-item d-flex justify-content-between">
+					<span>CafApp Balance</span>
+					<span id="delivery-fee" class="text-danger">{{ formatMoney .deliveryFee }}</span>
 				</li>
 			</ul>
 		</div>
 
         <div class="col-md-8 order-md-1">
-			<form class="needs-validation" novalidate>
+			<form id="orderDetailsForm" class="needs-validation" method="post" novalidate>
 				<h4>Main Items</h4>
 				<div class="row">
 					<div class="col-12 mb-3">
-						<label for="drink">Meal Combo</label>
-						<select class="form-control d-block w-100" id="drink" required>
-							<option value="">Choose...</option>
-							<option>Coke</option>
-							<option>Diet Coke</option>
-							<option>Mr Pibbs</option>
+						<label for="meal">Meal Combo</label>
+						<select class="form-control d-block w-100" id="meal" name="meal" required onchange="onSelectChange()">
+							<option value="">Choose a meal...</option>
+							{{ range .menu }}
+							<option value="{{ .ID }}" {{ if $.selectedMealID }}{{ if eq $.selectedMealID .ID }}selected{{end}}{{end}}>{{ .DisplayName }}</option>
+							{{ end }}
 						</select>
 						<div class="invalid-feedback">
 							Please select a valid meal.
@@ -48,11 +71,11 @@
 
 					<div class="col-12 mb-3">
 						<label for="drink">Cooler Drink</label>
-						<select class="form-control d-block w-100" id="drink" required>
-							<option value="">Choose...</option>
-							<option>Coke</option>
-							<option>Diet Coke</option>
-							<option>Mr Pibbs</option>
+						<select class="form-control d-block w-100" id="drink" name="drink" required onchange="onSelectChange()">
+							<option value="">Choose a drink...</option>
+							{{ range .drinks }}
+							<option value="{{ .ID }}" {{ if $.selectedDrinkID }}{{ if eq $.selectedDrinkID .ID }}selected{{end}}{{end}}>{{ .DisplayName }}</option>
+							{{ end }}
 						</select>
 						<div class="invalid-feedback">
 							Please select a valid drink.
@@ -66,11 +89,11 @@
 				<div class="row">
 					<div class="col-12 mb-3">
 						<label for="destination">Deliver To</label>
-						<select class="form-control d-block w-100" id="destination" required>
+						<select class="form-control d-block w-100" id="destination" name="destination" required>
 							<option value="">Choose...</option>
-							<option>Southwest</option>
-							<option>International Center</option>
-							<option>Sohre</option>
+							{{ range .destinations }}
+							<option value="{{ .Tag }}" {{ if $.selectedDestination }}{{ if eq $.selectedDestination .Tag }}selected{{end}}{{end}}>{{ .Name }}</option>
+							{{ end }}
 						</select>
 						<div class="invalid-feedback">
 							Please select a valid destination.
@@ -78,24 +101,26 @@
 					</div>
 				</div>
 
+				{{ if .needGusID }}
 				<hr class="mb-4"/>
 
 				<h4>Extra Information</h4>
 				<div class="row">
 					<div class="col-12 mb-3">
 						<label for="gus-id">Gustavus ID</label>
-						<input class="form-control" type="number" id="gus-id" name="gus-id">
+						<input class="form-control" type="number" id="gus-id" name="gus-id" required>
 						<small class="text-muted">We need your gustavus ID for identifying and charging your account at the caf. This info is saved so you don't have to enter it again next time!</small>
 						<div class="invalid-feedback">
 							Please enter your Gustavus ID.
 						</div>
 					</div>
 				</div>
+				{{ end }}
 			</form>
 
 			<hr class="mb-4"/>
 
-			<h4 class="mb-3">Payment</h4>
+			<h4 class="mb-3">Delivery Fee</h4>
 
 			<p>Your CafApp balance is currently <span class="text-info">$2.50</span>. This order will cost <span class="text-danger">$1.50</span> in delivery charge. You can add balance by <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false" aria-controls="cardRedeemForm">redeeming a CafApp Balance Card</a>.</p>
 			<form class="collapse" id="cardRedeemForm">
@@ -117,10 +142,62 @@
 			</form>
 
 			<hr class="mb-4">
-			<button class="btn btn-primary btn-lg btn-block" type="submit">Continue to Checkout</button>
+			<button class="btn btn-primary btn-lg btn-block" form="orderDetailsForm" type="submit">Continue to Checkout</button>
         </div>
 
 	</div>
 </section>
 
+{{ end }}
+
+{{ define "scripts" }}
+<script type="text/javascript">
+	// disabling form submission if there are invalid fields
+	(function() {
+	'use strict';
+	window.addEventListener('load', function() {
+		// Fetch all the forms we want to apply to
+		var forms = document.getElementsByClassName('needs-validation');
+		// Loop over them and prevent submission
+		var validation = Array.prototype.filter.call(forms, function(form) {
+		form.addEventListener('submit', function(event) {
+			if (form.checkValidity() === false) {
+			event.preventDefault();
+			event.stopPropagation();
+			}
+			form.classList.add('was-validated');
+		}, false);
+		});
+	}, false);
+	})();
+
+	// send an ajax to update the price summary whenever user change their selection
+	function onSelectChange() {
+		$.ajax({
+			type: "POST",
+			url: "/api/recalculate-order",
+			data: JSON.stringify({
+				meal_id: parseInt($("#meal").children("option:selected").val()),
+				drink_id: parseInt($("#drink").children("option:selected").val()),
+			}),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: updateSummary,
+			failure: function (err) {
+				console.log(err);
+				// TODO handle error
+			}
+		})
+	}
+
+	function updateSummary(data) {
+		console.log(data);
+		$("#meal-name").html(data.meal_name)
+		$("#meal-price").html(data.meal_price)
+		$("#drink-name").html(data.drink_name)
+		$("#delivery-fee").html(data.delivery_fee)
+		$("#order-total").html("<strong>"+data.order_total+"</strong>")
+		$("#caf-acct-charge-amt").html(data.caf_acct_charge_amt)
+	}
+</script>
 {{ end }}

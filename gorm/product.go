@@ -59,6 +59,18 @@ func GetAllProductsOnShelf() ([]Product, error) {
 	return res, err
 }
 
+// GetAllAddonProducts : get all addon products
+func GetAllAddonProducts() ([]Product, error) {
+	var res []Product
+	err := DB.Raw(`
+		SELECT p.*
+		FROM products p
+		WHERE p.status = ?
+		AND p.deleted_at IS NULL
+	`, ProductStatusAddon).Scan(&res).Error
+	return res, err
+}
+
 // IsAMeal return true if the product is in the db and ON SHELF
 func IsAMeal(id uint) bool {
 	var tmp []Product

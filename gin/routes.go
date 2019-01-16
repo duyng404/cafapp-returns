@@ -47,6 +47,7 @@ func InitRoutes() *gin.Engine {
 	store.Options(sessions.Options{
 		HttpOnly: true,
 		MaxAge:   604800, // a week
+		Path:     "/",
 	})
 	router.Use(sessions.Sessions("mysession", store))
 
@@ -62,7 +63,7 @@ func InitRoutes() *gin.Engine {
 
 	//404
 	router.NoRoute(func(c *gin.Context) {
-		renderHTML(c, 404, "404.html", gin.H{})
+		renderHTML(c, 404, "landing-404.html", gin.H{})
 	})
 
 	// landing group contains public-facing paths, aka, anyone can see without logging in
@@ -90,8 +91,15 @@ func InitRoutes() *gin.Engine {
 	{
 		restricted.GET("/dash", handleUserDash)
 		restricted.GET("/order", handleOrderGet)
-		restricted.GET("/order/*stuff", handleOrderGet)
-		restricted.POST("/order/*stuff", handleOrderPost)
+		restricted.GET("/order/:stuff", handleOrderGet)
+		restricted.POST("/order", handleOrderPost)
+		restricted.POST("/order/:stuff", handleOrderPost)
+	}
+
+	// api group for frontend interaction, will require auth
+	api := router.Group("/api", authMiddleware())
+	{
+		api.POST("/recalculate-order", handleRecalculateOrder)
 	}
 
 	return router
