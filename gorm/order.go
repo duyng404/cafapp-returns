@@ -2,6 +2,7 @@ package gorm
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/jinzhu/gorm"
 	"github.com/lithammer/shortuuid"
@@ -85,4 +86,23 @@ func (o *Order) CalculateTotal() {
 	o.CafAccountChargeAmountInCents = total
 	total += o.DeliveryFeeInCents
 	o.TotalInCents = total
+}
+
+// GenerateTag :
+func (o *Order) GenerateTag() error {
+	g, err := GetGlobalVar()
+	if err != nil {
+		return err
+	}
+	tag, err := g.GetNextOrderTag()
+	if err != nil {
+		return err
+	}
+	meal := o.GetMealRow()
+	drink := o.GetDrinkRow()
+	if meal == nil || drink == nil {
+		return errors.New("order is not completed")
+	}
+	o.Tag = fmt.Sprintf("%s-%s%s-%d", o.DestinationTag, meal.Product.Tag, drink.Product.Tag, tag)
+	return nil
 }

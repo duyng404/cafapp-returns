@@ -4,214 +4,98 @@
 
 <section class="container">
 	<h2 class="text-center my-5"><strong>Finalize Order</strong></h2>
-	<p class="lead text-center">Review and place your order</p>
+	<p class="lead text-center">Review and place your order below.</p>
 
 	<div class="row justify-content-center mt-5">
 		<div class="col-md-8 col-lg-6">
-			<div class="d-flex justify-content-between">
+			<hr />
+
+			<div class="d-flex justify-content-between align-items-center">
 				<div>
-					<h6 id="meal-name" class="my-0">{{.selectedMealName }}</h6>
-					<small class="text-muted">Meal Combo</small>
+					<h5 class="my-1">{{ .selectedMealName }}</h5>
+					<p class="text-muted font-italic">Meal Combo</p>
 				</div>
 				<div>
-					{{formatMoney .selectedMealPrice}}
+					<h5><strong>{{formatMoney .selectedMealPrice}}</strong></h5>
 				</div>
 			</div>
-		</div>
-	</div>
 
-	<div class="row mt-5">
-        <div class="col-md-4 order-md-2 mb-4">
-			<h4>Summary</h4>
-			<ul class="list-group mb-3">
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1">{{ .selectedDrinkName }}</h5>
+					<p class="text-muted font-italic">Drink</p>
+				</div>
+				<div>
+					<h5 class="text-muted">included</h5>
+				</div>
+			</div>
 
-				<li class="list-group-item d-flex justify-content-between lh-condensed">
-					<div>
-						<h6 id="meal-name" class="my-0">{{.selectedMealName }}</h6>
-						<small class="text-muted">Meal Combo</small>
-					</div>
-					<span id="meal-price" class="text-muted">{{formatMoney .selectedMealPrice}}</span>
-				</li>
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1">Delivery Fee</h5>
+				</div>
+				<div>
+					<h5 class="font-weight-bold">{{formatMoney .deliveryFee}}</h5>
+				</div>
+			</div>
 
-				<li class="list-group-item d-flex justify-content-between lh-condensed">
-					<div>
-						<h6 id="drink-name" class="my-0">{{.selectedDrinkName }}</h6>
-						<small class="text-muted">Drink</small>
-					</div>
-					<span class="text-muted">included</span>
-				</li>
+			<hr />
 
-				<li class="list-group-item d-flex justify-content-between lh-condensed">
-					<span>Delivery Fee</span>
-					<span id="delivery-fee" class="text-muted">{{formatMoney .deliveryFee}}</span>
-				</li>
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1 font-weight-bold text-ca-yellow2">Total</h5>
+				</div>
+				<div>
+					<h5 class="font-weight-bold text-ca-yellow2">{{formatMoney .orderTotal}}</h5>
+				</div>
+			</div>
 
-				<li class="list-group-item d-flex justify-content-between">
-					<span>Total (USD)</span>
-					<span id="order-total" class="text-yellow-3"><strong>{{formatMoney .orderTotal}}</strong></span>
-				</li>
+			<hr />
+
+			<h4 class="text-center">Payment</h4>
+
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1">Your Caf Account</h5>
+				</div>
+				<div>
+					<h5 class="font-weight-bold text-danger">{{formatMoney .cafAccountChargeAmount}}</h5>
+				</div>
+			</div>
+
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1">CafApp Balance</h5>
+				</div>
+				<div>
+					<h5 class="font-weight-bold text-danger">{{formatMoney .deliveryFee}}</h5>
+				</div>
+			</div>
+
+			<hr />
+
+			<p class="text-center">Order will be delivered to: {{ .destination }}</p>
+
+			<hr />
+
+			<h4 class="text-center">Disclaimer</h4>
+
+			<p>By clicking Place Order, you agree to bla bla bla bla bla bla:</p>
+			<ul>
+				<li>bla</li>
+				<li>bla</li>
+				<li>bLAAAHHHH</li>
 			</ul>
+			<p>Thank you for using CafApp!</p>
 
-			<h4>Payment</h4>
-			<ul class="list-group mb-3">
-				<li class="list-group-item d-flex justify-content-between">
-					<span>Your Caf Account</span>
-					<span id="caf-acct-charge-amt" class="text-danger">{{ formatMoney (.cafAccountChargeAmount) }}</span>
-				</li>
+			<div class="my-5"></div>
 
-				<li class="list-group-item d-flex justify-content-between">
-					<span>CafApp Balance</span>
-					<span id="delivery-fee" class="text-danger">{{ formatMoney .deliveryFee }}</span>
-				</li>
-			</ul>
-		</div>
-
-        <div class="col-md-8 order-md-1">
-			<form id="orderDetailsForm" class="needs-validation" method="post" novalidate>
-				<h4>Main Items</h4>
-				<div class="row">
-					<div class="col-12 mb-3">
-						<label for="meal">Meal Combo <span class="text-danger">*</span></label>
-						<select class="form-control d-block w-100" id="meal" name="meal" required onchange="onSelectChange()">
-							<option value="">Choose a meal...</option>
-							{{ range .menu }}
-							<option value="{{ .ID }}" {{ if $.selectedMealID }}{{ if eq $.selectedMealID .ID }}selected{{end}}{{end}}>{{ .DisplayName }}</option>
-							{{ end }}
-						</select>
-						<div class="invalid-feedback">
-							Please select a valid meal.
-						</div>
-					</div>
-
-					<div class="col-12 mb-3">
-						<label for="drink">Cooler Drink <span class="text-danger">*</span></label>
-						<select class="form-control d-block w-100" id="drink" name="drink" required onchange="onSelectChange()">
-							<option value="">Choose a drink...</option>
-							{{ range .drinks }}
-							<option value="{{ .ID }}" {{ if $.selectedDrinkID }}{{ if eq $.selectedDrinkID .ID }}selected{{end}}{{end}}>{{ .DisplayName }}</option>
-							{{ end }}
-						</select>
-						<div class="invalid-feedback">
-							Please select a valid drink.
-						</div>
-					</div>
-				</div>
-
-				<hr class="mb-4"/>
-
-				<h4>Destination</h4>
-				<div class="row">
-					<div class="col-12 mb-3">
-						<label for="destination">Deliver To <span class="text-danger">*</span></label>
-						<select class="form-control d-block w-100" id="destination" name="destination" required>
-							<option value="">Choose...</option>
-							{{ range .destinations }}
-							<option value="{{ .Tag }}" {{ if $.selectedDestination }}{{ if eq $.selectedDestination .Tag }}selected{{end}}{{end}}>{{ .Name }}</option>
-							{{ end }}
-						</select>
-						<div class="invalid-feedback">
-							Please select a valid destination.
-						</div>
-					</div>
-				</div>
-
-				{{ if .needGusID }}
-				<hr class="mb-4"/>
-
-				<h4>Extra Information</h4>
-				<div class="row">
-					<div class="col-12 mb-3">
-						<label for="gus-id">Gustavus ID <span class="text-danger">*</span></label>
-						<input class="form-control" type="number" id="gusID" name="gusID" required>
-						<small class="text-muted">We need your gustavus ID for identifying and charging your account at the caf. This info is saved so you don't have to enter it again next time!</small>
-						<div class="invalid-feedback">
-							Please enter your Gustavus ID.
-						</div>
-					</div>
-				</div>
-				{{ end }}
+			<form action="" method="post">
+				<button class="btn btn-primary btn-lg btn-block" type="submit">Place Order</button>
 			</form>
 
-			<hr class="mb-4"/>
-
-			<h4 class="mb-3">Delivery Fee</h4>
-
-			<p>Your CafApp balance is currently <span class="text-info">$2.50</span>. This order will cost <span class="text-danger">$1.50</span> in delivery charge. You can add balance by <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false" aria-controls="cardRedeemForm">redeeming a CafApp Balance Card</a>.</p>
-			<form class="collapse" id="cardRedeemForm">
-				<div class="row">
-					<div class="col-12 mb-3">
-						<label for="giftcardcode">Enter CafApp Balance Card code</label>
-						<div class="input-group">
-							<input type="text" class="form-control" id="giftcardcode" placeholder="" required>
-							<div class="input-group-append">
-								<button class="btn btn-outline-ca-yellow4" type="button">Redeem</button>
-							</div>
-						</div>
-						<small class="text-muted">CafApp Balance Cards can be purchased from the Bookmark</small>
-						<div class="invalid-feedback">
-							Please enter the card code
-						</div>
-					</div>
-				</div>
-			</form>
-
-			<hr class="mb-4">
-			<button class="btn btn-primary btn-lg btn-block" form="orderDetailsForm" type="submit">Continue to Checkout</button>
-        </div>
-
+		</div>
 	</div>
 </section>
 
-{{ end }}
-
-{{ define "scripts" }}
-<script type="text/javascript">
-	// disabling form submission if there are invalid fields
-	(function() {
-	'use strict';
-	window.addEventListener('load', function() {
-		// Fetch all the forms we want to apply to
-		var forms = document.getElementsByClassName('needs-validation');
-		// Loop over them and prevent submission
-		var validation = Array.prototype.filter.call(forms, function(form) {
-		form.addEventListener('submit', function(event) {
-			if (form.checkValidity() === false) {
-			event.preventDefault();
-			event.stopPropagation();
-			}
-			form.classList.add('was-validated');
-		}, false);
-		});
-	}, false);
-	})();
-
-	// send an ajax to update the price summary whenever user change their selection
-	function onSelectChange() {
-		$.ajax({
-			type: "POST",
-			url: "/api/recalculate-order",
-			data: JSON.stringify({
-				meal_id: parseInt($("#meal").children("option:selected").val()),
-				drink_id: parseInt($("#drink").children("option:selected").val()),
-			}),
-			contentType: "application/json; charset=utf-8",
-			dataType: "json",
-			success: updateSummary,
-			failure: function (err) {
-				console.log(err);
-				// TODO handle error
-			}
-		})
-	}
-
-	function updateSummary(data) {
-		console.log(data);
-		$("#meal-name").html(data.meal_name)
-		$("#meal-price").html(data.meal_price)
-		$("#drink-name").html(data.drink_name)
-		$("#delivery-fee").html(data.delivery_fee)
-		$("#order-total").html("<strong>"+data.order_total+"</strong>")
-		$("#caf-acct-charge-amt").html(data.caf_acct_charge_amt)
-	}
-</script>
 {{ end }}

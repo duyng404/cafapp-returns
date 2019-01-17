@@ -23,6 +23,13 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Global Var Table")
+	err = DB.AutoMigrate(&GlobalVar{}).Error
+	if err != nil {
+		logger.Error("Error migrating Global Var table:", err)
+		return err
+	}
+
 	logger.Info("Migrating Product Table")
 	err = DB.AutoMigrate(&Product{}).Error
 	if err != nil {
@@ -60,6 +67,7 @@ func Migrate() error {
 
 	initDestinations()
 	initOrderStatusCodes()
+	initGlobalVar()
 
 	// init data
 	var tmp Product

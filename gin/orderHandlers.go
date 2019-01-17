@@ -11,52 +11,55 @@ import (
 
 func handleOrderGet(c *gin.Context) {
 	// get the order id from params
-	urlpath := c.Param("stuff")
-	if urlpath == "" || urlpath == "/" {
+	stuff := c.Param("stuff")
+	action := c.Param("action")
+	if stuff == "" || stuff == "/" {
 		// no existing order, start a new one
 		getOrderMenu(c)
 		return
 	}
 
 	// check if valid order uuid
-	if urlpath[0] == '/' {
-		urlpath = urlpath[1:]
-	}
 	var order gorm.Order
-	err := order.PopulateByUUID(urlpath)
+	err := order.PopulateByUUID(stuff)
 	if err != nil {
 		logger.Error("order uuid in params is not valid:", err)
 		logger.Info("boucing back to /order")
 		c.Redirect(http.StatusFound, "/order")
 	}
 
-	// does order need any more info
-	if order.StatusCode == 1 || order.StatusCode == 2 || order.StatusCode == 3 {
+	if order.StatusCode == gorm.OrderStatusNeedInfo || order.StatusCode == gorm.OrderStatusIncomplete {
 		getMoreInfo(c, order)
+	} else if action == "finalize" || order.StatusCode == gorm.OrderStatusFinalized {
+		getFinalize(c, order)
+	} else if action == "completed" || order.StatusCode >= gorm.OrderStatusPlaced {
+		getComplete(c, order)
 	}
 }
 
 func handleOrderPost(c *gin.Context) {
-	urlpath := c.Param("stuff")
-	if urlpath == "" || urlpath == "/" {
+	stuff := c.Param("stuff")
+	action := c.Param("action")
+	if stuff == "" || stuff == "/" {
 		// no order id, so user wanted to start a new one
 		postOrderMenu(c)
 		return
 	}
 
 	// check if valid order uuid
-	if urlpath[0] == '/' {
-		urlpath = urlpath[1:]
-	}
 	var order gorm.Order
-	err := order.PopulateByUUID(urlpath)
+	err := order.PopulateByUUID(stuff)
 	if err != nil {
 		logger.Error("order uuid in params is not valid:", err)
 		logger.Info("boucing back to /order")
 		c.Redirect(http.StatusFound, "/order")
 	}
 
-	postOrderInfo(c, order)
+	if action != "finalize" {
+		postOrderInfo(c, order)
+	} else if action == "finalize" {
+		postFinalize(c, order)
+	}
 }
 
 // will show the user the error text and a link to start over
@@ -108,7 +111,6 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 			data["selectedMealPrice"] = order.OrderRows[i].Product.PriceInCents
 		}
 		if order.OrderRows[i].RowType == gorm.RowTypeIncluded {
-			data["drinkOrderRowID"] = order.OrderRows[i].ID
 			data["selectedDrinkID"] = order.OrderRows[i].ProductID
 			data["selectedDrinkName"] = order.OrderRows[i].Product.DisplayName
 		}
@@ -152,6 +154,45 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	data["destinations"] = dest
 
 	renderHTML(c, 200, "order-info.html", data)
+}
+
+func getFinalize(c *gin.Context, order gorm.Order) {
+	data := make(map[string]interface{})
+	data["Title"] = "Build Your Order"
+
+	// determine currently selected meal and drink
+	for i := range order.OrderRows {
+		if order.OrderRows[i].RowType == gorm.RowTypeNormal {
+			data["selectedMealName"] = order.OrderRows[i].Product.DisplayName
+			data["selectedMealPrice"] = order.OrderRows[i].Product.PriceInCents
+		}
+		if order.OrderRows[i].RowType == gorm.RowTypeIncluded {
+			data["selectedDrinkName"] = order.OrderRows[i].Product.DisplayName
+		}
+	}
+
+	// pass in the order details
+	data["deliveryFee"] = order.DeliveryFeeInCents
+	data["orderTotal"] = order.TotalInCents
+	data["cafAccountChargeAmount"] = order.CafAccountChargeAmountInCents
+
+	// dest
+	var dest gorm.Destination
+	err := dest.PopulateByTag(order.DestinationTag)
+	if err != nil {
+		logger.Error(err)
+		orderError(c, "Database error")
+		return
+	}
+	data["destination"] = dest.Name
+
+	renderHTML(c, 200, "order-finalize.html", data)
+}
+
+func getComplete(c *gin.Context, order gorm.Order) {
+	data := make(map[string]interface{})
+	data["Title"] = "Woohoo!"
+	renderHTML(c, 200, "order-placed.html", data)
 }
 
 // POST step 1: user has selected an item
@@ -293,6 +334,9 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 	}
 
 	// save order
+	order.CalculateDeliveryFee()
+	order.CalculateTotal()
+	order.StatusCode = gorm.OrderStatusFinalized
 	err := order.Save()
 	if err != nil {
 		logger.Error("cannot save order:", err)
@@ -300,8 +344,30 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 		return
 	}
 
-	// c.JSON(200, order)
 	c.Redirect(http.StatusFound, "/order/"+order.UUID+"/finalize")
+}
+
+func postFinalize(c *gin.Context, order gorm.Order) {
+	logger.Info("post finalize")
+	order.StatusCode = gorm.OrderStatusPlaced
+	err := order.GenerateTag()
+	if err != nil {
+		logger.Error("cannot generate tag for order")
+		order.StatusCode = gorm.OrderStatusGeneralFailure
+		order.Save()
+		orderError(c, "Database error")
+		return
+	}
+	err = order.Save()
+	if err != nil {
+		if err != nil {
+			logger.Error("cannot saving order")
+			orderError(c, "Database error")
+			return
+		}
+	}
+
+	c.Redirect(http.StatusFound, "/order/"+order.UUID+"/completed")
 }
 
 // when frontend send an ajax request requesting the new price, so the price can
