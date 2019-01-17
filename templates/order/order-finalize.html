@@ -3,8 +3,22 @@
 {{ template "basicspotlight" . }}
 
 <section class="container">
-	<h2 class="text-center my-5"><strong>Edit Order Details</strong></h2>
-	<p class="lead text-center">Please add or edit any necessary information. You will have a chance to review your order before placing.</p>
+	<h2 class="text-center my-5"><strong>Finalize Order</strong></h2>
+	<p class="lead text-center">Review and place your order</p>
+
+	<div class="row justify-content-center mt-5">
+		<div class="col-md-8 col-lg-6">
+			<div class="d-flex justify-content-between">
+				<div>
+					<h6 id="meal-name" class="my-0">{{.selectedMealName }}</h6>
+					<small class="text-muted">Meal Combo</small>
+				</div>
+				<div>
+					{{formatMoney .selectedMealPrice}}
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<div class="row mt-5">
         <div class="col-md-4 order-md-2 mb-4">

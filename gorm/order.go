@@ -48,6 +48,26 @@ func (o *Order) PopulateByUUID(uuid string) error {
 	return DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").Where("uuid = ?", uuid).Last(&o).Error
 }
 
+// GetMealRow : return the OrderRow that is the meal part of the order
+func (o *Order) GetMealRow() *OrderRow {
+	for i := range o.OrderRows {
+		if o.OrderRows[i].Product.Status == ProductStatusOnShelf {
+			return &o.OrderRows[i]
+		}
+	}
+	return nil
+}
+
+// GetDrinkRow : return the OrderRow that is the drink part of the order
+func (o *Order) GetDrinkRow() *OrderRow {
+	for i := range o.OrderRows {
+		if o.OrderRows[i].Product.Status == ProductStatusAddon {
+			return &o.OrderRows[i]
+		}
+	}
+	return nil
+}
+
 // CalculateDeliveryFee : calculate the delivery of a given order
 // does not save. Caller should handle that
 func (o *Order) CalculateDeliveryFee() {

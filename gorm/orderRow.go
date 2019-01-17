@@ -27,6 +27,16 @@ func (o *OrderRow) Create() error {
 	return DB.Create(o).Error
 }
 
+// Save save the object
+func (o *OrderRow) Save() error {
+	return DB.Save(o).Error
+}
+
+// PopulateByID : query the db by id
+func (o *OrderRow) PopulateByID(id uint) error {
+	return DB.Where("id = ?", id).Scan(&o).Error
+}
+
 // NewOrderRowFromProduct : return a pointer to a new row created from a product
 // Does not run Create(). The caller should take care of that
 func NewOrderRowFromProduct(p *Product) *OrderRow {

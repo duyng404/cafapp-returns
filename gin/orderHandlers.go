@@ -73,6 +73,7 @@ func getOrderMenu(c *gin.Context) {
 	if err != nil {
 		logger.Error("could not get products to display:", err)
 		orderError(c, "Could not load menu items")
+		return
 	}
 	// render
 	renderHTML(c, 200, "order-menu.html", gin.H{
@@ -91,6 +92,7 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	if user == nil {
 		logger.Error("cannot get currently logged in user")
 		orderError(c, "Authentication Error")
+		return
 	}
 
 	// does user have gus id
@@ -106,8 +108,9 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 			data["selectedMealPrice"] = order.OrderRows[i].Product.PriceInCents
 		}
 		if order.OrderRows[i].RowType == gorm.RowTypeIncluded {
+			data["drinkOrderRowID"] = order.OrderRows[i].ID
 			data["selectedDrinkID"] = order.OrderRows[i].ProductID
-			data["selectedDrinkName"] = order.OrderRows[i].ProductID
+			data["selectedDrinkName"] = order.OrderRows[i].Product.DisplayName
 		}
 	}
 
@@ -126,6 +129,7 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	if err != nil {
 		logger.Error("could not get products to display:", err)
 		orderError(c, "Database Error")
+		return
 	}
 	data["menu"] = menu
 
@@ -134,6 +138,7 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	if err != nil {
 		logger.Error("could not get drinks to display:", err)
 		orderError(c, "Database Error")
+		return
 	}
 	data["drinks"] = drinks
 
@@ -142,6 +147,7 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	if err != nil {
 		logger.Error("could not load destinations:", err)
 		orderError(c, "Database Error")
+		return
 	}
 	data["destinations"] = dest
 
@@ -195,11 +201,107 @@ func postOrderMenu(c *gin.Context) {
 
 // POST step 2: user finished filling out info
 func postOrderInfo(c *gin.Context, order gorm.Order) {
-	logger.Info("meal is", c.PostForm("meal"))
-	logger.Info("drink is", c.PostForm("drink"))
-	logger.Info("dest is", c.PostForm("destination"))
-	logger.Info("gusid is", c.PostForm("gus-id"))
-	c.JSON(200, order)
+	// get from POST form
+	selectedMeal := c.PostForm("meal")
+	selectedDrink := c.PostForm("drink")
+	selectedDestination := c.PostForm("destination")
+	inputGusID := c.PostForm("gusID")
+
+	// apply changes to meal
+	if selectedMeal != "" {
+		selectedMealInt, err := strconv.ParseUint(selectedMeal, 10, 32)
+		if err != nil {
+			logger.Error("invalid post form. Redirecting to edit page")
+			orderError(c, "Bad Request. Bad. BAAADD")
+			return
+		}
+		mealRow := order.GetMealRow() // potential nil pointer issue here but currently there's no way that happens
+		var newMeal gorm.Product
+		err = newMeal.PopulateByIDOnShelf(uint(selectedMealInt))
+		if err != nil {
+			logger.Error("cannot get meal product:", err)
+			orderError(c, "Database error")
+			return
+		}
+		mealRow.Product = &newMeal
+		err = mealRow.Save()
+		if err != nil {
+			logger.Error("cannot save meal row:", err)
+			orderError(c, "Database error")
+			return
+		}
+	}
+
+	// apply changes to drink
+	if selectedDrink != "" {
+		selectedDrinkInt, err := strconv.ParseUint(selectedDrink, 10, 32)
+		if err != nil {
+			logger.Error("invalid post form. Redirecting to edit page")
+			orderError(c, "Bad Request. Bad. BAAADD")
+			return
+		}
+		drinkRow := order.GetDrinkRow()
+		var newDrink gorm.Product
+		err = newDrink.PopulateByID(uint(selectedDrinkInt))
+		if err != nil {
+			logger.Error("cannot get drink product:", err)
+			orderError(c, "Database error")
+			return
+		}
+		if drinkRow != nil {
+			drinkRow.Product = &newDrink
+			err = drinkRow.Save()
+			if err != nil {
+				logger.Error("cannot save drink product:", err)
+				orderError(c, "Database error")
+				return
+			}
+		} else {
+			newDrinkRow := gorm.NewOrderRowFromProduct(&newDrink)
+			order.OrderRows = append(order.OrderRows, *newDrinkRow)
+		}
+	}
+
+	// apply changes to destination
+	if selectedDestination != "" {
+		var dest gorm.Destination
+		err := dest.PopulateByTag(selectedDestination)
+		if err != nil {
+			logger.Error("cannot get destination from db:", err)
+			orderError(c, "Database error")
+			return
+		}
+		order.DestinationTag = dest.Tag
+	}
+
+	// save user gus id if necessary
+	user := getCurrentAuthUser(c)
+	if user.GusID == 0 && inputGusID != "" {
+		gusID, err := strconv.Atoi(inputGusID)
+		if err != nil {
+			logger.Error("invalid post form. Redirecting to edit page")
+			orderError(c, "Bad Request. Bad. BAAADD")
+			return
+		}
+		user.GusID = gusID
+		err = user.Save()
+		if err != nil {
+			logger.Error("invalid post form. Redirecting to edit page")
+			orderError(c, "Bad Request. Bad. BAAADD")
+			return
+		}
+	}
+
+	// save order
+	err := order.Save()
+	if err != nil {
+		logger.Error("cannot save order:", err)
+		orderError(c, "Database error")
+		return
+	}
+
+	// c.JSON(200, order)
+	c.Redirect(http.StatusFound, "/order/"+order.UUID+"/finalize")
 }
 
 // when frontend send an ajax request requesting the new price, so the price can

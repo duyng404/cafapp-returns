@@ -20,9 +20,14 @@ type User struct {
 	IsAdmin     bool
 }
 
-// Create : save the object to the db
+// Create : Create the object
 func (u *User) Create() error {
 	return DB.Create(u).Error
+}
+
+// Save : save the object
+func (u *User) Save() error {
+	return DB.Save(u).Error
 }
 
 // PopulateByID : query the db to get object by id
