@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/davecgh/go-spew/spew"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -71,6 +73,19 @@ func orderError(c *gin.Context, err string) {
 
 // GET step 1: show the menu
 func getOrderMenu(c *gin.Context) {
+	data := make(map[string]interface{})
+	data["Title"] = "Build Your Order"
+
+	// check if user have any incomplete order
+	user := getCurrentAuthUser(c)
+	order, err := user.GetOneIncompleteOrder()
+	if err != nil || order == nil || order.ID == 0 {
+		logger.Info("Cannot get incomplete order from user. Assuming creating a fresh one.")
+	} else {
+		logger.Info("incomplete order is:", spew.Sdump(order))
+		data["incompleteOrderURL"] = "/order/" + order.UUID
+	}
+
 	// get all menu items from db
 	menu, err := gorm.GetAllProductsOnShelf()
 	if err != nil {
@@ -78,11 +93,10 @@ func getOrderMenu(c *gin.Context) {
 		orderError(c, "Could not load menu items")
 		return
 	}
+	data["menu"] = menu
+
 	// render
-	renderHTML(c, 200, "order-menu.html", gin.H{
-		"menu":  menu,
-		"Title": "Build Your Order",
-	})
+	renderHTML(c, 200, "order-menu.html", data)
 }
 
 // GET step 2: ask the user more info to complete the order
@@ -348,7 +362,21 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 }
 
 func postFinalize(c *gin.Context, order gorm.Order) {
-	logger.Info("post finalize")
+	// is the user trying to go back to edit?
+	tmp := c.PostForm("goToEdit")
+	if tmp == "goToEdit" {
+		logger.Info("here")
+		order.StatusCode = gorm.OrderStatusIncomplete
+		err := order.Save()
+		if err != nil {
+			logger.Error("cannot saving order")
+			orderError(c, "Database error")
+			return
+		}
+		c.Redirect(http.StatusFound, "/order/"+order.UUID)
+		return
+	}
+
 	order.StatusCode = gorm.OrderStatusPlaced
 	err := order.GenerateTag()
 	if err != nil {
@@ -368,6 +396,7 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 	}
 
 	c.Redirect(http.StatusFound, "/order/"+order.UUID+"/completed")
+	return
 }
 
 // when frontend send an ajax request requesting the new price, so the price can

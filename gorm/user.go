@@ -51,3 +51,21 @@ func (u *User) GenerateJWT() (string, error) {
 	}
 	return token, err
 }
+
+// GetOneIncompleteOrder check if user has any incomplete order by searching for order
+// that was created less than 48h ago.
+func (u *User) GetOneIncompleteOrder() (*Order, error) {
+	var o Order
+	err := DB.Raw(`
+		SELECT o.*
+		FROM orders o
+		WHERE o.user_id = ?
+			AND o.status_code < ?
+		ORDER BY o.created_at DESC
+		LIMIT 1
+	`, u.ID, OrderStatusFinalized).Scan(&o).Error
+	if err != nil {
+		return nil, err
+	}
+	return &o, nil
+}

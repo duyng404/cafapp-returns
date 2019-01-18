@@ -9,6 +9,19 @@
 
 	{{ if and (.menu) (len .menu) }}
 	<div class="row mt-5">
+		{{ if .incompleteOrderURL }}
+		<div class="col-12">
+			<div class="alert alert-info alert-dismissible fade show">
+				<div class="d-flex justify-content-between align-items-center">
+					<span>You have an unfinished order.</span>
+						<a class="btn btn-info" href="{{ .incompleteOrderURL }}">Continue with order</a>
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+				</div>
+			</div>
+		</div>
+		{{ end }}
 
 		{{ range .menu }}
 		<div class="col-12 col-md-6 col-lg-4">
@@ -22,7 +35,7 @@
 						{{ rawHTML .DescriptionHTML }}
 					</div>
 					<form action="" method="post">
-						<button class="btn btn-lg btn-block btn-outline-ca-yellow2"
+						<button class="btn btn-lg btn-block btn-outline-primary"
 							type="submit"
 							name="selected-meal"
 							value="{{ .ID }}">
