@@ -1,23 +1,23 @@
 version: "3.2"
 services:
+  db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cafapp
+      MYSQL_USER: cafapp
+      MYSQL_PASSWORD: cafapp
   web:
     build: .
     ports:
-      - "5000:5000"
-    volumes:
-      - type: volume
-        source: arcanaeum_data
-        target: /go/src/arcanaeum/data
-        volume:
-          nocopy: true
+      - "7000:7000"
+    depends_on:
+      - "db"
     logging:
       driver: journald
       options:
-        tag: arcanaeumlog
+        tag: cafapplog
     restart: always
-    # networks:
-    #   - webnet
-# networks:
-#   webnet:
-volumes:
-  arcanaeum_data:
+
