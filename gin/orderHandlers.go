@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/davecgh/go-spew/spew"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -82,7 +80,6 @@ func getOrderMenu(c *gin.Context) {
 	if err != nil || order == nil || order.ID == 0 {
 		logger.Info("Cannot get incomplete order from user. Assuming creating a fresh one.")
 	} else {
-		logger.Info("incomplete order is:", spew.Sdump(order))
 		data["incompleteOrderURL"] = "/order/" + order.UUID
 	}
 
