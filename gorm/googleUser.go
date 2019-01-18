@@ -2,7 +2,7 @@ package gorm
 
 import (
 	"cafapp-returns/ggoauth"
-	"sezzle/vault/logging"
+	"cafapp-returns/logger"
 
 	"github.com/jinzhu/gorm"
 )
@@ -18,7 +18,7 @@ type GoogleUser struct {
 func (u *GoogleUser) Create() error {
 	err := DB.Create(u).Error
 	if err != nil {
-		logging.Error(err)
+		logger.Error(err)
 		return err
 	}
 

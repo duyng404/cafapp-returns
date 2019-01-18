@@ -1,0 +1,30 @@
+package config
+
+var (
+	// ENV : current environment
+	ENV = "dev"
+
+	// Port : port to run on
+	Port = "7000"
+
+	// DB info
+	DBUsername = ""
+	DBPassword = ""
+	DBName     = ""
+	DBHostname = ""
+	DBPort     = ""
+	DBDriver   = ""
+
+	// the key used to sign jwt
+	JWTSigningKey = ""
+
+	// FrontendURL :
+	// Unused
+	FrontendURL = ""
+
+	// GGOauthID : Google Oauth client ID
+	GGoauthID = ""
+
+	// GGOauthSecret : Google Oauth client secret
+	GGoauthSecret = ""
+)

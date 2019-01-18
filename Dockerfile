@@ -1,9 +1,9 @@
 FROM golang:latest
 
-WORKDIR /go/src/arcanaeum
+WORKDIR /go/src/cafapp-returns
 COPY . .
 
-RUN go get -d -v ./...
+# RUN go get -d -v ./...
 RUN go install -v ./...
 
-ENTRYPOINT ["arcanaeum"]
+ENTRYPOINT ["cafapp-returns"]
