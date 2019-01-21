@@ -3,6 +3,7 @@ package main
 import (
 	"cafapp-returns/gorm"
 	_ "net/http/pprof"
+	"time"
 
 	"cafapp-returns/gin"
 	"cafapp-returns/logger"
@@ -21,6 +22,7 @@ func main() {
 			}
 			logger.Info("Could not connect to db. Trying again.")
 			dbRetryAttempts--
+			time.Sleep(time.Second * 5)
 			continue
 		}
 
@@ -36,6 +38,7 @@ func main() {
 			}
 			logger.Info("Could not run object migrations. Trying again.")
 			dbRetryAttempts--
+			time.Sleep(time.Second * 5)
 			continue
 		}
 		break
