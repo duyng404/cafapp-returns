@@ -9,21 +9,36 @@ import (
 )
 
 func main() {
-	// Initalize db
-	logger.Info("Initalizing db...")
-	db, err := gorm.InitDB()
-	if err != nil {
-		logger.Fatal("Could not initalize db", err.Error())
-	}
+	var dbRetryAttempts = 10
 
-	//Defer this so that if our application exits, we close the db.
-	defer db.Close()
+	for true {
+		// Initalize db
+		logger.Info("Initalizing db...")
+		db, err := gorm.InitDB()
+		if err != nil {
+			if dbRetryAttempts == 0 {
+				logger.Fatal("Could not initalize db", err)
+			}
+			logger.Info("Could not connect to db. Trying again.")
+			dbRetryAttempts--
+			continue
+		}
 
-	logger.Info("Initalizing Models...")
+		//Defer this so that if our application exits, we close the db.
+		defer db.Close()
 
-	err = gorm.Migrate()
-	if err != nil {
-		logger.Info("Could not run object migrations.")
+		logger.Info("Initalizing Models...")
+
+		err = gorm.Migrate()
+		if err != nil {
+			if dbRetryAttempts == 0 {
+				logger.Fatal("Could not initalize db", err)
+			}
+			logger.Info("Could not run object migrations. Trying again.")
+			dbRetryAttempts--
+			continue
+		}
+		break
 	}
 
 	logger.Info(`
