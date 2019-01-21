@@ -39,7 +39,7 @@ func init() {
 	conf = &oauth2.Config{
 		ClientID:     config.GGoauthID,
 		ClientSecret: config.GGoauthSecret,
-		RedirectURL:  "http://localhost:7000/gg-login-cb",
+		RedirectURL:  config.GGoauthRedirectURL,
 		Scopes:       []string{"profile", "email"},
 		Endpoint:     google.Endpoint,
 	}

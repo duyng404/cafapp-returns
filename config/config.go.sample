@@ -19,12 +19,10 @@ var (
 	JWTSigningKey = ""
 
 	// FrontendURL :
-	// Unused
-	FrontendURL = ""
-
-	// GGOauthID : Google Oauth client ID
+	// GGoauthID : Google Oauth client ID
 	GGoauthID = ""
-
-	// GGOauthSecret : Google Oauth client secret
+	// GGoauthSecret : Google Oauth client secret
 	GGoauthSecret = ""
+	// GGoauthRedirectURL : url to redirect after logging in
+	GGoauthRedirectURL = ""
 )
