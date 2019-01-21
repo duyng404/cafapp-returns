@@ -1,15 +1,15 @@
 version: "3.2"
 services:
-  db:
+  cafappdb:
     image: mysql:latest
     ports:
-      - "3306:3306"
+      - "7070:7070"
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: cafapp
       MYSQL_USER: cafapp
       MYSQL_PASSWORD: cafapp
-  web:
+  cafappweb:
     build: .
     ports:
       - "7000:7000"
@@ -20,4 +20,3 @@ services:
       options:
         tag: cafapplog
     restart: always
-
