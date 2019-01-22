@@ -14,8 +14,8 @@ var count = 0
 
 func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		// c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Accept, Origin, Cache-Control, X-Requested-With")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
 
@@ -97,12 +97,19 @@ func InitRoutes() *gin.Engine {
 		restricted.POST("/order", handleOrderPost)
 		restricted.POST("/order/:stuff", handleOrderPost)
 		restricted.POST("/order/:stuff/:action", handleOrderPost)
+		restricted.GET("/admin", handleAdminDash)
 	}
 
 	// api group for frontend interaction, will require auth
 	api := router.Group("/api", authMiddleware())
 	{
 		api.POST("/recalculate-order", handleRecalculateOrder)
+	}
+
+	// api group for admin dash, will require auth with admin privilege
+	apiadmin := router.Group("/api", adminAuthMiddleware())
+	{
+		apiadmin.GET("/admin-info", handleAdminInfo)
 	}
 
 	return router

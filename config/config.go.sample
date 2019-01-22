@@ -13,16 +13,21 @@ var (
 	DBName     = ""
 	DBHostname = ""
 	DBPort     = ""
-	DBDriver   = ""
+	DBDriver   = "mysql"
 
 	// the key used to sign jwt
 	JWTSigningKey = ""
 
-	// FrontendURL :
+	// the key used to encode session cookie
+	SessionCookieKey = ""
+
 	// GGoauthID : Google Oauth client ID
 	GGoauthID = ""
 	// GGoauthSecret : Google Oauth client secret
 	GGoauthSecret = ""
 	// GGoauthRedirectURL : url to redirect after logging in
 	GGoauthRedirectURL = ""
+
+	// AdminDashboardURL URL of the admin dashboard
+	AdminDashboardURL = ""
 )

@@ -4,6 +4,7 @@ import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/jwt"
 	"cafapp-returns/logger"
+	"net/http"
 
 	"github.com/gin-contrib/sessions"
 
@@ -36,6 +37,26 @@ func loginDetector() gin.HandlerFunc {
 		} else {
 			u := getCurrentAuthUser(c)
 			logger.Info("Browsing as user", u.Email)
+		}
+
+		c.Next()
+	}
+}
+
+// make sure restricted path are restricted and only accessible by admin users
+func adminAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// check proper jwt
+		ok := checkJWT(c)
+		if !ok {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		// check if admin
+		user := getCurrentAuthUser(c)
+		if user.IsAdmin == false {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 
 		c.Next()
