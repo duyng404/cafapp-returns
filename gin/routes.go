@@ -1,6 +1,7 @@
 package gin
 
 import (
+	"cafapp-returns/config"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -43,7 +44,7 @@ func InitRoutes() *gin.Engine {
 	router.Use(corsMiddleware())
 
 	// Sessions middleware
-	store := cookie.NewStore([]byte("secret")) // TODO: change secret & possible refactor
+	store := cookie.NewStore([]byte(config.SessionCookieKey))
 	store.Options(sessions.Options{
 		HttpOnly: true,
 		MaxAge:   604800, // a week
