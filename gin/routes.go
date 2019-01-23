@@ -97,6 +97,8 @@ func InitRoutes() *gin.Engine {
 		restricted.POST("/order", handleOrderPost)
 		restricted.POST("/order/:stuff", handleOrderPost)
 		restricted.POST("/order/:stuff/:action", handleOrderPost)
+
+		restricted.GET("/tracker", handleOrderTracker)
 	}
 
 	// api group for frontend interaction, will require auth
