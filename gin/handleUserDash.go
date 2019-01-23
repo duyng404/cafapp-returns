@@ -4,7 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func handleUserDash(c *gin.Context) {
-	c.String(200, "to be implemented")
-	return
+func handleUserDash(c *gin.Context) { 
+	user := getCurrentAuthUser(c)
+	renderHTML(c,200, "landing-dashboard.html",gin.H{
+		"Title": user.GusUsername,
+		"Fullname": user.FullName,
+		})
 }
