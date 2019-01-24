@@ -8,18 +8,18 @@ var (
 	Port = "7000"
 
 	// DB info
-	DBUsername = ""
-	DBPassword = ""
-	DBName     = ""
-	DBHostname = ""
-	DBPort     = ""
+	DBUsername = "cafapp"
+	DBPassword = "cafapp"
+	DBName     = "cafapp"
+	DBHostname = "127.0.0.1"
+	DBPort     = "3306"
 	DBDriver   = "mysql"
 
 	// the key used to sign jwt
-	JWTSigningKey = ""
+	JWTSigningKey = "secret"
 
 	// the key used to encode session cookie
-	SessionCookieKey = ""
+	SessionCookieKey = "secret"
 
 	// GGoauthID : Google Oauth client ID
 	GGoauthID = ""
@@ -29,5 +29,5 @@ var (
 	GGoauthRedirectURL = ""
 
 	// AdminDashboardURL URL of the admin dashboard
-	AdminDashboardURL = ""
+	AdminDashboardURL = "http://localhost:3000"
 )

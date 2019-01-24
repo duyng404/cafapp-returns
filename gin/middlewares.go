@@ -55,7 +55,7 @@ func adminAuthMiddleware() gin.HandlerFunc {
 		// check if admin
 		user := getCurrentAuthUser(c)
 		if user.IsAdmin == false {
-			c.AbortWithStatus(http.StatusUnauthorized)
+			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
 
