@@ -2,6 +2,7 @@ package gin
 
 import (
 	"cafapp-returns/config"
+	"cafapp-returns/logger"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -105,9 +106,40 @@ func InitRoutes() *gin.Engine {
 		api.POST("/recalculate-order", handleRecalculateOrder)
 	}
 
+	router.GET("/demo", demoHandler)
+
 	return router
 }
 
 func handlePing(c *gin.Context) {
 	c.JSON(200, gin.H{"msg": "pong", "increaseme": 0})
+}
+
+func demoHandler(c *gin.Context) {
+	s := sessions.Default(c)
+
+	s.Set("key", []int{1, 2, 3, 4, 5})
+	s.Save()
+
+	user := getCurrentAuthUser(c)
+
+	c.Set("something", "somevalue")
+
+	value, ok := c.Get("something")
+	if !ok {
+		logger.Info("error happened")
+	}
+	logger.Info(value)
+
+	// renderHTML(c, 200, "demo-top.html", gin.H{})
+
+	c.JSON(200, user)
+
+	// c.JSON(200, gin.H{
+	// 	"key": "value",
+	// 	"haha": 123,
+	// 	"lmao": []string{
+	// 		"mot", "hai", "ba"
+	// 	}
+	// })
 }
