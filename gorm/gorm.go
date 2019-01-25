@@ -37,8 +37,12 @@ func InitDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
+	// set association autoupdate to false. More info here http://gorm.io/docs/associations.html
+	db = db.Set("gorm:association_autoupdate", false)
+
 	// gorm's logging is super f-ing annoying like wtf man why
-	db.LogMode(false)
+	// db.LogMode(false)
+	db.LogMode(true)
 
 	// Set our variable to use the connection
 	DB = db
