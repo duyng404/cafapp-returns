@@ -2,12 +2,12 @@ package gin
 
 import (
 	"cafapp-returns/config"
-	"net/http"
-
+	"cafapp-returns/socket"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 var count = 0
@@ -107,6 +107,7 @@ func InitRoutes() *gin.Engine {
 		api.POST("/recalculate-order", handleRecalculateOrder)
 	}
 
+	router.GET("/socket/", gin.WrapH(socket.Server))
 	return router
 }
 

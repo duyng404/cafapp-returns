@@ -73,7 +73,6 @@ func orderError(c *gin.Context, err string) {
 func getOrderMenu(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["Title"] = "Build Your Order"
-
 	// check if user have any incomplete order
 	user := getCurrentAuthUser(c)
 	order, err := user.GetOneIncompleteOrder()
