@@ -3,19 +3,20 @@ package gin
 import (
 	"cafapp-returns/config"
 	"cafapp-returns/socket"
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 var count = 0
 
 func corsMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-		// c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", config.AdminDashboardURL)
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Accept, Origin, Cache-Control, X-Requested-With")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
 
@@ -99,6 +100,7 @@ func InitRoutes() *gin.Engine {
 		restricted.POST("/order/:stuff/:action", handleOrderPost)
 
 		restricted.GET("/tracker", handleOrderTracker)
+		restricted.GET("/admin", handleAdminDash)
 	}
 
 	// api group for frontend interaction, will require auth
@@ -107,7 +109,16 @@ func InitRoutes() *gin.Engine {
 		api.POST("/recalculate-order", handleRecalculateOrder)
 	}
 
+	// api group for admin dash, will require auth with admin privilege
+	apiadmin := router.Group("/api/admin", adminAuthMiddleware())
+	{
+		apiadmin.GET("/my-info", handleAdminInfo)
+		apiadmin.GET("/view-queue", handleAdminViewQueue)
+	}
+
+	// TODO: make a group for this and look at authentication
 	router.GET("/socket/", gin.WrapH(socket.Server))
+
 	return router
 }
 
