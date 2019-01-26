@@ -1,0 +1,33 @@
+package config
+
+var (
+	// ENV : current environment
+	ENV = "dev"
+
+	// Port : port to run on
+	Port = "7000"
+
+	// DB info
+	DBUsername = "cafapp"
+	DBPassword = "cafapp"
+	DBName     = "cafapp"
+	DBHostname = "127.0.0.1"
+	DBPort     = "3306"
+	DBDriver   = "mysql"
+
+	// the key used to sign jwt
+	JWTSigningKey = "secret"
+
+	// the key used to encode session cookie
+	SessionCookieKey = "secret"
+
+	// GGoauthID : Google Oauth client ID
+	GGoauthID = ""
+	// GGoauthSecret : Google Oauth client secret
+	GGoauthSecret = ""
+	// GGoauthRedirectURL : url to redirect after logging in
+	GGoauthRedirectURL = ""
+
+	// AdminDashboardURL URL of the admin dashboard
+	AdminDashboardURL = "http://localhost:3000"
+)
