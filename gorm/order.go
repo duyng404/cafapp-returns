@@ -106,3 +106,10 @@ func (o *Order) GenerateTag() error {
 	o.Tag = fmt.Sprintf("%s-%s%s-%d", o.DestinationTag, meal.Product.Tag, drink.Product.Tag, tag)
 	return nil
 }
+
+// GetOrdersForAdminViewQueue :
+func GetOrdersForAdminViewQueue() (*[]Order, error) {
+	var orders []Order
+	err := DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").Where("status_code BETWEEN ? AND ?", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
+	return &orders, err
+}

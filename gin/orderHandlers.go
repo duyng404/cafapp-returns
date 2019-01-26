@@ -338,10 +338,11 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 		user.GusID = gusID
 		err = user.Save()
 		if err != nil {
-			logger.Error("invalid post form. Redirecting to edit page")
+			logger.Error("cannot save user gus id. Redirecting to edit page")
 			orderError(c, "Bad Request. Bad. BAAADD")
 			return
 		}
+		logger.Info("!!!!!! Gus User ID is", user.GusID)
 	}
 
 	// save order

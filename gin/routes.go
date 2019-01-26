@@ -107,9 +107,10 @@ func InitRoutes() *gin.Engine {
 	}
 
 	// api group for admin dash, will require auth with admin privilege
-	apiadmin := router.Group("/api", adminAuthMiddleware())
+	apiadmin := router.Group("/api/admin", adminAuthMiddleware())
 	{
-		apiadmin.GET("/admin-info", handleAdminInfo)
+		apiadmin.GET("/my-info", handleAdminInfo)
+		apiadmin.GET("/view-queue", handleAdminViewQueue)
 	}
 
 	return router
