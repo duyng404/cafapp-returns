@@ -9,8 +9,8 @@ import (
 // Destination of deliveries
 type Destination struct {
 	gorm.Model
-	Name string
-	Tag  string
+	Name string `json:"name"`
+	Tag  string `json:"tag"`
 }
 
 var (

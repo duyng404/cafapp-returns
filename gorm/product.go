@@ -9,14 +9,14 @@ import (
 // Product the basic product that goes on menu and orders
 type Product struct {
 	gorm.Model
-	Tag             string // Unique tag following our internal convention
-	Name            string // Internal code names
-	DisplayName     string // Full Display Name on frontend
-	PriceInCents    int
-	ImageURL        string
-	Description     string // one-line description
-	DescriptionHTML string // html formatted description
-	Status          uint
+	Tag             string `json:"tag"`          // Unique tag following our internal convention
+	Name            string `json:"name"`         // Internal code names
+	DisplayName     string `json:"display_name"` // Full Display Name on frontend
+	PriceInCents    int    `json:"price_in_cents"`
+	ImageURL        string `json:"image_url"`
+	Description     string `json:"description"`      // one-line description
+	DescriptionHTML string `json:"description_html"` // html formatted description
+	Status          uint   `json:"status"`
 }
 
 const (

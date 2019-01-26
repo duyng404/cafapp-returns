@@ -11,13 +11,13 @@ import (
 // User : a cafapp user!
 type User struct {
 	gorm.Model
-	FirstName   string
-	LastName    string
-	FullName    string
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	FullName    string `json:"full_name"`
 	Email       string `json:"email" gorm:"index:email"`
-	GusUsername string
-	GusID       int
-	IsAdmin     bool
+	GusUsername string `json:"gus_username"`
+	GusID       int    `json:"gus_id"`
+	IsAdmin     bool   `json:"-"`
 }
 
 // Create : Create the object

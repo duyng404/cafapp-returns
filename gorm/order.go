@@ -11,16 +11,16 @@ import (
 // Order : the most important object in our app
 type Order struct {
 	gorm.Model
-	UUID                          string `gorm:"index:uuid"`
-	Tag                           string
-	UserID                        uint
-	User                          *User
-	DeliveryFeeInCents            int
-	CafAccountChargeAmountInCents int
-	TotalInCents                  int
-	OrderRows                     []OrderRow `gorm:"many2many:order_order_rows"`
-	DestinationTag                string
-	StatusCode                    int
+	UUID                          string     `json:"uuid" gorm:"index:uuid"`
+	Tag                           string     `json:"tag"`
+	UserID                        uint       `json:"user_id"`
+	User                          *User      `json:"user"`
+	DeliveryFeeInCents            int        `json:"delivery_fee_in_cents"`
+	CafAccountChargeAmountInCents int        `json:"caf_account_charge_amount_in_cents"`
+	TotalInCents                  int        `json:"total_in_cents"`
+	OrderRows                     []OrderRow `json:"order_rows" gorm:"many2many:order_order_rows"`
+	DestinationTag                string     `json:"destination_tag"`
+	StatusCode                    int        `json:"status_code"`
 }
 
 // Create : save the object to the db
