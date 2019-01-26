@@ -36,6 +36,7 @@ func init() {
 		"userdash",
 		"order",
 		"404",
+		"tracker",
 	}
 	f := template.FuncMap{
 		"formatMoney": formatMoney,

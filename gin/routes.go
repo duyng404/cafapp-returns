@@ -2,6 +2,7 @@ package gin
 
 import (
 	"cafapp-returns/config"
+	"cafapp-returns/socket"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -97,6 +98,8 @@ func InitRoutes() *gin.Engine {
 		restricted.POST("/order", handleOrderPost)
 		restricted.POST("/order/:stuff", handleOrderPost)
 		restricted.POST("/order/:stuff/:action", handleOrderPost)
+
+		restricted.GET("/tracker", handleOrderTracker)
 		restricted.GET("/admin", handleAdminDash)
 	}
 
@@ -112,6 +115,9 @@ func InitRoutes() *gin.Engine {
 		apiadmin.GET("/my-info", handleAdminInfo)
 		apiadmin.GET("/view-queue", handleAdminViewQueue)
 	}
+
+	// TODO: make a group for this and look at authentication
+	router.GET("/socket/", gin.WrapH(socket.Server))
 
 	return router
 }
