@@ -1,8 +1,11 @@
 package gorm
 
 import (
+	//"cafapp-returns/logger"
 	"errors"
 	"fmt"
+
+	//"github.com/davecgh/go-spew/spew"
 
 	"github.com/jinzhu/gorm"
 	"github.com/lithammer/shortuuid"
@@ -67,6 +70,18 @@ func (o *Order) GetDrinkRow() *OrderRow {
 		}
 	}
 	return nil
+}
+
+// GetAllOrderFromUser : return all Orders that Users have placed
+func GetAllOrderFromUser(id uint) (*[]Order, error) {
+	var orders []Order
+	err := DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").
+		Where("user_id = ?", id).Find(&orders).Error
+	if err != nil {
+		return nil, err
+	}
+	//logger.Info("data is: ", spew.Sdump(orders))
+	return &orders, nil
 }
 
 // CalculateDeliveryFee : calculate the delivery of a given order
