@@ -374,8 +374,13 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 		return
 	}
 
-	order.StatusCode = gorm.OrderStatusPlaced
-	err := order.GenerateTag()
+	err := order.SetStatusTo(gorm.OrderStatusPlaced)
+	if err != nil {
+		logger.Error("cannot change status order")
+		orderError(c, "Database error")
+		return
+	}
+	err = order.GenerateTag()
 	if err != nil {
 		logger.Error("cannot generate tag for order")
 		order.StatusCode = gorm.OrderStatusGeneralFailure
@@ -386,7 +391,7 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 	err = order.Save()
 	if err != nil {
 		if err != nil {
-			logger.Error("cannot saving order")
+			logger.Error("cannot save order")
 			orderError(c, "Database error")
 			return
 		}

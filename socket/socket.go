@@ -52,7 +52,7 @@ func init() {
 		})
 
 		// handle all other stuff
-		so.On("qfeed-commit-queue", commitQueue)
+		so.On("qfeed-commit-queue", handleCommitQueue)
 
 		so.On("disconnection", func() {
 			logger.Info("socket disconnected", so.Id())
@@ -67,8 +67,4 @@ func init() {
 // GetServer get the current server
 func GetServer() *socketio.Server {
 	return server
-}
-
-func commitQueue() string {
-	return ""
 }

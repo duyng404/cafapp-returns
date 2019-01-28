@@ -143,3 +143,20 @@ func GetOrdersForAdminViewQueue() (*[]Order, error) {
 		Where("status_code BETWEEN ? AND ?", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
 	return &orders, err
 }
+
+// SetStatusTo : changes the status and save the update to the db.
+func (o *Order) SetStatusTo(s int) error {
+	if o.ID == 0 {
+		return errors.New("id is zero")
+	}
+	o.StatusCode = s
+	err := CreateOrderStatusUpdate(o.ID, s)
+	if err != nil {
+		return err
+	}
+	err = o.Save()
+	if err != nil {
+		return err
+	}
+	return nil
+}
