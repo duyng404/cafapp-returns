@@ -65,6 +65,13 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating User Socket Token Table")
+	err = DB.AutoMigrate(&UserSocketToken{}).Error
+	if err != nil {
+		logger.Error("Error migrating user socket token table:", err)
+		return err
+	}
+
 	initDestinations()
 	initOrderStatusCodes()
 	initGlobalVar()

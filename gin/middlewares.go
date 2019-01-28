@@ -39,7 +39,7 @@ func loginDetector() gin.HandlerFunc {
 			logger.Info("Browsing as user", u.Email)
 		}
 
-		c.Next()
+		// c.Next()
 	}
 }
 

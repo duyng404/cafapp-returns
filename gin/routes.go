@@ -114,10 +114,12 @@ func InitRoutes() *gin.Engine {
 	{
 		apiadmin.GET("/my-info", handleAdminInfo)
 		apiadmin.GET("/view-queue", handleAdminViewQueue)
+		apiadmin.GET("/destination", handleAdminGetDestinations)
 	}
 
 	// TODO: make a group for this and look at authentication
-	router.GET("/socket/", gin.WrapH(socket.Server))
+	router.GET("/socket/", gin.WrapH(socket.GetServer()))
+	router.POST("/socket/", gin.WrapH(socket.GetServer()))
 
 	return router
 }

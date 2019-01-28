@@ -5,6 +5,8 @@ import (
 	"cafapp-returns/logger"
 	"time"
 
+	"github.com/lithammer/shortuuid"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -50,6 +52,19 @@ func (u *User) GenerateJWT() (string, error) {
 		logger.Error(err)
 	}
 	return token, err
+}
+
+// GenerateSocketToken generate a new socket token for the user
+func (u *User) GenerateSocketToken() (string, error) {
+	token := UserSocketToken{
+		User:  *u,
+		Token: shortuuid.New() + shortuuid.New(),
+	}
+	err := token.Create()
+	if err != nil {
+		return "", err
+	}
+	return token.Token, nil
 }
 
 // GetOneIncompleteOrder check if user has any incomplete order by searching for order
