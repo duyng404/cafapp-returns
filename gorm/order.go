@@ -11,16 +11,17 @@ import (
 // Order : the most important object in our app
 type Order struct {
 	gorm.Model
-	UUID                          string `gorm:"index:uuid"`
-	Tag                           string
-	UserID                        uint
-	User                          *User
-	DeliveryFeeInCents            int
-	CafAccountChargeAmountInCents int
-	TotalInCents                  int
-	OrderRows                     []OrderRow `gorm:"many2many:order_order_rows"`
-	DestinationTag                string
-	StatusCode                    int
+	UUID                          string       `json:"uuid" gorm:"index:uuid"`
+	Tag                           string       `json:"tag"`
+	UserID                        uint         `json:"user_id"`
+	User                          *User        `json:"user"`
+	DeliveryFeeInCents            int          `json:"delivery_fee_in_cents"`
+	CafAccountChargeAmountInCents int          `json:"caf_account_charge_amount_in_cents"`
+	TotalInCents                  int          `json:"total_in_cents"`
+	OrderRows                     []OrderRow   `json:"order_rows" gorm:"many2many:order_order_rows"`
+	DestinationTag                string       `json:"destination_tag"`
+	Destination                   *Destination `json:"destination" gorm:"foreignkey:DestinationTag,association_foreignkey:Tag"`
+	StatusCode                    int          `json:"status_code"`
 }
 
 // Create : save the object to the db
@@ -41,12 +42,21 @@ func (o *Order) Save() error {
 
 // PopulateByID : query the db to get object by id
 func (o *Order) PopulateByID(id uint) error {
-	return DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").Where("id = ?", id).Last(&o).Error
+	return DB.Preload("User").
+		Preload("OrderRows").
+		Preload("OrderRows.Product").
+		Preload("Destination").
+		Where("id = ?", id).Last(&o).Error
 }
 
 // PopulateByUUID : query the db to get object by uuidid
 func (o *Order) PopulateByUUID(uuid string) error {
-	return DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").Where("uuid = ?", uuid).Last(&o).Error
+	return DB.
+		Preload("User").
+		Preload("OrderRows").
+		Preload("OrderRows.Product").
+		Preload("Destination").
+		Where("uuid = ?", uuid).Last(&o).Error
 }
 
 // GetMealRow : return the OrderRow that is the meal part of the order
@@ -110,6 +120,11 @@ func (o *Order) GenerateTag() error {
 // GetOrdersForAdminViewQueue :
 func GetOrdersForAdminViewQueue() (*[]Order, error) {
 	var orders []Order
-	err := DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").Where("status_code BETWEEN ? AND ?", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
+	err := DB.
+		Preload("User").
+		Preload("OrderRows").
+		Preload("OrderRows.Product").
+		Preload("Destination").
+		Where("status_code BETWEEN ? AND ?", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
 	return &orders, err
 }
