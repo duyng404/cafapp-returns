@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -102,6 +103,14 @@ func getStringFromSession(s sessions.Session, name string) string {
 		}
 	}
 	return ""
+}
+
+// helper func to extract the last number of the order string.
+// this will be referred to as the "friendly order number" and is the main way users will refer to the orders.
+// example: SO-VSSP-43 will returns 43
+func fromTagToNumber(tag string) string {
+	splitted := strings.Split(tag, "-")
+	return splitted[len(splitted)-1]
 }
 
 // get current user from gin store. If not logged in, will return a nil pointer

@@ -85,8 +85,8 @@ func (o *Order) GetDrinkRow() *OrderRow {
 // GetAllOrderFromUser : return all Orders that Users have placed
 func GetAllOrderFromUser(id uint) (*[]Order, error) {
 	var orders []Order
-	err := DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").
-		Where("user_id = ?", id).Find(&orders).Error
+	err := DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").Preload("Destination").
+		Where("user_id = ? AND status_code >= ?", id, OrderStatusPlaced).Find(&orders).Error
 	if err != nil {
 		return nil, err
 	}
