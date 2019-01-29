@@ -27,6 +27,16 @@ body {
 	color: #C49317;
 }
 
+#userdash-profile {
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+#userdash-pastorders {
+	max-width: 1000px;
+	margin: 0 atuo;
+}
+
 #footer{
 	position: absolute;
 	bottom: 0;
