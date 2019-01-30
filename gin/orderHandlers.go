@@ -3,6 +3,7 @@ package gin
 import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
+	"cafapp-returns/socket"
 	"net/http"
 	"strconv"
 
@@ -362,7 +363,6 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 	// is the user trying to go back to edit?
 	tmp := c.PostForm("goToEdit")
 	if tmp == "goToEdit" {
-		logger.Info("here")
 		order.StatusCode = gorm.OrderStatusIncomplete
 		err := order.Save()
 		if err != nil {
@@ -374,12 +374,15 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 		return
 	}
 
+	// set status to Placed
 	err := order.SetStatusTo(gorm.OrderStatusPlaced)
 	if err != nil {
 		logger.Error("cannot change status order")
 		orderError(c, "Database error")
 		return
 	}
+
+	// generate a tag
 	err = order.GenerateTag()
 	if err != nil {
 		logger.Error("cannot generate tag for order")
@@ -388,6 +391,8 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 		orderError(c, "Database error")
 		return
 	}
+
+	// save
 	err = order.Save()
 	if err != nil {
 		if err != nil {
@@ -396,6 +401,9 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 			return
 		}
 	}
+
+	// signals the admin queue and order tracker
+	socket.NewOrderPlaced(&order)
 
 	c.Redirect(http.StatusFound, "/order/"+order.UUID+"/completed")
 	return
