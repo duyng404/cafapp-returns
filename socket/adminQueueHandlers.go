@@ -5,86 +5,47 @@ import (
 	"cafapp-returns/logger"
 )
 
-// commit queue means move from queue to prep
-func handleCommitQueue(commited []int) []*gorm.Order {
-	if len(commited) > 0 {
-		logger.Info("processing queue -> prep:", commited)
-		processed := []*gorm.Order{}
-		for _, v := range commited {
-			// get order from db
-			var o gorm.Order
-			err := o.PopulateByID(uint(v))
-			if err != nil {
-				logger.Error("error getting order from db")
-				return []*gorm.Order{}
-			}
-			// set a new status
-			err = o.SetStatusTo(gorm.OrderStatusPrepping)
-			if err != nil {
-				logger.Error("error setting new status")
-				return []*gorm.Order{}
-			}
-			// accumulate to processed
-			processed = append(processed, &o)
-		}
-		return processed
+// "commit" means "move the order up". this func handles moving the order up the queue.
+func handleCommit(event string, committed []int) {
+	// determine what event are we handling
+	var targetStatus int
+	switch event {
+	case "qfeed-commit-queue":
+		targetStatus = gorm.OrderStatusPrepping
+	case "qfeed-commit-prep":
+		targetStatus = gorm.OrderStatusShipping
+	case "qfeed-commit-ship":
+		targetStatus = gorm.OrderStatusDelivered
+	default:
+		logger.Error("no event provided")
+		return
 	}
-	logger.Info("nothing to process.")
-	return []*gorm.Order{}
-}
 
-// commit prep means move from prep to ship
-func handleCommitPrep(commited []int) []*gorm.Order {
-	if len(commited) > 0 {
-		logger.Info("processing prep -> ship:", commited)
+	// process
+	if len(committed) > 0 {
+		logger.Info("processing", event, "with data", committed)
 		processed := []*gorm.Order{}
-		for _, v := range commited {
+		for _, v := range committed {
 			// get order from db
 			var o gorm.Order
 			err := o.PopulateByID(uint(v))
 			if err != nil {
 				logger.Error("error getting order from db")
-				return []*gorm.Order{}
+				return
 			}
 			// set a new status
-			err = o.SetStatusTo(gorm.OrderStatusShipping)
+			err = o.SetStatusTo(targetStatus)
 			if err != nil {
 				logger.Error("error setting new status")
-				return processed
+				return
 			}
 			// accumulate to processed
 			processed = append(processed, &o)
 		}
-		return processed
+		// notify all connected admins
+		updateQueueForEveryone(processed)
+		return
 	}
 	logger.Info("nothing to process.")
-	return []*gorm.Order{}
-}
-
-// commit ship means move from ship to delivered
-func handleCommitShip(commited []int) []*gorm.Order {
-	if len(commited) > 0 {
-		logger.Info("processing ship -> delivered:", commited)
-		processed := []*gorm.Order{}
-		for _, v := range commited {
-			// get order from db
-			var o gorm.Order
-			err := o.PopulateByID(uint(v))
-			if err != nil {
-				logger.Error("error getting order from db")
-				return []*gorm.Order{}
-			}
-			// set a new status
-			err = o.SetStatusTo(gorm.OrderStatusDelivered)
-			if err != nil {
-				logger.Error("error setting new status")
-				return processed
-			}
-			// accumulate to processed
-			processed = append(processed, &o)
-		}
-		return processed
-	}
-	logger.Info("nothing to process.")
-	return []*gorm.Order{}
+	return
 }
