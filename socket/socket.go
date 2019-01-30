@@ -53,6 +53,8 @@ func init() {
 
 		// handle all other stuff
 		so.On("qfeed-commit-queue", handleCommitQueue)
+		so.On("qfeed-commit-prep", handleCommitPrep)
+		so.On("qfeed-commit-ship", handleCommitShip)
 
 		so.On("disconnection", func() {
 			logger.Info("socket disconnected", so.Id())
