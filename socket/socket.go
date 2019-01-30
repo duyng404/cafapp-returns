@@ -13,8 +13,8 @@ var server *socketio.Server
 
 // client
 type client struct {
-	Token  string
-	Socket *socketio.Socket
+	Token        string
+	SendNewOrder func(o *gorm.Order)
 }
 
 // socketMessage
@@ -38,22 +38,29 @@ func init() {
 		// handle registration
 		so.On("register", func(token string) string {
 			// admin registration: add the socket to the adminClients list, and return ack
-			if gorm.ValidateAdminSocketToken(token) == nil {
-				c := client{
-					Token:  token,
-					Socket: &so,
-				}
-				adminClients = append(adminClients, &c)
-				logger.Info("socket id", so.Id(), "registered as admin.")
-				return "okbro"
+			if gorm.ValidateAdminSocketToken(token) != nil {
+				logger.Info("token validation failed")
+				return "error"
 			}
-			logger.Info("token validation failed")
-			return "error"
+
+			// register the client as admin
+			c := client{
+				Token: token,
+			}
+			adminClients = append(adminClients, &c)
+			logger.Info("socket id", so.Id(), "registered as admin.")
+
+			// enable admin actions
+			so.On("qfeed-commit-queue", handleCommitQueue)
+			so.On("qfeed-commit-prep", handleCommitPrep)
+			so.On("qfeed-commit-ship", handleCommitShip)
+
+			c.SendNewOrder = func(o *gorm.Order) {
+				so.Emit("qfeed-new-order", o)
+			}
+
+			return "okbro"
 		})
-
-		// handle all other stuff
-		so.On("qfeed-commit-queue", commitQueue)
-
 		so.On("disconnection", func() {
 			logger.Info("socket disconnected", so.Id())
 		})
@@ -69,6 +76,13 @@ func GetServer() *socketio.Server {
 	return server
 }
 
-func commitQueue() string {
-	return ""
+// NewOrderPlaced is used after user placed an order. Will send notification to the admin queue
+// and the order tracker
+func NewOrderPlaced(o *gorm.Order) {
+	// send order to the admin queue
+	for _, c := range adminClients {
+		c.SendNewOrder(o)
+	}
+	// TODO: send something to the chatbot
+	return
 }

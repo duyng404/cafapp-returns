@@ -58,6 +58,13 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Order Status Update Table")
+	err = DB.AutoMigrate(&OrderStatusUpdate{}).Error
+	if err != nil {
+		logger.Error("Error migrating Order Status Update table:", err)
+		return err
+	}
+
 	logger.Info("Migrating Order Table")
 	err = DB.AutoMigrate(&Order{}).Error
 	if err != nil {
