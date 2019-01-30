@@ -20,15 +20,15 @@ func (t *UserSocketToken) Create() error {
 	return DB.Create(t).Error
 }
 
-// ValidateAdminToken : query the db for the owner of the token, and return nil if it's an admin
-func ValidateAdminSocketToken(token string) error {
+// ValidateAdminSocketToken : query the db for the owner of the token, and return nil if it's an admin
+func ValidateAdminSocketToken(token string) (*User, error) {
 	var t UserSocketToken
 	err := DB.Preload("User").Where("token = ?", token).First(&t).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if t.User.IsAdmin == false {
-		return errors.New("not an admin")
+		return nil, errors.New("not an admin")
 	}
-	return nil
+	return &t.User, nil
 }

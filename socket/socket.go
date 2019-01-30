@@ -13,8 +13,11 @@ var server *socketio.Server
 
 // client
 type client struct {
-	Token        string
-	SendNewOrder func(o *gorm.Order)
+	ID                 string
+	User               *gorm.User
+	Token              string
+	SendNewOrder       func(o *gorm.Order)
+	UpdateCurrentQueue func(orders []*gorm.Order)
 }
 
 // socketMessage
@@ -38,7 +41,8 @@ func init() {
 		// handle registration
 		so.On("register", func(token string) string {
 			// admin registration: add the socket to the adminClients list, and return ack
-			if gorm.ValidateAdminSocketToken(token) != nil {
+			user, err := gorm.ValidateAdminSocketToken(token)
+			if err != nil {
 				logger.Info("token validation failed")
 				return "error"
 			}
@@ -46,17 +50,30 @@ func init() {
 			// register the client as admin
 			c := client{
 				Token: token,
+				ID:    so.Id(),
+				User:  user,
 			}
 			adminClients = append(adminClients, &c)
 			logger.Info("socket id", so.Id(), "registered as admin.")
 
 			// enable admin actions
-			so.On("qfeed-commit-queue", handleCommitQueue)
-			so.On("qfeed-commit-prep", handleCommitPrep)
-			so.On("qfeed-commit-ship", handleCommitShip)
+			// so.On("qfeed-commit-queue", handleCommitQueue)
+			so.On("qfeed-commit-queue", func(committed []int) {
+				handleCommit("qfeed-commit-queue", committed)
+			})
+			so.On("qfeed-commit-prep", func(committed []int) {
+				handleCommit("qfeed-commit-prep", committed)
+			})
+			so.On("qfeed-commit-ship", func(committed []int) {
+				handleCommit("qfeed-commit-ship", committed)
+			})
 
 			c.SendNewOrder = func(o *gorm.Order) {
 				so.Emit("qfeed-new-order", o)
+			}
+
+			c.UpdateCurrentQueue = func(orders []*gorm.Order) {
+				so.Emit("qfeed-update-queue", orders)
 			}
 
 			return "okbro"
@@ -81,8 +98,17 @@ func GetServer() *socketio.Server {
 func NewOrderPlaced(o *gorm.Order) {
 	// send order to the admin queue
 	for _, c := range adminClients {
+		logger.Info("sending new order to user", c.User.GusUsername)
 		c.SendNewOrder(o)
 	}
 	// TODO: send something to the chatbot
 	return
+}
+
+// when one admin changes something, update it for every other admins currently connected.
+func updateQueueForEveryone(orders []*gorm.Order) {
+	for _, c := range adminClients {
+		logger.Info("sending update queue to user", c.User.GusUsername)
+		c.UpdateCurrentQueue(orders)
+	}
 }
