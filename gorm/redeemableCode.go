@@ -22,8 +22,10 @@ type RedeemableCode struct {
 const (
 	// RedeemableCodeStatusAvailable available for redeem
 	RedeemableCodeStatusAvailable = 1
+	// RedeemableCodeStatusOnSale available for redeem and has been put on sale
+	RedeemableCodeStatusOnSale = 2
 	// RedeemableCodeStatusRedeemed already been redeemed
-	RedeemableCodeStatusRedeemed = 2
+	RedeemableCodeStatusRedeemed = 3
 )
 
 // GetRedeemableCodeByCode input a string, will query db and return a RedeemableCode object with that string as the Code
@@ -36,7 +38,7 @@ func GetRedeemableCodeByCode(code string) (*RedeemableCode, error) {
 // GetAllRedeemableCodes for viewing in admin dash
 func GetAllRedeemableCodes() ([]RedeemableCode, error) {
 	var res []RedeemableCode
-	err := DB.Find(&res).Error
+	err := DB.Preload("RedeemedByUser").Find(&res).Error
 	return res, err
 }
 
