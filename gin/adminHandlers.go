@@ -47,3 +47,23 @@ func handleAdminViewQueue(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, orders)
 }
+
+func handleAdminViewAllRedeemableCodes(c *gin.Context) {
+	codes, err := gorm.GetAllRedeemableCodes()
+	if err != nil {
+		logger.Error("error getting all redeemable codes for admin dash:", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	c.JSON(http.StatusOK, codes)
+}
+
+func handleAdminGenerateFiveCodes(c *gin.Context) {
+	codes, err := gorm.GenerateFiveRedeemableCodes()
+	if err != nil {
+		logger.Error("error generating 5 redeemable codes:")
+		c.JSON(http.StatusInternalServerError, codes)
+		return
+	}
+	c.JSON(http.StatusOK, codes)
+}
