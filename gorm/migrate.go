@@ -79,6 +79,13 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Redeemable Code Table")
+	err = DB.AutoMigrate(&RedeemableCode{}).Error
+	if err != nil {
+		logger.Error("Error migrating redeemable code table:", err)
+		return err
+	}
+
 	initDestinations()
 	initOrderStatusCodes()
 	initGlobalVar()
