@@ -22,6 +22,17 @@ type User struct {
 	IsAdmin     bool   `json:"-"`
 }
 
+// GetAllUser
+func (u *User) GetAllUser() ([]User, error) {
+	var users []User
+	err := DB.Raw(`
+		SELECT u.*
+		FROM users u
+		WHERE u.deleted_at IS NULL
+	`).Scan(&users).Error
+	return users, err
+}
+
 // Create : Create the object
 func (u *User) Create() error {
 	return DB.Create(u).Error
