@@ -8,11 +8,11 @@ import (
 type OrderRow struct {
 	gorm.Model
 	// OrderID
-	ProductID       uint
-	Product         *Product
-	Quantity        int
-	SubtotalInCents int
-	RowType         int
+	ProductID       uint     `json:"product_id"`
+	Product         *Product `json:"product"`
+	Quantity        int      `json:"quantity"`
+	SubtotalInCents int      `json:"subtotal_in_cents"`
+	RowType         int      `json:"row_type"`
 }
 
 const (

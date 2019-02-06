@@ -5,19 +5,21 @@ import (
 	"cafapp-returns/logger"
 	"time"
 
+	"github.com/lithammer/shortuuid"
+
 	"github.com/jinzhu/gorm"
 )
 
 // User : a cafapp user!
 type User struct {
 	gorm.Model
-	FirstName   string
-	LastName    string
-	FullName    string
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	FullName    string `json:"full_name"`
 	Email       string `json:"email" gorm:"index:email"`
-	GusUsername string
-	GusID       int
-	IsAdmin     bool
+	GusUsername string `json:"gus_username"`
+	GusID       int    `json:"gus_id"`
+	IsAdmin     bool   `json:"-"`
 }
 
 // Create : Create the object
@@ -50,6 +52,19 @@ func (u *User) GenerateJWT() (string, error) {
 		logger.Error(err)
 	}
 	return token, err
+}
+
+// GenerateSocketToken generate a new socket token for the user
+func (u *User) GenerateSocketToken() (string, error) {
+	token := UserSocketToken{
+		User:  *u,
+		Token: shortuuid.New() + shortuuid.New(),
+	}
+	err := token.Create()
+	if err != nil {
+		return "", err
+	}
+	return token.Token, nil
 }
 
 // GetOneIncompleteOrder check if user has any incomplete order by searching for order

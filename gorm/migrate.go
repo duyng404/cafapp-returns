@@ -58,10 +58,31 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Order Status Update Table")
+	err = DB.AutoMigrate(&OrderStatusUpdate{}).Error
+	if err != nil {
+		logger.Error("Error migrating Order Status Update table:", err)
+		return err
+	}
+
 	logger.Info("Migrating Order Table")
 	err = DB.AutoMigrate(&Order{}).Error
 	if err != nil {
 		logger.Error("Error migrating Order table:", err)
+		return err
+	}
+
+	logger.Info("Migrating User Socket Token Table")
+	err = DB.AutoMigrate(&UserSocketToken{}).Error
+	if err != nil {
+		logger.Error("Error migrating user socket token table:", err)
+		return err
+	}
+
+	logger.Info("Migrating Redeemable Code Table")
+	err = DB.AutoMigrate(&RedeemableCode{}).Error
+	if err != nil {
+		logger.Error("Error migrating redeemable code table:", err)
 		return err
 	}
 

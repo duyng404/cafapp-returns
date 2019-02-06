@@ -3,10 +3,17 @@
 	<div class="container">
 		<h1 class="jumbotron-heading text-ca-yellow1"><img src="/static/favicon.png" width="50" height="50" class="d-inline-block align-middle" alt=""><strong>&nbsp;CafApp</strong></h1>
 		<h4 class="text-light">Gustavus Marketplace Delivery Service</h4>
-		<p class="text-white-50">By students, for students</p>
+		<p class="text-light">By students, for students</p>
 		<div class="my-5"></div>
-		<a href="/login" class="btn btn-ca-yellow2 btn-lg m-2">Log In</a>
-		<a href="javascript:void(0);" class="btn btn-secondary btn-lg m-2" onclick="scrollToInfo()">More info</a>
+		{{ if .loggedIn }}
+			<p class="text-center text-light">Logged in as: <span class="text-warning">{{ .currentUser.FullName }}</span></p>
+			<a href="/order" class="btn btn-primary btn-lg m-2 px-5">Order now</a><br />
+			<a href="/dash" class="btn btn-secondary m-2">My Past Orders</a><br class="d-md-none" />
+			<a href="/tracker" class="btn btn-secondary m-2">Order Tracker</a>
+		{{ else }}
+			<a href="/login" class="btn btn-ca-yellow2 btn-lg m-2">Log In</a>
+			<a href="javascript:void(0);" class="btn btn-secondary btn-lg m-2" onclick="scrollToInfo()">More info</a>
+		{{ end }}
 	</div>
 </section>
 

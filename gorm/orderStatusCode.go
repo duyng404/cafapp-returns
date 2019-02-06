@@ -15,8 +15,8 @@ type OrderStatusCode struct {
 }
 
 const (
-	OrderStatusIncomplete = 0
-	OrderStatusNeedInfo   = 1
+	OrderStatusIncomplete = 1
+	OrderStatusNeedInfo   = 2
 
 	OrderStatusFinalized         = 10
 	OrderStatusInsufficientFunds = 11
