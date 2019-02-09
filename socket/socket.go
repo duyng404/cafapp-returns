@@ -79,7 +79,14 @@ func init() {
 			return "okbro"
 		})
 		so.On("disconnection", func() {
-			logger.Info("socket disconnected", so.Id())
+			// deregister, remove them from admin list
+			for i, v := range adminClients {
+				if v.ID == so.Id() {
+					adminClients = append(adminClients[:i], adminClients[i+1:]...)
+					logger.Info("admin socket id", so.Id(), "disconnected.")
+					break
+				}
+			}
 		})
 	})
 
