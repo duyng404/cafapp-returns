@@ -54,9 +54,27 @@ body {
 
 /* --------- Order Tracker ----------- */
 
-#username-form{
-    display: none;
+#tracker-nav {
+	position: absolute;
+	top: 5px;
+	/* height: px; */
+	width: 100%;
+	z-index: 20;
 }
-.red{
-    border: 1px solid red;
+
+#tracker-container {
+	position: absolute;
+	top: 65px;
+	bottom: 90px;
+	width: 100%;
+	overflow: scroll;
+	z-index: 10;
+}
+
+#tracker-inputbox {
+	position: absolute;
+	bottom: 0;
+	height: 85px;
+	width: 100%;
+	z-index: 20;
 }
