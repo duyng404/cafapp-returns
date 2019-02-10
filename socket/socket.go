@@ -58,14 +58,17 @@ func init() {
 
 			// enable admin actions
 			// so.On("qfeed-commit-queue", handleCommitQueue)
-			so.On("qfeed-commit-queue", func(committed []int) {
+			so.On("qfeed-commit-queue", func(committed []int) string {
 				handleCommit("qfeed-commit-queue", committed)
+				return "okbro"
 			})
-			so.On("qfeed-commit-prep", func(committed []int) {
+			so.On("qfeed-commit-prep", func(committed []int) string {
 				handleCommit("qfeed-commit-prep", committed)
+				return "okbro"
 			})
-			so.On("qfeed-commit-ship", func(committed []int) {
+			so.On("qfeed-commit-ship", func(committed []int) string {
 				handleCommit("qfeed-commit-ship", committed)
+				return "okbro"
 			})
 
 			c.SendNewOrder = func(o *gorm.Order) {
