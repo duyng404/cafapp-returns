@@ -1,7 +1,6 @@
 package gin
 
 import (
-	"cafapp-returns/config"
 	"cafapp-returns/logger"
 	"net/http"
 
@@ -25,6 +24,5 @@ func handleUserInfo(c *gin.Context) {
 
 func handleOrderTracker(c *gin.Context) {
 	data := make(map[string]interface{})
-	data["BACKEND_URL"] = config.BaseURL
 	renderHTML(c, 200, "tracker.html", data)
 }

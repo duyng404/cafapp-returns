@@ -7,9 +7,6 @@ var (
 	// Port : port to run on
 	Port = "7000"
 
-	// BaseURL
-	BaseURL = "http://localhost:7000"
-
 	// DB info
 	DBUsername = "cafapp"
 	DBPassword = "cafapp"
