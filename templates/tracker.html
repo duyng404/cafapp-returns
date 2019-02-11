@@ -20,92 +20,60 @@
 </head>
 
 <body class="bg-light">
-	<div id="tracker-nav"><div class="container">
-		<nav class="navbar navbar-expand-md navbar-dark bg-dark rounded shadow-sm">
-			<a class="navbar-brand" href="/">
-				<img src="/static/favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">
-				<span class="ca-logo-text text-ca-yellow1"><strong>&nbsp;CafApp Tracker</strong></span>
-			</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample09" aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
+	<div class="container h-100">
 
-			<div class="collapse navbar-collapse" id="navbarsExample09">
-				<ul class="navbar-nav mr-auto">
-				</ul>
-				<ul class="navbar-nav">
-					<li class="nav-item active">
-						<a class="nav-link" href="#"><i class="fa fa-chevron-left" aria-hidden="true"></i> Return to dashboard<span class="sr-only">(current)</span></a>
-					</li>
-				</ul>
-			</div>
-		</nav>
-	</div></div>
+		<div class="d-flex flex-column align-items-stretch h-100">
 
-	<div id ="tracker-container">
-		<div class="container h-100">
-			<div class="h-100">
+			<div class="flex-shrink-1">
 
-				<div class="bg-white rounded shadow-sm mb-3">
-					<div class="media pt-3">
-						<div class="media-body pb-3 px-3 mb-0">
-							<strong class="d-block text-dark">@username</strong>
-							Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
-						</div>
+				<nav class="navbar navbar-expand-md navbar-dark bg-dark rounded shadow-sm">
+					<a class="navbar-brand" href="/">
+						<img src="/static/favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+						<span class="ca-logo-text text-ca-yellow1"><strong>&nbsp;CafApp Tracker</strong></span>
+					</a>
+					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample09" aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+
+					<div class="collapse navbar-collapse" id="navbarsExample09">
+						<ul class="navbar-nav mr-auto">
+						</ul>
+						<ul class="navbar-nav">
+							<li class="nav-item active">
+								<a class="nav-link" href="/dash"><i class="fa fa-chevron-left" aria-hidden="true"></i> Return to My Account<span class="sr-only">(current)</span></a>
+							</li>
+						</ul>
 					</div>
+				</nav>
+			</div>
+
+			<div class="flex-grow-1 overflow-auto">
+
+				<div class="h-100 py-2" id="chat-window">
 				</div>
 
 			</div>
-		</div>
-	</div>
 
-	<div id="tracker-inputbox">
-		<div class="container h-100">
-			<div class="h-100 bg-dark pt-3 px-3 rounded">
-				<div class="input-group">
-					<input type="text" class="form-control" id="main-input" placeholder="Type something..." required>
+			<div class="flex-shrink-1 bg-dark pt-3 px-3 rounded">
+				<form class="input-group" id="main-input" name="main-input" onsubmit="">
+					<input type="text" class="form-control" id="main-input-text" placeholder="Type something..." required>
 					<div class="input-group-append">
-						<button class="btn btn-outline-ca-yellow4" type="button">Send</button>
+						<button class="btn btn-outline-ca-yellow4" type="submit">Send</button>
 					</div>
-				</div>
+				</form>
 				<small class="text-light ml-2">Type <strong>help</strong> to see available chat commands</small>
 			</div>
 		</div>
 	</div>
 
+	<script type="text/javascript">
+		// var BACKEND_URL = {{ .BACKEND_URL }};
+	</script>
 
-
-    <!-- <div id="chatbot-content" class="hidden">
-        <h1 class="text-center">Welcome to the chat bot</h1>
-        <div class="row">
-            <div class="col-4">
-                <div class="card" style="width: 18rem;margin-left:50px;">
-                    <div class="card-body">
-                        <h5 class="card-title">People connected</h5>
-                        <p class="card-text" id="active-users">There are 0 active users</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-8">
-                <div class="card" style="margin-right: 50px;">
-                    <div class="card-body" id="chat-window">
-                        Chat box
-                    </div>
-                    <textarea id="msg-content" class="form-control" placeholder="enter a message" name="Message Content"
-                        required></textarea>
-                    <input id="send" type="button" class="btn btn-success" value="Send" />
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-    <script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-    <script type="text/javascript" src="/static/js/app.js"></script> -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script type="text/javascript" src="/static/js/tracker.js"></script>
 </body>
 
 </html>
