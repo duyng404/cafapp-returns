@@ -8,7 +8,7 @@ window.onload = async function() {
 		console.log(res);
 		socketToken = res;
 	} catch (error) {
-		errorMessage("", "Some error happened while connecting:" + error + ". Maybe try reloading?");
+		errorMessage("", "Unable to connect to TrackerBot:" + error + ". Maybe try reloading?");
 	}
 
 	// init socket connection
@@ -36,7 +36,7 @@ function getInfo() {
 function initSocket() {
 	if (socketToken === '') {
 		console.log('token is blank');
-		errorMessage("", "Cannot connect to TrackerBot T_T");
+		errorMessage("", "Unable to connect to TrackerBot: server error.");
 	}
 
 	socket = io("/", {
@@ -46,28 +46,56 @@ function initSocket() {
 	})
 
 	socket.on("connect", function () {
-		console.log("connected to server from client");
-		newMessage("", "TrackerBot online!", 'info');
-	});
-	socket.on("disconnect", function () {
-		console.log("disconnected from server");
+		socket.emit('register-user', socketToken, function(response){
+			if (response === "okbro") {
+				console.log('socket connected!');
+				newMessage("", "TrackerBot online!", 'info');
+			}
+			else {
+				console.log('invalid response from server');
+				errorMessage("", "Unable to connect to TrackerBot: server error.");
+				socket.close();
+			}
+		})
+		// newMessage("", "TrackerBot online!", 'info');
 	});
 
-	socket.on("newMessage", function (message) {
-		console.log("message received from server")
-		$("#chat-window").append(`<div class="card card-body bg-light"><span class="font-weight-bold">${message.user}</span>  ${message.content}</div>`);
+	socket.on('connect_error', function(error) {
+		console.log('error connecting to socket:',error);
+		errorMessage("", "Unable to connect to Trackerbot.");
+	})
+	socket.on('connect_timeout', function(timeout) {
+		console.log('timed out when connecting to socket:',timeout);
+		errorMessage("", "Unable to connect to Trackerbot: Timed Out.");
+	})
+	socket.on('reconnect_attempt', function(number) {
+		console.log('attempting to connect #', number);
+		errorMessage("", "Trying to reconnect...");
+	})
+	socket.on('disconnect', function (reason) {
+		console.log('disconnected from server with reason', reason);
+		errorMessage("", "Disconnected.");
 	});
+
+	socket.on("chatbot-response", function(response) {
+		newMessage("", response, "chatbot");
+	})
 }
 
 $("#main-input").on("submit", function (e) {
     e.preventDefault();
-    var content = $("#main-input-text").val().trim();
-    // socket.emit("createMessage", {
-    //     user: "Lam",
-    //     content: content
-    // });
-
-	console.log(content);
+	var content = $("#main-input-text").val().trim();
+	newMessage("You", content);
+    socket.emit("chatbot-request", content, function(response){
+		if (response === 'okbro') {
+			console.log('okbro received');
+			return
+		} else {
+			console.log('no okbro?');
+			onConnectErrorFunc('error');
+			setTimeout(() => {socket.open()},2000);
+		}
+	});
 	$("#main-input-text").val("");
 });
 
@@ -78,6 +106,7 @@ function newMessage(title, content, type) {
 	var specialBadge = "";
 	if (type === "error") specialBadge = '<span class="badge badge-danger">Error</span>';
 	if (type === "info") specialBadge = '<span class="badge badge-info">System</span>';
+	if (type === "chatbot") specialBadge = '<span class="badge badge-success">TrackerBot</span>';
 	var timestamp = moment().format("h:mm a");
 	$('\
 	<div class="bg-white rounded shadow-sm my-2">\
@@ -91,8 +120,14 @@ function newMessage(title, content, type) {
 			</div>\
 		</div>\
 	</div>').appendTo("#chat-window");
+	updateScroll();
 }
 
 function errorMessage(title, error) {
 	newMessage(title, error, 'error');
+}
+
+function updateScroll(){
+	var element = document.getElementById("chat-scroll");
+    element.scrollTop = element.scrollHeight;
 }
