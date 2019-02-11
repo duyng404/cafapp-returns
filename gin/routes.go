@@ -107,6 +107,7 @@ func InitRoutes() *gin.Engine {
 	api := router.Group("/api", authMiddleware())
 	{
 		api.POST("/recalculate-order", handleRecalculateOrder)
+		api.GET("/my-info", handleUserInfo)
 	}
 
 	// api group for admin dash, will require auth with admin privilege

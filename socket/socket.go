@@ -9,6 +9,7 @@ import (
 
 // private vars
 var adminClients []*client
+var userClients []*client
 var server *socketio.Server
 
 // client
@@ -38,7 +39,7 @@ func init() {
 	server.On("connection", func(so socketio.Socket) {
 		logger.Info("socket connection from", so.Id())
 
-		// handle registration
+		// handle registration for admin
 		so.On("register", func(token string) string {
 			// admin registration: add the socket to the adminClients list, and return ack
 			user, err := gorm.ValidateAdminSocketToken(token)
@@ -57,7 +58,6 @@ func init() {
 			logger.Info("socket id", so.Id(), "registered as admin.")
 
 			// enable admin actions
-			// so.On("qfeed-commit-queue", handleCommitQueue)
 			so.On("qfeed-commit-queue", func(committed []int) string {
 				handleCommit("qfeed-commit-queue", committed)
 				return "okbro"
@@ -81,6 +81,35 @@ func init() {
 
 			return "okbro"
 		})
+
+		// handle registration for users
+		so.On("register-user", func(token string) string {
+			// user registration: add the socket to the userClients list, and return ack
+			user, err := gorm.ValidateUserSocketToken(token)
+			if err != nil {
+				logger.Info("token validation failed")
+				return "error"
+			}
+
+			// register the client as user
+			c := client{
+				Token: token,
+				ID:    so.Id(),
+				User:  user,
+			}
+			userClients = append(userClients, &c)
+			logger.Info("socket id", so.Id(), "registered as user.")
+
+			// enable user action
+			so.On("chatbot-request", func(request string) string {
+				response := c.handleChatbotRequest(request)
+				so.Emit("chatbot-response", response)
+				return "okbro"
+			})
+
+			return "okbro"
+		})
+
 		so.On("disconnection", func() {
 			// deregister, remove them from admin list
 			for i, v := range adminClients {
