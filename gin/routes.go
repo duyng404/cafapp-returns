@@ -123,8 +123,6 @@ func InitRoutes() *gin.Engine {
 	// TODO: make a group for this and look at authentication
 	router.GET("/socket/", gin.WrapH(socket.GetServer()))
 	router.POST("/socket/", gin.WrapH(socket.GetServer()))
-
-	router.GET("/socket/", gin.WrapH(socket.Server))
 	return router
 }
 
