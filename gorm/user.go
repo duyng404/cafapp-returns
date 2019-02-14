@@ -1,9 +1,12 @@
 package gorm
 
 import (
+	"cafapp-returns/apiObjects"
 	"cafapp-returns/jwt"
 	"cafapp-returns/logger"
 	"time"
+
+	"github.com/davecgh/go-spew/spew"
 
 	"github.com/lithammer/shortuuid"
 
@@ -105,9 +108,24 @@ func (u *User) CountTotalOrders() (int, error) {
 	logger.Info(u.ID)
 	err := DB.Raw(`
 		SELECT COUNT(*) AS total
-		FROM orders o 
-		WHERE o.user_id = ? 
+		FROM orders o
+		WHERE o.user_id = ?
 		AND o.status_code >= ?
 	`, u.ID, OrderStatusPlaced).Scan(&res).Error
 	return res.total, err
+}
+
+// GetUsersForAdmin count the total orders for a particular user
+func GetUsersForAdmin() ([]apiObjects.AdminUsersStruct, error) {
+	var tmp []apiObjects.AdminUsersStruct
+	DB.Raw(`
+		SELECT
+			u.first_name,
+			COUNT(o.*) AS total_orders
+		FROM users u
+			INNER JOIN orders o ON o.user_id = u.id
+		WHERE o.status_code >= ?
+	`, OrderStatusPlaced).Scan(&tmp)
+	logger.Info(spew.Sdump(tmp))
+	return tmp, nil
 }

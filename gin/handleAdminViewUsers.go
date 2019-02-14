@@ -3,6 +3,7 @@ package gin
 import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,28 +15,28 @@ func handleAdminViewUsers(c *gin.Context) {
 		logger.Error("There's an error retrieving users: ", err)
 		return
 	}
-	c.JSON(200, gin.H{
-		"users": allUsers,
-	})
+	result, err := gorm.GetUsersForAdmin()
+	c.JSON(200, result)
 }
-func handleGetTotalOrders(c *gin.Context) {
-	var users gorm.User
-	allUsers, err := users.GetAllUser()
-	if err != nil {
-		logger.Error("There's an error retrieving users: ", err)
-		return
-	}
-	//create a list that stores each user's total orders
-	var totalOrders []int
-	for i := 0; i < len(allUsers); i++ {
-		order, err := allUsers[i].CountTotalOrders()
-		if err != nil {
-			logger.Error("There's an error counting total orders", err)
-			return
-		}
-		totalOrders = append(totalOrders, order)
-	}
-	c.JSON(200, gin.H{
-		"totalOrders": totalOrders,
-	})
-}
+
+// func handleGetTotalOrders(c *gin.Context) {
+// 	var users gorm.User
+// 	allUsers, err := users.GetAllUser()
+// 	if err != nil {
+// 		logger.Error("There's an error retrieving users: ", err)
+// 		return
+// 	}
+// 	//create a list that stores each user's total orders
+// 	var totalOrders []int
+// 	for i := 0; i < len(allUsers); i++ {
+// 		order, err := allUsers[i].CountTotalOrders()
+// 		if err != nil {
+// 			logger.Error("There's an error counting total orders", err)
+// 			return
+// 		}
+// 		totalOrders = append(totalOrders, order)
+// 	}
+// 	c.JSON(200, gin.H{
+// 		"totalOrders": totalOrders,
+// 	})
+// }
