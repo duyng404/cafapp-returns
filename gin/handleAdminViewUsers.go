@@ -9,13 +9,11 @@ import (
 
 func handleAdminViewUsers(c *gin.Context) {
 	//make users array to hold the retrieved users
-	var users gorm.User
-	allUsers, err := users.GetAllUser()
+	result, err := gorm.GetUsersForAdmin()
 	if err != nil {
 		logger.Error("There's an error retrieving users: ", err)
 		return
 	}
-	result, err := gorm.GetUsersForAdmin()
 	c.JSON(200, result)
 }
 

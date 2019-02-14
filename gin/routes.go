@@ -118,7 +118,6 @@ func InitRoutes() *gin.Engine {
 		apiadmin.GET("/view-redeemable-codes", handleAdminViewAllRedeemableCodes)
 		apiadmin.POST("/generate-five-codes", handleAdminGenerateFiveCodes)
 		apiadmin.GET("/view-users", handleAdminViewUsers)
-		apiadmin.GET("/get-total-orders", handleGetTotalOrders)
 	}
 
 	// TODO: make a group for this and look at authentication
