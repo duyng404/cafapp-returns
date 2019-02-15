@@ -14,6 +14,7 @@ type RedeemableCode struct {
 	CreatedAt        time.Time  `json:"created_at"`
 	AmountInCents    int        `json:"amount_in_cents"`
 	Status           int        `json:"status"`
+	Reason           string     `json:"reason"`
 	RedeemedAt       *time.Time `json:"redeemed_at"`
 	RedeemedByUserID uint       `json:"redeemed_by_user_id"`
 	RedeemedByUser   User       `json:"redeemed_by_user" gorm:"foreignkey:RedeemedByUserID,association_foreignkey:ID"`
@@ -42,14 +43,18 @@ func GetAllRedeemableCodes() ([]RedeemableCode, error) {
 	return res, err
 }
 
-// GenerateFiveRedeemableCodes : generate a set of 5 codes and save it to db
-func GenerateFiveRedeemableCodes() ([]*RedeemableCode, error) {
+// GenerateRedeemableCodes : generate a set amount of codes and save it to db
+func GenerateRedeemableCodes(amount int, reason string) ([]*RedeemableCode, error) {
+	// upper limit is 50
+	if amount > 50 {
+		amount = 50
+	}
 	var res []*RedeemableCode
-	// loop until we have 5
-	for len(res) < 5 {
+	// loop until we have enough
+	for len(res) < amount {
 		// generate
 		generator := vcgen.New(&vcgen.Generator{
-			Count:   5,
+			Count:   uint16(amount),
 			Pattern: "####-####-####",
 			Prefix:  "CA-",
 			Charset: "123456789QWERTYUPADFGHJKLXCVBNM",
@@ -68,6 +73,7 @@ func GenerateFiveRedeemableCodes() ([]*RedeemableCode, error) {
 				Code:          v,
 				AmountInCents: 1000,
 				Status:        RedeemableCodeStatusAvailable,
+				Reason:        reason,
 			}
 			err = DB.Create(&code).Error
 			if err != nil {
