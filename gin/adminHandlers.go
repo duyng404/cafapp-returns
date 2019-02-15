@@ -58,8 +58,23 @@ func handleAdminViewAllRedeemableCodes(c *gin.Context) {
 	c.JSON(http.StatusOK, codes)
 }
 
-func handleAdminGenerateFiveCodes(c *gin.Context) {
-	codes, err := gorm.GenerateFiveRedeemableCodes()
+func handleAdminGenerateRedeemableCodes(c *gin.Context) {
+	// TODO: factor out this struct
+	type reqStruct struct {
+		Amount int    `json:"amount"`
+		Reason string `json:"reason"`
+	}
+	var req reqStruct
+
+	// bind
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error("error reading request:", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	codes, err := gorm.GenerateRedeemableCodes(req.Amount, req.Reason)
 	if err != nil {
 		logger.Error("error generating 5 redeemable codes:")
 		c.JSON(http.StatusInternalServerError, codes)
