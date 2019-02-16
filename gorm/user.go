@@ -36,6 +36,18 @@ func (u *User) GetAllUser() ([]User, error) {
 	return users, err
 }
 
+// GetOneUser get one particular user based on id
+func (u *User) GetOneUser(id uint) (*User, error) {
+	var user User
+	err := DB.Raw(`
+		SELECT u.*
+		FROM users u
+		WHERE u.id = ?
+		AND u.deleted_at IS NULL
+	`, id).Scan(&user).Error
+	return &user, err
+}
+
 // Create : Create the object
 func (u *User) Create() error {
 	return DB.Create(u).Error

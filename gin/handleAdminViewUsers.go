@@ -3,8 +3,8 @@ package gin
 import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
-
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func handleAdminViewUsers(c *gin.Context) {
@@ -38,3 +38,20 @@ func handleAdminViewUsers(c *gin.Context) {
 // 		"totalOrders": totalOrders,
 // 	})
 // }
+func handleGetUserAndAllOrdersFromUser(c *gin.Context) {
+	var user gorm.User
+	userID, err := strconv.ParseUint(c.Param("userid"), 16, 16)
+	if err != nil {
+		logger.Info("Cannot convert userid to uint")
+		return
+	}
+	//get a list of order object for an user
+	allOrders, err := gorm.GetAllOrderFromUser(uint(userID))
+	//get an user object
+	userInfo, err := user.GetOneUser(uint(userID))
+
+	c.JSON(200, gin.H{
+		"allOrders": allOrders,
+		"userInfo":  userInfo,
+	})
+}

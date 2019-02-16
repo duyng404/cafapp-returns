@@ -1,6 +1,7 @@
 package apiObjects
 
 type AdminUsersStruct struct {
+	ID          int    `json:"user_id"`
 	FirstName   string `json:"first_name"`
 	LastName    string `json:"last_name"`
 	FullName    string `json:"full_name"`
