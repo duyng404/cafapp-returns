@@ -83,7 +83,7 @@ func (o *Order) GetDrinkRow() *OrderRow {
 }
 
 // GetAllOrderFromUser : return all Orders that Users have placed
-func GetAllOrderFromUser(id uint) (*[]Order, error) {
+func GetAllOrderFromUser(id uint) ([]Order, error) {
 	var orders []Order
 	err := DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").Preload("Destination").
 		Where("user_id = ? AND status_code >= ?", id, OrderStatusPlaced).Find(&orders).Error
@@ -91,7 +91,7 @@ func GetAllOrderFromUser(id uint) (*[]Order, error) {
 		return nil, err
 	}
 	//logger.Info("data is: ", spew.Sdump(orders))
-	return &orders, nil
+	return orders, nil
 }
 
 // CalculateDeliveryFee : calculate the delivery of a given order

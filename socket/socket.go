@@ -4,7 +4,7 @@ import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
 
-	"github.com/googollee/go-socket.io"
+	socketio "github.com/googollee/go-socket.io"
 )
 
 // private vars
@@ -102,7 +102,7 @@ func init() {
 
 			// enable user action
 			so.On("chatbot-request", func(request string) string {
-				response := c.handleChatbotRequest(request)
+				response := c.handleChatbotRequest(request,user)
 				so.Emit("chatbot-response", response)
 				return "okbro"
 			})
