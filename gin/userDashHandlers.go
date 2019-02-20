@@ -22,6 +22,6 @@ func handleUserDash(c *gin.Context) {
 
 	//current user info
 	data["user"] = user
-	data["totalOrders"] = len(*orders)
+	data["totalOrders"] = len(orders)
 	renderHTML(c, 200, "userdash-top.html", data)
 }
