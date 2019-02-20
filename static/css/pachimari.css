@@ -52,5 +52,28 @@ body {
 	padding-top: 10vh;
 }
 
-/* --------- Order Tracker ----------- */
+/* --------- User Redeem ----------- */
 
+.redeem-input-pre {
+	font-family: 'Fira Mono', monospace;
+	font-size: 1.5rem;
+	white-space: nowrap;
+	padding: 0 5px;
+}
+
+.redeem-input-wrapper {
+	max-width: 20rem;
+}
+
+.redeem-input {
+	font-family: 'Fira Mono', monospace;
+	font-size: 1.5rem;
+	text-transform: uppercase;
+	text-align: center;
+}
+
+.redeem-submit {
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}

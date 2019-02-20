@@ -45,6 +45,17 @@ func loginFailed(errmsg string, c *gin.Context, session sessions.Session) {
 	return
 }
 
+// a helper func to use when error during code redeem.
+// will redirect user to redeem page and display an err msg.
+func redeemFailed(errmsg string, c *gin.Context) {
+	session := sessions.Default(c)
+	session.Set("error", errmsg)
+	session.Save()
+	c.Redirect(http.StatusFound, "/redeem")
+	c.Abort()
+	return
+}
+
 // a helper func to use when accessing restricted pages without being logged in
 // will save the current path in session, so after loggin in will be redirected
 func stashThisPath(c *gin.Context, session sessions.Session) {

@@ -11,13 +11,14 @@ import (
 // User : a cafapp user!
 type User struct {
 	gorm.Model
-	FirstName   string `json:"first_name"`
-	LastName    string `json:"last_name"`
-	FullName    string `json:"full_name"`
-	Email       string `json:"email" gorm:"index:email"`
-	GusUsername string `json:"gus_username"`
-	GusID       int    `json:"gus_id"`
-	IsAdmin     bool   `json:"-"`
+	FirstName             string `json:"first_name"`
+	LastName              string `json:"last_name"`
+	FullName              string `json:"full_name"`
+	Email                 string `json:"email" gorm:"index:email"`
+	GusUsername           string `json:"gus_username"`
+	GusID                 int    `json:"gus_id"`
+	IsAdmin               bool   `json:"-"`
+	CurrentBalanceInCents int    `json:"current_balance_in_cents"`
 }
 
 // Create : Create the object
@@ -81,4 +82,41 @@ func (u *User) GetOneIncompleteOrder() (*Order, error) {
 		return nil, err
 	}
 	return &o, nil
+}
+
+// RedeemDeliveryCode : add the delivery code's amount to user's balance, and create a transaction record
+func (u *User) RedeemDeliveryCode(code *RedeemableCode) (bool, error) {
+	// mark the code as redeemed
+	ok, err := code.MarkCodeAsRedeemed(u)
+	if err != nil {
+		return false, err
+	}
+	if !ok {
+		return false, nil
+	}
+
+	// increase balance
+	originalAmount := u.CurrentBalanceInCents
+	if ok {
+		u.CurrentBalanceInCents += code.AmountInCents
+		err := u.Save()
+		if err != nil {
+			return false, err
+		}
+	}
+
+	// save transaction
+	t := Transaction{
+		User:         u,
+		AmountBefore: originalAmount,
+		AmountAfter:  u.CurrentBalanceInCents,
+		Type:         TransactionTypeRedeem,
+		RelatedInfo:  code.Code,
+	}
+	err = t.Create()
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

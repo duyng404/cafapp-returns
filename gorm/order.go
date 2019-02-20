@@ -98,7 +98,7 @@ func GetAllOrderFromUser(id uint) (*[]Order, error) {
 // does not save. Caller should handle that
 func (o *Order) CalculateDeliveryFee() {
 	// TODO: implement a proper rate
-	o.DeliveryFeeInCents = 75
+	o.DeliveryFeeInCents = 250
 }
 
 // CalculateTotal : calculate the total fee based on what's in order rows
