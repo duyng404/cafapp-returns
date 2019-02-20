@@ -48,7 +48,7 @@ func handleGetUserAndAllOrdersFromUser(c *gin.Context) {
 	//get a list of order object for an user
 	allOrders, err := gorm.GetAllOrderFromUser(uint(userID))
 	//get an user object
-	userInfo, err := user.GetOneUser(uint(userID))
+	userInfo := user.PopulateByID(uint(userID))
 
 	c.JSON(200, gin.H{
 		"allOrders": allOrders,
