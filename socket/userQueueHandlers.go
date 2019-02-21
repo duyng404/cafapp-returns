@@ -25,5 +25,5 @@ func (c *client) handleChatbotRequest(request string, user *gorm.User) string {
 	if request == "help" {
 		return "Type orders for your order's details"
 	}
-	return "command not recognized"
+	return "Command not recognized. Type help for more command"
 }
