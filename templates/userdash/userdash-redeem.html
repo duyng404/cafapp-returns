@@ -10,7 +10,15 @@
 
 	<div class="my-5"></div>
 
-	<p class="w-75 mx-auto">Redeeming as user . Your current balance is .</p>
+	{{ if .Error }}
+	<div class="alert alert-danger" role="alert">
+		{{ .Error }}
+	</div>
+
+	<div class="my-5"></div>
+	{{ end }}
+
+	<p class="w-75 mx-auto">Redeeming as <span class="text-primary">{{ .User.FullName }}</span>. Your current balance is <span class="text-primary">{{ formatMoney .User.CurrentBalanceInCents }}</span>.</p>
 
 	<div class="my-4"></div>
 
@@ -18,7 +26,7 @@
 		<div class="d-flex justify-content-center align-items-center">
 			<div class="redeem-input-pre">CA-</div>
 			<div class="redeem-input-wrapper">
-				<input class="form-control form-control-lg redeem-input" type="text" id="redeem-input" name="redeem-input" data-inputmask="'mask': '****-****-****'">
+				<input class="form-control form-control-lg redeem-input" autofocus type="text" id="redeem-input" name="redeem-input" data-inputmask="'mask': '****-****-****'">
 			</div>
 		</div>
 

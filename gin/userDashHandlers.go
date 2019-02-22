@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gin-contrib/sessions"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,6 +33,17 @@ func handleUserDash(c *gin.Context) {
 func handleUserRedeem(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["Title"] = "Redeem"
+
+	// get user
+	user := getCurrentAuthUser(c)
+	data["User"] = user
+
+	// get pending errors if any
+	session := sessions.Default(c)
+	err := session.Get("error")
+	session.Delete("error")
+	session.Save()
+	data["Error"], _ = err.(string)
 
 	renderHTML(c, 200, "userdash-redeem.html", data)
 }
@@ -70,11 +83,33 @@ func handleUserRedeemPost(c *gin.Context) {
 		return
 	}
 
+	session := sessions.Default(c)
+	session.Set("redeemSuccess", true)
+	session.Set("newBalance", user.CurrentBalanceInCents)
+	session.Save()
 	c.Redirect(http.StatusFound, "/redeem-success")
 }
 
 func handleUserRedeemSuccess(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["Title"] = "Woohoo!"
+
+	session := sessions.Default(c)
+	success, ok := session.Get("redeemSuccess").(bool)
+	if !ok || !success {
+		c.Redirect(http.StatusFound, "/redeem")
+		return
+	}
+	newBalance, ok := session.Get("newBalance").(int)
+	if !ok {
+		user := getCurrentAuthUser(c)
+		newBalance = user.CurrentBalanceInCents
+	}
+	data["NewBalance"] = newBalance
+
+	session.Delete("redeemSuccess")
+	session.Delete("newBalance")
+	session.Save()
+
 	renderHTML(c, 200, "userdash-redeem-success.html", data)
 }
