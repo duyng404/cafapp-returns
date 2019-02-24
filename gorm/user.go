@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
-
 	"github.com/lithammer/shortuuid"
 
 	"github.com/jinzhu/gorm"
@@ -141,21 +139,19 @@ func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObject
 			`)
 	//both fullname and gususername are empty
 	if len(fn) == 0 && len(gususername) == 0 {
-		sql.WriteString(`ORDER BY ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, sortBy).Scan(&tmp).Error
-		logger.Info(spew.Sdump(tmp))
+		err := DB.Raw(sql.String(), OrderStatusPlaced).Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else if len(fn) > 0 && len(gususername) == 0 {
-		sql.WriteString(`WHERE full_name LIKE ? ORDER BY ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", sortBy).Scan(&tmp).Error
+		sql.WriteString(`WHERE full_name LIKE ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else if len(fn) == 0 && len(gususername) > 0 {
-		sql.WriteString(`WHERE gus_username LIKE ? ORDER BY ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+gususername+"%", sortBy).Scan(&tmp).Error
+		sql.WriteString(`WHERE gus_username LIKE ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else {
-		sql.WriteString(`WHERE full_name LIKE ? AND gus_username LIKE ? ORDER BY ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", "%"+gususername+"%", sortBy).Scan(&tmp).Error
+		sql.WriteString(`WHERE full_name LIKE ? AND gus_username LIKE ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	}
 }
