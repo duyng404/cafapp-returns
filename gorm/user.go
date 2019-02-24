@@ -4,6 +4,7 @@ import (
 	"cafapp-returns/apiObjects"
 	"cafapp-returns/jwt"
 	"cafapp-returns/logger"
+	"strings"
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
@@ -116,17 +117,45 @@ func (u *User) GetOneIncompleteOrder() (*Order, error) {
 // }
 
 // GetUsersForAdmin count the total orders for a particular user
-func GetUsersForAdmin() ([]apiObjects.AdminUsersStruct, error) {
+func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObjects.AdminUsersStruct, error) {
 	var tmp []apiObjects.AdminUsersStruct
-	err := DB.Raw(`
-	SELECT
-		u.*,
-		(SELECT COUNT(*)
-		FROM orders o_sub
-		WHERE o_sub.user_id = u.id
-		AND o_sub.status_code >= ?) AS total_orders
-	FROM users u
-	`, OrderStatusPlaced).Scan(&tmp).Error
-	logger.Info(spew.Sdump(tmp))
-	return tmp, err
+	var sql strings.Builder
+	switch sortBy {
+	case "idDESC":
+		sortBy = "u.id DESC"
+		logger.Info(sortBy)
+	case "full_nameDESC":
+		sortBy = "u.full_name DESC"
+		logger.Info(sortBy)
+	case "gus_usernameDESC":
+		sortBy = "u.gus_username DESC"
+		logger.Info(sortBy)
+	}
+	sql.WriteString(`SELECT
+			u.*,
+			(SELECT COUNT(*)
+			FROM orders o_sub
+			WHERE o_sub.user_id = u.id
+			AND o_sub.status_code >= ?) AS total_orders
+			FROM users u
+			`)
+	//both fullname and gususername are empty
+	if len(fn) == 0 && len(gususername) == 0 {
+		sql.WriteString(`ORDER BY ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, sortBy).Scan(&tmp).Error
+		logger.Info(spew.Sdump(tmp))
+		return tmp, err
+	} else if len(fn) > 0 && len(gususername) == 0 {
+		sql.WriteString(`WHERE full_name LIKE ? ORDER BY ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", sortBy).Scan(&tmp).Error
+		return tmp, err
+	} else if len(fn) == 0 && len(gususername) > 0 {
+		sql.WriteString(`WHERE gus_username LIKE ? ORDER BY ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+gususername+"%", sortBy).Scan(&tmp).Error
+		return tmp, err
+	} else {
+		sql.WriteString(`WHERE full_name LIKE ? AND gus_username LIKE ? ORDER BY ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", "%"+gususername+"%", sortBy).Scan(&tmp).Error
+		return tmp, err
+	}
 }

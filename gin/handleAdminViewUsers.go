@@ -10,7 +10,10 @@ import (
 
 func handleAdminViewUsers(c *gin.Context) {
 	//make users array to hold the retrieved users
-	result, err := gorm.GetUsersForAdmin()
+	fullname := c.Query("fullname")
+	gususername := c.Query("gususername")
+	sortby := c.Query("sortBy")
+	result, err := gorm.GetUsersForAdmin(fullname, gususername, sortby)
 	if err != nil {
 		logger.Error("There's an error retrieving users: ", err)
 		return
