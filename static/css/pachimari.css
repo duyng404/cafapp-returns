@@ -77,3 +77,8 @@ body {
 	margin-left: auto;
 	margin-right: auto;
 }
+
+.font-codecard {
+	font-family: 'Fira Mono', monospace;
+	text-transform: uppercase;
+}

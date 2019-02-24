@@ -109,6 +109,9 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 		return
 	}
 
+	// user's current balance
+	data["balance"] = user.CurrentBalanceInCents
+
 	// does user have gus id
 	if user.GusID == 0 {
 		data["needGusID"] = true

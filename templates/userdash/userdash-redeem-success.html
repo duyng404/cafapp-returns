@@ -5,7 +5,7 @@
 <section id="loginform" class="container text-center">
 	<img class="mb-4" src="/static/img/change.png" alt="ok!" width="150" height="150">
 	<h1 class="h3 mb-3 font-weight-normal">Redeem Successful!</h1>
-	<p class="lead">Your Delivery Card was redeemed successfully! Your balance is now {{ formatMoney .NewBalance }}.</p>
+	<p class="lead">Your Delivery Card was redeemed successfully! Your balance is now <div id="text-info">{{ formatMoney .NewBalance }}</div>.</p>
 
 	<div class="my-5"></div>
 

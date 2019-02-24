@@ -122,24 +122,30 @@
 
 			<h4 class="mb-3">Delivery Fee</h4>
 
-			<p>Your CafApp balance is currently <span class="text-info">$2.50</span>. This order will cost <span class="text-danger">$1.50</span> in delivery charge. You can add balance by <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false" aria-controls="cardRedeemForm">redeeming a CafApp Balance Card</a>.</p>
+			<p>Your CafApp balance is currently <span class="text-info">{{ formatMoney .balance }}</span>. This order will cost <span class="text-danger">$2.50</span> in delivery fee. You can add balance by <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false" aria-controls="cardRedeemForm">redeeming a CafApp Delivery Card here</a>.</p>
 			<form class="collapse" id="cardRedeemForm">
 				<div class="row">
 					<div class="col-12 mb-3">
-						<label for="giftcardcode">Enter CafApp Balance Card code</label>
+						<label for="giftcardcode">Enter Your CafApp Delivery Card code</label>
 						<div class="input-group">
-							<input type="text" class="form-control" id="giftcardcode" placeholder="" required>
+							<div class="input-group-prepend">
+								<span class="input-group-text font-codecard">CA-</span>
+							</div>
+							<input class="form-control font-codecard" type="text" id="giftcardcode" name="giftcardcode" data-inputmask="'mask': '****-****-****'" required>
 							<div class="input-group-append">
 								<button class="btn btn-outline-ca-yellow4" type="button">Redeem</button>
 							</div>
 						</div>
-						<small class="text-muted">CafApp Balance Cards can be purchased from the Bookmark</small>
 						<div class="invalid-feedback">
 							Please enter the card code
 						</div>
 					</div>
 				</div>
 			</form>
+
+			<!-- TODO: Rewrite dis line -->
+			<p><span class="badge badge-info"> Tip </span> The cards are sold at the Bookmark for <span class="text-info">$10</span>.
+				With each delivery priced at <span class="text-info">$2.50</span>, one card will allow you to order <span class="text-info">four</span> times.</p>
 
 			<hr class="mb-4">
 			<button class="btn btn-primary btn-lg btn-block" form="orderDetailsForm" type="submit">Continue to Checkout</button>
@@ -151,6 +157,8 @@
 {{ end }}
 
 {{ define "scripts" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js" data-autoinit="true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/jquery.inputmask.min.js"></script>
 <script type="text/javascript">
 	// disabling form submission if there are invalid fields
 	(function() {
@@ -199,5 +207,9 @@
 		$("#order-total").html("<strong>"+data.order_total+"</strong>")
 		$("#caf-acct-charge-amt").html(data.caf_acct_charge_amt)
 	}
+
+	$(document).ready(function(){
+		$(":input").inputmask();
+  });
 </script>
 {{ end }}
