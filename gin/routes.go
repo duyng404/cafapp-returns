@@ -117,7 +117,6 @@ func InitRoutes() *gin.Engine {
 		apiadmin.GET("/view-queue", handleAdminViewQueue)
 		apiadmin.GET("/destination", handleAdminGetDestinations)
 		apiadmin.GET("/view-redeemable-codes", handleAdminViewAllRedeemableCodes)
-		apiadmin.POST("/generate-five-codes", handleAdminGenerateFiveCodes)
 		apiadmin.GET("/view-users", handleAdminViewUsers)
 		apiadmin.GET("/view-users/:userid", handleAdminViewOneUser)
 		apiadmin.POST("/generate-redeemable-codes", handleAdminGenerateRedeemableCodes)
