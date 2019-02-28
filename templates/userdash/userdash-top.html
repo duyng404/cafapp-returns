@@ -29,8 +29,8 @@
 			<div class="col text-left">{{ .totalOrders }}</div>
 		</div>
 		<div class="row justify-content-between">
-			<div class="col text-right">Current balance</div>
-			<div class="col text-left">Nothing here yet</div>
+			<div class="col text-right">Current balance:</div>
+			<div class="col text-left">TBA</div>
 		</div>
 	</div>
 </section>
@@ -65,6 +65,13 @@
 	{{ else }}
 	<p>You havent placed any order! <a href="/order">Go here to order now!</a></p>
 	{{ end }}
+</section>
+
+<section class="container text-center mt-5">
+	<h2 class="font-weight-bold">Need help?</h2>
+	<p>If you have questions and/or problems with your order or your account, please send us an email at <span class="text-info">cafappsupport@gustavus.edu</span>.<br/>
+		Thanks for using CafApp!
+	</p>
 </section>
 
 {{ end }}

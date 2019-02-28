@@ -1,6 +1,6 @@
 {{ define "topbar" }}
 
-<nav class="navbar navbar-expand-sm navbar-dark bg-ca-dark">
+<nav class="navbar navbar-expand-md navbar-dark bg-ca-dark">
 	<a class="navbar-brand" href="/">
 		<img src="/static/favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">
 		<span class="ca-logo-text text-ca-yellow1"><strong>&nbsp;CafApp</strong></span>
@@ -13,13 +13,13 @@
 		{{ if .loggedIn }}
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item">
-					<a class="nav-link" href="/order">Menu</a>
+					<a class="nav-link" href="/about">About</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/news">News</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/about">About</a>
+					<a class="nav-link" href="/tracker">Tracker</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/redeem">Redeem</a>
@@ -28,15 +28,15 @@
 					<a class="nav-link text-ca-yellow2" href="/order">Order Now!</a>
 				</li>
 				{{ if .isAdmin }}
-				<div class="dropdown">
-					<button class="btn btn-ca-yellow2 my-sm-0 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<li class="nav-item dropdown">
+					<a href="#" class="nav-link text-ca-yellow2 dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					  Admin
-					</button>
+					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 					  <a class="dropdown-item" href="/admin">Dashboard</a>
 					  <a class="dropdown-item" href="/driver">Driver</a>
 					</div>
-				</div>
+				</li>
 				{{ end }}
 			</ul>
 			<ul class="navbar-nav">
@@ -45,18 +45,18 @@
 				</li>
 				<li class="nav-item">
 					<a class="btn btn-outline-secondary my-2 my-sm-0" href="/logout">Log Out</a>
-				</li>	
+				</li>
 			</div>
 		{{ else }}
 		<ul class="navbar-nav mr-auto">
 			<li class="nav-item">
-				<a class="nav-link" href="/menu">Menu</a>
+				<a class="nav-link" href="/about">About</a>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="/news">News</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link" href="/about">About</a>
+				<a class="nav-link" href="/menu">Menu</a>
 			</li>
 		</ul>
 			<a class="btn btn-ca-yellow1 my-2 my-sm-0" href="/login">Log In</a>
