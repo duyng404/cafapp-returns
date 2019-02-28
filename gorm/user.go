@@ -1,8 +1,10 @@
 package gorm
 
 import (
+	"cafapp-returns/apiObjects"
 	"cafapp-returns/jwt"
 	"cafapp-returns/logger"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -18,6 +20,17 @@ type User struct {
 	GusUsername string `json:"gus_username"`
 	GusID       int    `json:"gus_id"`
 	IsAdmin     bool   `json:"-"`
+}
+
+// GetAllUser
+func (u *User) GetAllUser() ([]User, error) {
+	var users []User
+	err := DB.Raw(`
+		SELECT u.*
+		FROM users u
+		WHERE u.deleted_at IS NULL
+	`).Scan(&users).Error
+	return users, err
 }
 
 // Create : Create the object
@@ -81,4 +94,46 @@ func (u *User) GetOneIncompleteOrder() (*Order, error) {
 		return nil, err
 	}
 	return &o, nil
+}
+
+// GetUsersForAdmin get all users for admin dashboard, with filters and sorting
+func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObjects.AdminUsersStruct, error) {
+	var tmp []apiObjects.AdminUsersStruct
+	var sql strings.Builder
+	switch sortBy {
+	case "idDESC":
+		sortBy = "u.id DESC"
+		logger.Info(sortBy)
+	case "full_nameDESC":
+		sortBy = "u.full_name DESC"
+		logger.Info(sortBy)
+	case "gus_usernameDESC":
+		sortBy = "u.gus_username DESC"
+		logger.Info(sortBy)
+	}
+	sql.WriteString(`SELECT
+			u.*,
+			(SELECT COUNT(*)
+			FROM orders o_sub
+			WHERE o_sub.user_id = u.id
+			AND o_sub.status_code >= ?) AS total_orders
+			FROM users u
+			`)
+	//both fullname and gususername are empty
+	if len(fn) == 0 && len(gususername) == 0 {
+		err := DB.Raw(sql.String(), OrderStatusPlaced).Order(sortBy).Scan(&tmp).Error
+		return tmp, err
+	} else if len(fn) > 0 && len(gususername) == 0 {
+		sql.WriteString(`WHERE full_name LIKE ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%").Order(sortBy).Scan(&tmp).Error
+		return tmp, err
+	} else if len(fn) == 0 && len(gususername) > 0 {
+		sql.WriteString(`WHERE gus_username LIKE ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
+		return tmp, err
+	} else {
+		sql.WriteString(`WHERE full_name LIKE ? AND gus_username LIKE ?`)
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
+		return tmp, err
+	}
 }

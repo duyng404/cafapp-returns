@@ -117,13 +117,14 @@ func InitRoutes() *gin.Engine {
 		apiadmin.GET("/view-queue", handleAdminViewQueue)
 		apiadmin.GET("/destination", handleAdminGetDestinations)
 		apiadmin.GET("/view-redeemable-codes", handleAdminViewAllRedeemableCodes)
+		apiadmin.GET("/view-users", handleAdminViewUsers)
+		apiadmin.GET("/view-users/:userid", handleAdminViewOneUser)
 		apiadmin.POST("/generate-redeemable-codes", handleAdminGenerateRedeemableCodes)
 	}
 
 	// TODO: make a group for this and look at authentication
 	router.GET("/socket/", gin.WrapH(socket.GetServer()))
 	router.POST("/socket/", gin.WrapH(socket.GetServer()))
-
 	return router
 }
 
