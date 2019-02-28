@@ -98,23 +98,7 @@ func (u *User) GetOneIncompleteOrder() (*Order, error) {
 	return &o, nil
 }
 
-//CountTotalOrders count the total orders for a particular user
-// func (u *User) CountTotalOrders() (int, error) {
-// 	type totalOrder struct {
-// 		total int
-// 	}
-// 	var res totalOrder
-// 	logger.Info(u.ID)
-// 	err := DB.Raw(`
-// 		SELECT COUNT(*) AS total
-// 		FROM orders o
-// 		WHERE o.user_id = ?
-// 		AND o.status_code >= ?
-// 	`, u.ID, OrderStatusPlaced).Scan(&res).Error
-// 	return res.total, err
-// }
-
-// GetUsersForAdmin count the total orders for a particular user
+// GetUsersForAdmin get all users for admin dashboard, with filters and sorting
 func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObjects.AdminUsersStruct, error) {
 	var tmp []apiObjects.AdminUsersStruct
 	var sql strings.Builder
