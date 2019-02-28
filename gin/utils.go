@@ -19,6 +19,9 @@ func renderHTML(c *gin.Context, code int, template string, data map[string]inter
 	if u != nil {
 		data["loggedIn"] = true
 		data["currentUser"] = u
+		if u.IsAdmin == true {
+			data["isAdmin"] = true
+		}
 	}
 
 	// write to a buffer
