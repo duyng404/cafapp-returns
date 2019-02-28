@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/lithammer/shortuuid"
-
 	"github.com/jinzhu/gorm"
 )
 
@@ -70,10 +68,10 @@ func (u *User) GenerateJWT() (string, error) {
 // GenerateSocketToken generate a new socket token for the user
 func (u *User) GenerateSocketToken() (string, error) {
 	token := UserSocketToken{
-		User:  *u,
-		Token: shortuuid.New() + shortuuid.New(),
+		User:   *u,
+		UserID: u.ID,
 	}
-	err := token.Create()
+	err := token.Renew()
 	if err != nil {
 		return "", err
 	}

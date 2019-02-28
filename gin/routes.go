@@ -107,6 +107,7 @@ func InitRoutes() *gin.Engine {
 	api := router.Group("/api", authMiddleware())
 	{
 		api.POST("/recalculate-order", handleRecalculateOrder)
+		api.GET("/my-info", handleUserInfo)
 	}
 
 	// api group for admin dash, will require auth with admin privilege
@@ -119,6 +120,7 @@ func InitRoutes() *gin.Engine {
 		apiadmin.POST("/generate-five-codes", handleAdminGenerateFiveCodes)
 		apiadmin.GET("/view-users", handleAdminViewUsers)
 		apiadmin.GET("/view-users/:userid", handleAdminViewOneUser)
+		apiadmin.POST("/generate-redeemable-codes", handleAdminGenerateRedeemableCodes)
 	}
 
 	// TODO: make a group for this and look at authentication
