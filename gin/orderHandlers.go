@@ -6,6 +6,7 @@ import (
 	"cafapp-returns/socket"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -473,4 +474,56 @@ func handleRecalculateOrder(c *gin.Context) {
 	}
 
 	c.JSON(200, res)
+}
+
+// when frontend send an ajax request to redeem a delivery card
+func handleRedeemDeliveryCard(c *gin.Context) {
+	// bind
+	type reqStruct struct {
+		DeliveryCode string `json:"delivery_code"`
+	}
+	var req reqStruct
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	// uppercase
+	req.DeliveryCode = "CA-" + strings.ToUpper(req.DeliveryCode)
+
+	// log
+	logger.Info(req.DeliveryCode)
+
+	// check if code exist in db
+	code, err := gorm.GetRedeemableCodeByCode(req.DeliveryCode)
+	if err == gorm.ErrRecordNotFound {
+		logger.Error("code not found:", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	if err != nil {
+		logger.Error("unable to query db:", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	// get user
+	user := getCurrentAuthUser(c)
+
+	// add the amount to user's balance
+	ok, err := user.RedeemDeliveryCode(code)
+	if err != nil {
+		logger.Error("unable to redeem code:", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		logger.Error("invalid code entered:", req.DeliveryCode)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	c.String(200, "%v", user.CurrentBalanceInCents)
 }

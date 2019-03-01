@@ -112,6 +112,7 @@ func InitRoutes() *gin.Engine {
 	{
 		api.POST("/recalculate-order", handleRecalculateOrder)
 		api.GET("/my-info", handleUserInfo)
+		api.POST("/quick-redeem", handleRedeemDeliveryCard)
 	}
 
 	// api group for admin dash, will require auth with admin privilege

@@ -24,9 +24,11 @@
 
 	<form method="post">
 		<div class="d-flex justify-content-center align-items-center">
-			<div class="redeem-input-pre">CA-</div>
-			<div class="redeem-input-wrapper">
-				<input class="form-control form-control-lg redeem-input" autofocus type="text" id="redeem-input" name="redeem-input" data-inputmask="'mask': '****-****-****'">
+			<div class="redeem-input-wrapper input-group">
+				<div class="input-group-prepend">
+					<span class="input-group-text font-codecard">CA-</span>
+				</div>
+				<input class="form-control font-codecard text-center redeem-input" autofocus type="text" id="redeem-input" name="redeem-input" data-inputmask="'mask': '****-****-****'">
 			</div>
 		</div>
 
@@ -35,6 +37,7 @@
 		<div class="redeem-submit">
 			<button class="btn btn-primary btn-lg btn-block" type="submit">Redeem</button>
 		</div>
+
 	</form>
 
 	<div class="my-5"></div>
