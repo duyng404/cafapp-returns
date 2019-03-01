@@ -16,7 +16,23 @@ type Destination struct {
 var (
 	destinationList = []Destination{
 		Destination{
-			Name: "Sohre",
+			Name: "Norelius",
+			Tag:  "NR",
+		},
+		Destination{
+			Name: "Complex",
+			Tag:  "CX",
+		},
+		Destination{
+			Name: "Rundstrom",
+			Tag:  "RU",
+		},
+		Destination{
+			Name: "Uhler",
+			Tag:  "UH",
+		},
+		Destination{
+			Name: "Pittman/Sohre",
 			Tag:  "SO",
 		},
 		Destination{
