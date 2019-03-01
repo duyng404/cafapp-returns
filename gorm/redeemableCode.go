@@ -17,7 +17,7 @@ type RedeemableCode struct {
 	Reason           string     `json:"reason"`
 	RedeemedAt       *time.Time `json:"redeemed_at"`
 	RedeemedByUserID uint       `json:"redeemed_by_user_id"`
-	RedeemedByUser   User       `json:"redeemed_by_user" gorm:"foreignkey:RedeemedByUserID,association_foreignkey:ID"`
+	RedeemedByUser   *User      `json:"redeemed_by_user" gorm:"foreignkey:RedeemedByUserID,association_foreignkey:ID"`
 }
 
 const (
@@ -86,14 +86,11 @@ func GenerateRedeemableCodes(amount int, reason string) ([]*RedeemableCode, erro
 	return res, nil
 }
 
-// RedeemACodeByCode set the code status to redeemed, and add its value to user's balance
-func RedeemACodeByCode(user User, code string) (bool, error) {
-	if user.ID == 0 {
+// MarkCodeAsRedeemed set the code status to redeemed, and add its value to user's balance
+// Return true if redeemable. False if not. And errors if any.
+func (c *RedeemableCode) MarkCodeAsRedeemed(user *User) (bool, error) {
+	if user.ID == 0 || c.Code == "" {
 		return false, errors.New("id is zero")
-	}
-	c, err := GetRedeemableCodeByCode(code)
-	if err != nil {
-		return false, err
 	}
 	if c.Status != RedeemableCodeStatusAvailable {
 		return false, nil
@@ -102,8 +99,7 @@ func RedeemACodeByCode(user User, code string) (bool, error) {
 	c.RedeemedByUser = user
 	now := time.Now()
 	c.RedeemedAt = &now
-	// TODO: increase the user's balance somewhere.
-	err = DB.Save(c).Error
+	err := DB.Save(c).Error
 	if err != nil {
 		return false, err
 	}

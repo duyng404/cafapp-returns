@@ -91,13 +91,17 @@ func InitRoutes() *gin.Engine {
 	// restricted group requires loggin in before accessing
 	restricted := router.Group("/", authMiddleware())
 	{
-		restricted.GET("/dash", handleUserDash)
 		restricted.GET("/order", handleOrderGet)
 		restricted.GET("/order/:stuff", handleOrderGet)
 		restricted.GET("/order/:stuff/:action", handleOrderGet)
 		restricted.POST("/order", handleOrderPost)
 		restricted.POST("/order/:stuff", handleOrderPost)
 		restricted.POST("/order/:stuff/:action", handleOrderPost)
+
+		restricted.GET("/dash", handleUserDash)
+		restricted.GET("/redeem", handleUserRedeem)
+		restricted.GET("/redeem-success", handleUserRedeemSuccess)
+		restricted.POST("/redeem", handleUserRedeemPost)
 
 		restricted.GET("/tracker", handleOrderTracker)
 		restricted.GET("/admin", handleAdminDash)
@@ -108,6 +112,7 @@ func InitRoutes() *gin.Engine {
 	{
 		api.POST("/recalculate-order", handleRecalculateOrder)
 		api.GET("/my-info", handleUserInfo)
+		api.POST("/quick-redeem", handleRedeemDeliveryCard)
 	}
 
 	// api group for admin dash, will require auth with admin privilege

@@ -1,0 +1,59 @@
+{{ define "content" }}
+
+{{ template "basicspotlight" . }}
+
+<section class="container text-center">
+	<h2 class="text-center my-5"><strong>Redeem CafApp Delivery Cards</strong></h2>
+	<p class="lead text-center">Enter the code at the back of your CafApp Delivery Cards below.</p>
+	<p class="lead text-center">The cards are sold at the Bookmark for <span class="font-weight-bold text-info">$10</span>.
+		With each delivery priced at <span class="font-weight-bold text-info">$2.50</span>, one card will allow you to order <span class="font-weight-bold text-info">four</span> times.</p>
+
+	<div class="my-5"></div>
+
+	{{ if .Error }}
+	<div class="alert alert-danger" role="alert">
+		{{ .Error }}
+	</div>
+
+	<div class="my-5"></div>
+	{{ end }}
+
+	<p class="w-75 mx-auto">Redeeming as <span class="text-primary">{{ .User.FullName }}</span>. Your current balance is <span class="text-info">{{ formatMoney .User.CurrentBalanceInCents }}</span>.</p>
+
+	<div class="my-4"></div>
+
+	<form method="post">
+		<div class="d-flex justify-content-center align-items-center">
+			<div class="redeem-input-wrapper input-group">
+				<div class="input-group-prepend">
+					<span class="input-group-text font-codecard">CA-</span>
+				</div>
+				<input class="form-control font-codecard text-center redeem-input" autofocus type="text" id="redeem-input" name="redeem-input" data-inputmask="'mask': '****-****-****'">
+			</div>
+		</div>
+
+		<div class="my-5"></div>
+
+		<div class="redeem-submit">
+			<button class="btn btn-primary btn-lg btn-block" type="submit">Redeem</button>
+		</div>
+
+	</form>
+
+	<div class="my-5"></div>
+
+	<a role="button" class="btn btn-link" href="/dash">Back to My Account</a>
+
+</section>
+
+{{ end }}
+
+{{ define "scripts" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js" data-autoinit="true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/jquery.inputmask.min.js"></script>
+<script>
+$(document).ready(function(){
+	$(":input").inputmask();
+  });
+</script>
+{{ end }}
