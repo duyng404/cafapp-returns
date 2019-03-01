@@ -32,7 +32,11 @@ var (
 			Tag:  "UH",
 		},
 		Destination{
-			Name: "Pittman/Sohre",
+			Name: "Pittman",
+			Tag:  "PM",
+		},
+		Destination{
+			Name: "Sohre",
 			Tag:  "SO",
 		},
 		Destination{
