@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gin-contrib/sessions"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,11 +33,24 @@ func handleOrderGet(c *gin.Context) {
 	}
 
 	if order.StatusCode == gorm.OrderStatusNeedInfo || order.StatusCode == gorm.OrderStatusIncomplete {
-		getMoreInfo(c, order)
-	} else if action == "finalize" || order.StatusCode == gorm.OrderStatusFinalized {
-		getFinalize(c, order)
-	} else if action == "completed" || order.StatusCode >= gorm.OrderStatusPlaced {
-		getComplete(c, order)
+		if action == "" {
+			getMoreInfo(c, order)
+		} else {
+			c.Redirect(http.StatusFound, "/order/"+stuff)
+		}
+	} else if order.StatusCode == gorm.OrderStatusFinalized {
+		if action == "finalize" {
+			getFinalize(c, order)
+		} else {
+			c.Redirect(http.StatusFound, "/order/"+stuff+"/finalize")
+		}
+	} else if order.StatusCode >= gorm.OrderStatusPlaced {
+		if action == "completed" {
+			getComplete(c, order)
+		} else {
+			c.Redirect(http.StatusFound, "/order/"+stuff+"/completed")
+		}
+
 	}
 }
 
@@ -200,6 +215,15 @@ func getFinalize(c *gin.Context, order gorm.Order) {
 		return
 	}
 	data["destination"] = dest.Name
+
+	// error if any
+	sesh := sessions.Default(c)
+	errText := getStringFromSession(sesh, "error")
+	if errText != "" {
+		sesh.Delete("error")
+		sesh.Save()
+		data["error"] = errText
+	}
 
 	renderHTML(c, 200, "order-finalize.html", data)
 }
@@ -378,8 +402,28 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 		return
 	}
 
+	// check user's balance
+	user := getCurrentAuthUser(c)
+	if user.CurrentBalanceInCents < order.DeliveryFeeInCents {
+		logger.Info("user have insufficient funds")
+		sesh := sessions.Default(c)
+		sesh.Set("error", "Error: You don't have enough funds in your CafApp balance for this delivery. You can add balance by <a class=\"text-info\" href=\"/redeem\">redeeming CafApp Delivery Cards</a>.")
+		sesh.Save()
+		c.Redirect(http.StatusFound, "/order/"+order.UUID)
+		return
+	}
+
+	// subtract from user's balance
+	user.CurrentBalanceInCents -= order.DeliveryFeeInCents
+	err := user.Save()
+	if err != nil {
+		logger.Error("cannot update user's balance")
+		orderError(c, "Fatal Error. Unable to place order. Your balance may have been wrongly subtracted. Please contact support for help.")
+		return
+	}
+
 	// set status to Placed
-	err := order.SetStatusTo(gorm.OrderStatusPlaced)
+	err = order.SetStatusTo(gorm.OrderStatusPlaced)
 	if err != nil {
 		logger.Error("cannot change status order")
 		orderError(c, "Database error")

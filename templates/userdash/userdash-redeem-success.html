@@ -5,12 +5,12 @@
 <section id="loginform" class="container text-center">
 	<img class="mb-4" src="/static/img/change.png" alt="ok!" width="150" height="150">
 	<h1 class="h3 mb-3 font-weight-normal">Redeem Successful!</h1>
-	<p class="lead">Your Delivery Card was redeemed successfully! Your balance is now <div id="text-info">{{ formatMoney .NewBalance }}</div>.</p>
+	<p class="lead">Your Delivery Card was redeemed successfully! Your balance is now <span class="text-info">{{ formatMoney .NewBalance }}</span>.</p>
 
 	<div class="my-5"></div>
 
 	<div class="redeem-submit">
-		<button class="btn btn-primary btn-lg btn-block" type="submit">Click here to Order Now!</button>
+		<a role="button" class="btn btn-primary btn-lg btn-block" href="/order">Click here to Order Now!</a>
 	</div>
 
 	<div class="my-5"></div>
