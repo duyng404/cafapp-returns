@@ -1,11 +1,8 @@
 package gorm
 
 import (
-	//"cafapp-returns/logger"
 	"errors"
 	"fmt"
-
-	//"github.com/davecgh/go-spew/spew"
 
 	"github.com/jinzhu/gorm"
 	"github.com/lithammer/shortuuid"
@@ -90,7 +87,6 @@ func GetAllOrderFromUser(id uint) (*[]Order, error) {
 	if err != nil {
 		return nil, err
 	}
-	//logger.Info("data is: ", spew.Sdump(orders))
 	return &orders, nil
 }
 
@@ -98,7 +94,7 @@ func GetAllOrderFromUser(id uint) (*[]Order, error) {
 // does not save. Caller should handle that
 func (o *Order) CalculateDeliveryFee() {
 	// TODO: implement a proper rate
-	o.DeliveryFeeInCents = 75
+	o.DeliveryFeeInCents = 250
 }
 
 // CalculateTotal : calculate the total fee based on what's in order rows

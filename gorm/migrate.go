@@ -86,6 +86,13 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Transaction Table")
+	err = DB.AutoMigrate(&Transaction{}).Error
+	if err != nil {
+		logger.Error("Error migrating transaction table:", err)
+		return err
+	}
+
 	initDestinations()
 	initOrderStatusCodes()
 	initGlobalVar()

@@ -15,6 +15,8 @@ func handleCommit(event string, committed []int) {
 	case "qfeed-commit-prep":
 		targetStatus = gorm.OrderStatusShipping
 	case "qfeed-commit-ship":
+		targetStatus = gorm.OrderStatusApproaching
+	case "qfeed-commit-approach":
 		targetStatus = gorm.OrderStatusDelivered
 	default:
 		logger.Error("no event provided")

@@ -16,6 +16,26 @@ type Destination struct {
 var (
 	destinationList = []Destination{
 		Destination{
+			Name: "Norelius",
+			Tag:  "NR",
+		},
+		Destination{
+			Name: "Complex",
+			Tag:  "CX",
+		},
+		Destination{
+			Name: "Rundstrom",
+			Tag:  "RU",
+		},
+		Destination{
+			Name: "Uhler",
+			Tag:  "UH",
+		},
+		Destination{
+			Name: "Pittman",
+			Tag:  "PM",
+		},
+		Destination{
 			Name: "Sohre",
 			Tag:  "SO",
 		},
@@ -42,6 +62,7 @@ func GetAllDestinations() ([]Destination, error) {
 		SELECT d.*
 		FROM destinations d
 		WHERE d.deleted_at IS NULL
+		ORDER BY d.name
 	`).Scan(&res).Error
 	return res, err
 }

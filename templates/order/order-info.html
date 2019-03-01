@@ -61,7 +61,7 @@
 						<select class="form-control d-block w-100" id="meal" name="meal" required onchange="onSelectChange()">
 							<option value="">Choose a meal...</option>
 							{{ range .menu }}
-							<option value="{{ .ID }}" {{ if $.selectedMealID }}{{ if eq $.selectedMealID .ID }}selected{{end}}{{end}}>{{ .DisplayName }}</option>
+							<option value="{{ .ID }}" {{ if $.selectedMealID }}{{ if eq $.selectedMealID .ID }}selected{{end}}{{end}}>{{ .DisplayName }} - {{ formatMoney .PriceInCents }}</option>
 							{{ end }}
 						</select>
 						<div class="invalid-feedback">
@@ -122,24 +122,32 @@
 
 			<h4 class="mb-3">Delivery Fee</h4>
 
-			<p>Your CafApp balance is currently <span class="text-info">$2.50</span>. This order will cost <span class="text-danger">$1.50</span> in delivery charge. You can add balance by <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false" aria-controls="cardRedeemForm">redeeming a CafApp Balance Card</a>.</p>
+			<p>Your CafApp balance is <span class="text-info balance-value">{{ formatMoney .balance }}</span>.<br />
+				This order will cost <span class="text-danger">$2.50</span> in delivery fee.<br />
+				You can <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false" aria-controls="cardRedeemForm">click here to redeem a CafApp Delivery Card</a>.</p>
 			<form class="collapse" id="cardRedeemForm">
 				<div class="row">
 					<div class="col-12 mb-3">
-						<label for="giftcardcode">Enter CafApp Balance Card code</label>
+						<label for="giftcardcode">Enter Your CafApp Delivery Card code</label>
 						<div class="input-group">
-							<input type="text" class="form-control" id="giftcardcode" placeholder="" required>
+							<div class="input-group-prepend">
+								<span class="input-group-text font-codecard">CA-</span>
+							</div>
+							<input class="form-control font-codecard" type="text" id="giftcardcode" name="giftcardcode" data-inputmask="'mask': '****-****-****'" required>
 							<div class="input-group-append">
-								<button class="btn btn-outline-ca-yellow4" type="button">Redeem</button>
+								<button class="btn btn-outline-ca-yellow4" type="submit">Redeem</button>
 							</div>
 						</div>
-						<small class="text-muted">CafApp Balance Cards can be purchased from the Bookmark</small>
-						<div class="invalid-feedback">
-							Please enter the card code
-						</div>
+						<div class="mt-2"></div>
+						<div class="text-danger d-none" id="redeem-error">asdf</div>
+						<div class="text-success d-none" id="redeem-success">Redeem Success! Your balance is now <span class="balance-value"></span></div>
 					</div>
 				</div>
 			</form>
+
+			<!-- TODO: Rewrite dis line -->
+			<p><span class="badge badge-info"> Tip </span> The cards are sold at the Bookmark for <span class="text-info">$10</span>.
+				With each delivery priced at <span class="text-info">$2.50</span>, one card will allow you to order <span class="text-info">four</span> times.</p>
 
 			<hr class="mb-4">
 			<button class="btn btn-primary btn-lg btn-block" form="orderDetailsForm" type="submit">Continue to Checkout</button>
@@ -151,6 +159,8 @@
 {{ end }}
 
 {{ define "scripts" }}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js" data-autoinit="true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/jquery.inputmask.min.js"></script>
 <script type="text/javascript">
 	// disabling form submission if there are invalid fields
 	(function() {
@@ -160,14 +170,18 @@
 		var forms = document.getElementsByClassName('needs-validation');
 		// Loop over them and prevent submission
 		var validation = Array.prototype.filter.call(forms, function(form) {
-		form.addEventListener('submit', function(event) {
-			if (form.checkValidity() === false) {
-			event.preventDefault();
-			event.stopPropagation();
-			}
-			form.classList.add('was-validated');
-		}, false);
+			form.addEventListener('submit', function(event) {
+				if (form.checkValidity() === false) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+				form.classList.add('was-validated');
+			}, false);
 		});
+		// enable input mask
+		$(":input").inputmask();
+		// bind event for card redeem form
+		$("#cardRedeemForm").submit(onRedeemSubmit);
 	}, false);
 	})();
 
@@ -183,11 +197,48 @@
 			contentType: "application/json; charset=utf-8",
 			dataType: "json",
 			success: updateSummary,
-			failure: function (err) {
+			error: function (err) {
 				console.log(err);
 				// TODO handle error
 			}
 		})
+	}
+
+	// when redeem form is submitted
+	function onRedeemSubmit(e) {
+		e.preventDefault();
+		$("#redeem-success").addClass("d-none");
+		$("#redeem-error").addClass("d-none");
+		console.log($("#giftcardcode").val());
+		$.ajax({
+			type: "POST",
+			url: "/api/quick-redeem",
+			data: JSON.stringify({
+				delivery_code: $("#giftcardcode").val(),
+			}),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function(data) {
+				console.log("redeem success", data);
+				$(".balance-value").text("$"+parseInt(data)/100);
+				$("#redeem-success").removeClass("d-none");
+				$("#cardRedeemForm :input").prop("disabled", true);
+			},
+			error: function (err) {
+				if (err.status == 400) {
+					$("#redeem-error").text("You have entered an invalid code.");
+					$("#redeem-error").removeClass("d-none");
+				} else if (err.status == 500) {
+					$("#redeem-error").text("Oh no! Some unexpected error happened. Please try again later.");
+					$("#redeem-error").removeClass("d-none");
+				} else {
+					$("#redeem-error").text("Unrecognized response from server. Please try again later.");
+					$("#redeem-error").removeClass("d-none");
+				}
+
+				// TODO handle error
+			}
+		});
 	}
 
 	function updateSummary(data) {
@@ -199,5 +250,9 @@
 		$("#order-total").html("<strong>"+data.order_total+"</strong>")
 		$("#caf-acct-charge-amt").html(data.caf_acct_charge_amt)
 	}
+
+	$(document).ready(function(){
+		$(":input").inputmask();
+  });
 </script>
 {{ end }}

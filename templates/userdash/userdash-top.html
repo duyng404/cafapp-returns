@@ -1,6 +1,10 @@
 {{ define "content" }}
 
-{{ template "basicspotlight" . }}
+<section class="jumbotron jumbotron-fluid text-center bg-dark">
+	<div class="container">
+		<h1 class="jumbotron-heading text-ca-yellow2"><strong>{{ .Title }}</strong></h1>
+	</div>
+</section>
 
 <section class="container-fluid text-center">
 	<h2 class="font-weight-bold">Account Details</h2>
@@ -23,6 +27,10 @@
 		<div class="row justify-content-between">
 			<div class="col text-right">Total Orders:</div>
 			<div class="col text-left">{{ .totalOrders }}</div>
+		</div>
+		<div class="row justify-content-between">
+			<div class="col text-right">Current balance:</div>
+			<div class="col text-left">{{ formatMoney .user.CurrentBalanceInCents }}</div>
 		</div>
 	</div>
 </section>
@@ -48,7 +56,7 @@
 				<td>{{ .Destination.Name }}</td>
 				<td>{{ .CreatedAt.Format "Jan _2 3:04pm" }}</td>
 				<td>{{ formatMoney .TotalInCents }}</td>
-				<td>{{ .StatusCode }}</td>
+				<td>{{ statusCodeToText .StatusCode }}</td>
 				<td><a href="">View details</a></td>
 			</tr>
 			{{ end }}
@@ -57,6 +65,13 @@
 	{{ else }}
 	<p>You havent placed any order! <a href="/order">Go here to order now!</a></p>
 	{{ end }}
+</section>
+
+<section class="container text-center mt-5">
+	<h2 class="font-weight-bold">Need help?</h2>
+	<p>If you have questions and/or problems with your order or your account, please send us an email at <span class="text-info">cafappsupport@gustavus.edu</span>.<br/>
+		Thanks for using CafApp!
+	</p>
 </section>
 
 {{ end }}

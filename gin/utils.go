@@ -19,6 +19,9 @@ func renderHTML(c *gin.Context, code int, template string, data map[string]inter
 	if u != nil {
 		data["loggedIn"] = true
 		data["currentUser"] = u
+		if u.IsAdmin == true {
+			data["isAdmin"] = true
+		}
 	}
 
 	// write to a buffer
@@ -41,6 +44,17 @@ func loginFailed(errmsg string, c *gin.Context, session sessions.Session) {
 	session.Set("error", errmsg)
 	session.Save()
 	c.Redirect(http.StatusFound, "/login")
+	c.Abort()
+	return
+}
+
+// a helper func to use when error during code redeem.
+// will redirect user to redeem page and display an err msg.
+func redeemFailed(errmsg string, c *gin.Context) {
+	session := sessions.Default(c)
+	session.Set("error", errmsg)
+	session.Save()
+	c.Redirect(http.StatusFound, "/redeem")
 	c.Abort()
 	return
 }
@@ -93,6 +107,16 @@ func formatMoney(a int) string {
 
 func rawHTML(s string) template.HTML {
 	return template.HTML(s)
+}
+
+func statusCodeToText(code int) (string, error) {
+	var oss gorm.OrderStatusCode
+	err := oss.PopulateByCode(code)
+	if err != nil {
+		logger.Error("unable to convert status code to text")
+		return "", err
+	}
+	return oss.DisplayName, nil
 }
 
 // helper func to get string from session

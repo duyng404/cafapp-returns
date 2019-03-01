@@ -6,6 +6,9 @@ import (
 	"cafapp-returns/socket"
 	"net/http"
 	"strconv"
+	"strings"
+
+	"github.com/gin-contrib/sessions"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,11 +33,24 @@ func handleOrderGet(c *gin.Context) {
 	}
 
 	if order.StatusCode == gorm.OrderStatusNeedInfo || order.StatusCode == gorm.OrderStatusIncomplete {
-		getMoreInfo(c, order)
-	} else if action == "finalize" || order.StatusCode == gorm.OrderStatusFinalized {
-		getFinalize(c, order)
-	} else if action == "completed" || order.StatusCode >= gorm.OrderStatusPlaced {
-		getComplete(c, order)
+		if action == "" {
+			getMoreInfo(c, order)
+		} else {
+			c.Redirect(http.StatusFound, "/order/"+stuff)
+		}
+	} else if order.StatusCode == gorm.OrderStatusFinalized {
+		if action == "finalize" {
+			getFinalize(c, order)
+		} else {
+			c.Redirect(http.StatusFound, "/order/"+stuff+"/finalize")
+		}
+	} else if order.StatusCode >= gorm.OrderStatusPlaced {
+		if action == "completed" {
+			getComplete(c, order)
+		} else {
+			c.Redirect(http.StatusFound, "/order/"+stuff+"/completed")
+		}
+
 	}
 }
 
@@ -108,6 +124,9 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 		orderError(c, "Authentication Error")
 		return
 	}
+
+	// user's current balance
+	data["balance"] = user.CurrentBalanceInCents
 
 	// does user have gus id
 	if user.GusID == 0 {
@@ -196,6 +215,15 @@ func getFinalize(c *gin.Context, order gorm.Order) {
 		return
 	}
 	data["destination"] = dest.Name
+
+	// error if any
+	sesh := sessions.Default(c)
+	errText := getStringFromSession(sesh, "error")
+	if errText != "" {
+		sesh.Delete("error")
+		sesh.Save()
+		data["error"] = errText
+	}
 
 	renderHTML(c, 200, "order-finalize.html", data)
 }
@@ -374,8 +402,28 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 		return
 	}
 
+	// check user's balance
+	user := getCurrentAuthUser(c)
+	if user.CurrentBalanceInCents < order.DeliveryFeeInCents {
+		logger.Info("user have insufficient funds")
+		sesh := sessions.Default(c)
+		sesh.Set("error", "Error: You don't have enough funds in your CafApp balance for this delivery. You can add balance by <a class=\"text-info\" href=\"/redeem\">redeeming CafApp Delivery Cards</a>.")
+		sesh.Save()
+		c.Redirect(http.StatusFound, "/order/"+order.UUID)
+		return
+	}
+
+	// subtract from user's balance
+	user.CurrentBalanceInCents -= order.DeliveryFeeInCents
+	err := user.Save()
+	if err != nil {
+		logger.Error("cannot update user's balance")
+		orderError(c, "Fatal Error. Unable to place order. Your balance may have been wrongly subtracted. Please contact support for help.")
+		return
+	}
+
 	// set status to Placed
-	err := order.SetStatusTo(gorm.OrderStatusPlaced)
+	err = order.SetStatusTo(gorm.OrderStatusPlaced)
 	if err != nil {
 		logger.Error("cannot change status order")
 		orderError(c, "Database error")
@@ -470,4 +518,56 @@ func handleRecalculateOrder(c *gin.Context) {
 	}
 
 	c.JSON(200, res)
+}
+
+// when frontend send an ajax request to redeem a delivery card
+func handleRedeemDeliveryCard(c *gin.Context) {
+	// bind
+	type reqStruct struct {
+		DeliveryCode string `json:"delivery_code"`
+	}
+	var req reqStruct
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	// uppercase
+	req.DeliveryCode = "CA-" + strings.ToUpper(req.DeliveryCode)
+
+	// log
+	logger.Info(req.DeliveryCode)
+
+	// check if code exist in db
+	code, err := gorm.GetRedeemableCodeByCode(req.DeliveryCode)
+	if err == gorm.ErrRecordNotFound {
+		logger.Error("code not found:", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	if err != nil {
+		logger.Error("unable to query db:", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	// get user
+	user := getCurrentAuthUser(c)
+
+	// add the amount to user's balance
+	ok, err := user.RedeemDeliveryCode(code)
+	if err != nil {
+		logger.Error("unable to redeem code:", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	if !ok {
+		logger.Error("invalid code entered:", req.DeliveryCode)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	c.String(200, "%v", user.CurrentBalanceInCents)
 }
