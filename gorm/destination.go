@@ -62,6 +62,7 @@ func GetAllDestinations() ([]Destination, error) {
 		SELECT d.*
 		FROM destinations d
 		WHERE d.deleted_at IS NULL
+		ORDER BY d.name
 	`).Scan(&res).Error
 	return res, err
 }
