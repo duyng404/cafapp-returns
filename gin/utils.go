@@ -109,6 +109,16 @@ func rawHTML(s string) template.HTML {
 	return template.HTML(s)
 }
 
+func statusCodeToText(code int) (string, error) {
+	var oss gorm.OrderStatusCode
+	err := oss.PopulateByCode(code)
+	if err != nil {
+		logger.Error("unable to convert status code to text")
+		return "", err
+	}
+	return oss.DisplayName, nil
+}
+
 // helper func to get string from session
 func getStringFromSession(s sessions.Session, name string) string {
 	if a := s.Get(name); a != nil {

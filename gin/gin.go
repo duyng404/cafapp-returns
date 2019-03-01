@@ -39,9 +39,10 @@ func init() {
 		"tracker",
 	}
 	f := template.FuncMap{
-		"formatMoney":     formatMoney,
-		"rawHTML":         rawHTML,
-		"fromTagToNumber": fromTagToNumber,
+		"formatMoney":      formatMoney,
+		"rawHTML":          rawHTML,
+		"fromTagToNumber":  fromTagToNumber,
+		"statusCodeToText": statusCodeToText,
 	}
 	rdr = renderer.InitRdr(views, f)
 	router = InitRoutes()

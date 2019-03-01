@@ -79,20 +79,21 @@ func (u *User) GenerateSocketToken() (string, error) {
 	return token.Token, nil
 }
 
-// GetOneIncompleteOrder check if user has any incomplete order by searching for order
-// that was created less than 48h ago.
+// GetOneIncompleteOrder : check the latest order. If it has status <= finalized, return it.
 func (u *User) GetOneIncompleteOrder() (*Order, error) {
 	var o Order
 	err := DB.Raw(`
 		SELECT o.*
 		FROM orders o
 		WHERE o.user_id = ?
-			AND o.status_code < ?
 		ORDER BY o.created_at DESC
 		LIMIT 1
-	`, u.ID, OrderStatusFinalized).Scan(&o).Error
+	`, u.ID).Scan(&o).Error
 	if err != nil {
 		return nil, err
+	}
+	if o.StatusCode > OrderStatusFinalized {
+		return nil, nil
 	}
 	return &o, nil
 }

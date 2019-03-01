@@ -30,7 +30,7 @@
 		</div>
 		<div class="row justify-content-between">
 			<div class="col text-right">Current balance:</div>
-			<div class="col text-left">TBA</div>
+			<div class="col text-left">{{ formatMoney .user.CurrentBalanceInCents }}</div>
 		</div>
 	</div>
 </section>
@@ -56,7 +56,7 @@
 				<td>{{ .Destination.Name }}</td>
 				<td>{{ .CreatedAt.Format "Jan _2 3:04pm" }}</td>
 				<td>{{ formatMoney .TotalInCents }}</td>
-				<td>{{ .StatusCode }}</td>
+				<td>{{ statusCodeToText .StatusCode }}</td>
 				<td><a href="">View details</a></td>
 			</tr>
 			{{ end }}

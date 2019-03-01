@@ -70,6 +70,10 @@ func init() {
 				handleCommit("qfeed-commit-ship", committed)
 				return "okbro"
 			})
+			so.On("qfeed-commit-approach", func(committed []int) string {
+				handleCommit("qfeed-commit-approach", committed)
+				return "okbro"
+			})
 
 			c.SendNewOrder = func(o *gorm.Order) {
 				so.Emit("qfeed-new-order", o)

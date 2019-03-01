@@ -23,12 +23,13 @@ const (
 
 	OrderStatusPlaced = 20
 
-	OrderStatusQueued   = 30
-	OrderStatusRequeued = 31
+	OrderStatusQueued   = 30 // unused
+	OrderStatusRequeued = 31 // unused
 
-	OrderStatusPrepping  = 40
-	OrderStatusShipping  = 50
-	OrderStatusDelivered = 60
+	OrderStatusPrepping    = 40
+	OrderStatusShipping    = 50
+	OrderStatusApproaching = 51
+	OrderStatusDelivered   = 60
 
 	OrderStatusGeneralFailure = 90
 	OrderStatusDeliveryFailed = 92
@@ -81,25 +82,31 @@ var (
 		},
 		OrderStatusCode{
 			Name:        "prepping",
-			DisplayName: "prepping",
+			DisplayName: "Prepping",
 			StatusCode:  OrderStatusPrepping,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatusCode{
 			Name:        "shipping",
-			DisplayName: "shipping",
+			DisplayName: "Out For Delivery",
 			StatusCode:  OrderStatusShipping,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatusCode{
+			Name:        "approaching",
+			DisplayName: "Arrived At Door",
+			StatusCode:  OrderStatusApproaching,
+			ColorCode:   "#ffffff",
+		},
+		OrderStatusCode{
 			Name:        "delivered",
-			DisplayName: "Delievered",
+			DisplayName: "Delivered",
 			StatusCode:  OrderStatusDelivered,
 			ColorCode:   "#ffffff",
 		},
 		OrderStatusCode{
 			Name:        "general-failure",
-			DisplayName: "failed",
+			DisplayName: "Failed",
 			StatusCode:  OrderStatusGeneralFailure,
 			ColorCode:   "#ff0000",
 		},
