@@ -8,7 +8,7 @@ body {
 }
 
 #spotlight {
-	height: 50vh;
+	min-height: 50vh;
 	background-image: url("/static/img/spotlight.jpg");
 	background-size: cover;
 	background-position: center center;
