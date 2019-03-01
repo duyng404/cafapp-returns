@@ -1,11 +1,8 @@
 package gorm
 
 import (
-	//"cafapp-returns/logger"
 	"errors"
 	"fmt"
-
-	//"github.com/davecgh/go-spew/spew"
 
 	"github.com/jinzhu/gorm"
 	"github.com/lithammer/shortuuid"
@@ -90,7 +87,6 @@ func GetAllOrderFromUser(id uint) (*[]Order, error) {
 	if err != nil {
 		return nil, err
 	}
-	//logger.Info("data is: ", spew.Sdump(orders))
 	return &orders, nil
 }
 
