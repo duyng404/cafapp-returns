@@ -142,37 +142,54 @@ func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObject
 	switch sortBy {
 	case "idDESC":
 		sortBy = "u.id DESC"
-		logger.Info(sortBy)
 	case "full_nameDESC":
 		sortBy = "u.full_name DESC"
-		logger.Info(sortBy)
 	case "gus_usernameDESC":
 		sortBy = "u.gus_username DESC"
-		logger.Info(sortBy)
 	}
 	sql.WriteString(`SELECT
 			u.*,
 			(SELECT COUNT(*)
 			FROM orders o_sub
 			WHERE o_sub.user_id = u.id
-			AND o_sub.status_code >= ?) AS total_orders
+			AND o_sub.status_code >= ?) AS total_orders,
+            (SELECT COUNT(*) 
+            FROM redeemable_codes r
+            WHERE r.redeemed_by_user_id = u.id
+            AND r.status = ?) AS number_of_redeems
 			FROM users u
 			`)
 	//both fullname and gususername are empty
 	if len(fn) == 0 && len(gususername) == 0 {
-		err := DB.Raw(sql.String(), OrderStatusPlaced).Order(sortBy).Scan(&tmp).Error
+		err := DB.Raw(sql.String(), OrderStatusPlaced, RedeemableCodeStatusRedeemed).Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else if len(fn) > 0 && len(gususername) == 0 {
 		sql.WriteString(`WHERE full_name LIKE ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%").Order(sortBy).Scan(&tmp).Error
+		err := DB.Raw(sql.String(), OrderStatusPlaced, RedeemableCodeStatusRedeemed, "%"+fn+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else if len(fn) == 0 && len(gususername) > 0 {
 		sql.WriteString(`WHERE gus_username LIKE ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
+		err := DB.Raw(sql.String(), OrderStatusPlaced, RedeemableCodeStatusRedeemed, "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else {
 		sql.WriteString(`WHERE full_name LIKE ? AND gus_username LIKE ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
+		err := DB.Raw(sql.String(), OrderStatusPlaced, RedeemableCodeStatusRedeemed, "%"+fn+"%", "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	}
+}
+
+//PopulateByIDForAdminDash get info for one user (admin)
+func PopulateByIDForAdminDash(id uint) (apiObjects.AdminUsersStruct, error) {
+	var user apiObjects.AdminUsersStruct
+	err := DB.Raw(`
+		SELECT u.*,
+		(SELECT COUNT(*) 
+            FROM redeemable_codes r
+            WHERE r.redeemed_by_user_id = u.id
+            AND r.status = ?) AS number_of_redeems
+		FROM users u
+		WHERE u.id = ?
+		AND u.deleted_at IS NULL
+	`, RedeemableCodeStatusRedeemed, id).Scan(&user).Error
+	return user, err
 }
