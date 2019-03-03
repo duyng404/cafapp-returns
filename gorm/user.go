@@ -152,11 +152,7 @@ func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObject
 			(SELECT COUNT(*)
 			FROM orders o_sub
 			WHERE o_sub.user_id = u.id
-			AND o_sub.status_code >= ?) AS total_orders,
-            (SELECT COUNT(*) 
-            FROM redeemable_codes r
-            WHERE r.redeemed_by_user_id = u.id
-            AND r.status = ?) AS number_of_redeems
+			AND o_sub.status_code >= ?) AS total_orders
 			FROM users u
 			`)
 	//both fullname and gususername are empty
@@ -184,9 +180,9 @@ func PopulateByIDForAdminDash(id uint) (apiObjects.AdminUsersStruct, error) {
 	err := DB.Raw(`
 		SELECT u.*,
 		(SELECT COUNT(*) 
-            FROM redeemable_codes r
-            WHERE r.redeemed_by_user_id = u.id
-            AND r.status = ?) AS number_of_redeems
+        FROM redeemable_codes r
+        WHERE r.redeemed_by_user_id = u.id
+        AND r.status = ?) AS number_of_redeems
 		FROM users u
 		WHERE u.id = ?
 		AND u.deleted_at IS NULL
