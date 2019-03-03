@@ -157,19 +157,19 @@ func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObject
 			`)
 	//both fullname and gususername are empty
 	if len(fn) == 0 && len(gususername) == 0 {
-		err := DB.Raw(sql.String(), OrderStatusPlaced, RedeemableCodeStatusRedeemed).Order(sortBy).Scan(&tmp).Error
+		err := DB.Raw(sql.String(), OrderStatusPlaced).Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else if len(fn) > 0 && len(gususername) == 0 {
 		sql.WriteString(`WHERE full_name LIKE ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, RedeemableCodeStatusRedeemed, "%"+fn+"%").Order(sortBy).Scan(&tmp).Error
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else if len(fn) == 0 && len(gususername) > 0 {
 		sql.WriteString(`WHERE gus_username LIKE ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, RedeemableCodeStatusRedeemed, "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	} else {
 		sql.WriteString(`WHERE full_name LIKE ? AND gus_username LIKE ?`)
-		err := DB.Raw(sql.String(), OrderStatusPlaced, RedeemableCodeStatusRedeemed, "%"+fn+"%", "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
+		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	}
 }
