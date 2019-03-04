@@ -32,15 +32,11 @@ var (
 			Tag:  "UH",
 		},
 		Destination{
-			Name: "Pittman",
-			Tag:  "PM",
+			Name: "Pittman/Sohre",
+			Tag:  "PS",
 		},
 		Destination{
-			Name: "Sohre",
-			Tag:  "SO",
-		},
-		Destination{
-			Name: "International Center",
+			Name: "Intl Center",
 			Tag:  "IC",
 		},
 		Destination{
