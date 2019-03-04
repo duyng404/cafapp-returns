@@ -178,11 +178,12 @@ func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObject
 func PopulateByIDForAdminDash(id uint) (apiObjects.AdminUsersStruct, error) {
 	var user apiObjects.AdminUsersStruct
 	err := DB.Raw(`
-		SELECT u.*,
-		(SELECT COUNT(*) 
-        FROM redeemable_codes r
-        WHERE r.redeemed_by_user_id = u.id
-        AND r.status = ?) AS number_of_redeems
+		SELECT
+			u.*,
+			(SELECT COUNT(*)
+			FROM redeemable_codes r
+			WHERE r.redeemed_by_user_id = u.id
+			AND r.status = ?) AS number_of_redeems
 		FROM users u
 		WHERE u.id = ?
 		AND u.deleted_at IS NULL
