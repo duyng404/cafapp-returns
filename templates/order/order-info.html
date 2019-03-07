@@ -112,17 +112,15 @@
 				<h4>Phone Numbers</h4>
 				<div class="row">
 					<div class="col-12 mb-3">
-							<div class="d-flex justify-content-center align-items-center">
-								<div class="phone-input-wrapper input-group">
-									<input class="form-control text-center phone-input" type="text"
-										id="phone-input" name="phone-input" data-inputmask="'mask': '(***)-***-****'" required>
-								</div>
-							</div>
+						<label for="phone-number">Phone number</label>
+						<input class="form-control font-codecard text-center phone-input" type="text" id="phone-input" name="phone-input"
+							data-inputmask="'mask': '(999)-999-9999'" required>
+						<small>We'd like your phone number so that we can contact you for delivery!</small>
 						<div class="invalid-feedback">
-								Please enter your phone number.
+							Please enter your phone number.
 						</div>
 						{{ else }}
-						<p class="text-center">Your phone number is: {{ .phone }} 
+						<p>Your phone number is: {{ .phone }}
 							and you will be contacted for the delivery</p>
 						{{ end }}
 					</div>

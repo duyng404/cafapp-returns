@@ -21,7 +21,7 @@ type User struct {
 	GusID                 int    `json:"gus_id"`
 	IsAdmin               bool   `json:"-"`
 	CurrentBalanceInCents int    `json:"current_balance_in_cents"`
-	PhoneNumbers          string `json:"phone_numbers"`
+	PhoneNumber           string `json:"phone_number"`
 }
 
 // GetAllUser ...

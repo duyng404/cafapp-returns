@@ -129,7 +129,7 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	data["balance"] = user.CurrentBalanceInCents
 
 	// user's phone number
-	data["phone"] = user.PhoneNumbers
+	data["phone"] = user.PhoneNumber
 
 	// does user have gus id
 	if user.GusID == 0 {
@@ -137,7 +137,7 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	}
 
 	// does user have a phone number
-	if user.PhoneNumbers == "" {
+	if user.PhoneNumber == "" {
 		data["needPhoneNumbers"] = true
 	}
 
@@ -372,17 +372,25 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 			return
 		}
 		user.GusID = gusID
-		if user.PhoneNumbers == "" && inputPhoneNumber != "" {
-			user.PhoneNumbers = inputPhoneNumber
-			logger.Info("!!!!!! phone number is", user.PhoneNumbers)
-		}
 		err = user.Save()
 		if err != nil {
-			logger.Error("cannot save user gus id or phone number. Redirecting to edit page")
+			logger.Error("cannot save user gus id. Redirecting to edit page")
 			orderError(c, "Bad Request. Bad. BAAADD")
 			return
 		}
 		logger.Info("!!!!!! Gus User ID is", user.GusID)
+	}
+
+	//save user's phone
+	if user.PhoneNumber == "" && inputPhoneNumber != "" {
+		user.PhoneNumber = inputPhoneNumber
+		err := user.Save()
+		if err != nil {
+			logger.Error("cannot save user phone. Redirecting to edit page")
+			orderError(c, "Bad Request. Bad. BAAADD")
+			return
+		}
+		logger.Info("!!!!!! Phone number is", user.GusID)
 	}
 
 	// save order
