@@ -4,10 +4,11 @@
 
 <section class="container">
 	<h2 class="text-center my-5"><strong>Edit Order Details</strong></h2>
-	<p class="lead text-center">Please add or edit any necessary information. You will have a chance to review your order before placing.</p>
+	<p class="lead text-center">Please add or edit any necessary information. You will have a chance to review your order
+		before placing.</p>
 
 	<div class="row mt-5">
-        <div class="col-md-4 order-md-2 mb-4">
+		<div class="col-md-4 order-md-2 mb-4">
 			<h4>Summary</h4>
 			<ul class="list-group mb-3">
 
@@ -52,7 +53,7 @@
 			</ul>
 		</div>
 
-        <div class="col-md-8 order-md-1">
+		<div class="col-md-8 order-md-1">
 			<form id="orderDetailsForm" class="needs-validation" method="post" novalidate>
 				<h4>Main Items</h4>
 				<div class="row">
@@ -61,7 +62,8 @@
 						<select class="form-control d-block w-100" id="meal" name="meal" required onchange="onSelectChange()">
 							<option value="">Choose a meal...</option>
 							{{ range .menu }}
-							<option value="{{ .ID }}" {{ if $.selectedMealID }}{{ if eq $.selectedMealID .ID }}selected{{end}}{{end}}>{{ .DisplayName }} - {{ formatMoney .PriceInCents }}</option>
+							<option value="{{ .ID }}" {{ if $.selectedMealID }}{{ if eq $.selectedMealID .ID }}selected{{end}}{{end}}>
+								{{ .DisplayName }} - {{ formatMoney .PriceInCents }}</option>
 							{{ end }}
 						</select>
 						<div class="invalid-feedback">
@@ -74,7 +76,9 @@
 						<select class="form-control d-block w-100" id="drink" name="drink" required onchange="onSelectChange()">
 							<option value="">Choose a drink...</option>
 							{{ range .drinks }}
-							<option value="{{ .ID }}" {{ if $.selectedDrinkID }}{{ if eq $.selectedDrinkID .ID }}selected{{end}}{{end}}>{{ .DisplayName }}</option>
+							<option value="{{ .ID }}"
+								{{ if $.selectedDrinkID }}{{ if eq $.selectedDrinkID .ID }}selected{{end}}{{end}}>{{ .DisplayName }}
+							</option>
 							{{ end }}
 						</select>
 						<div class="invalid-feedback">
@@ -83,7 +87,7 @@
 					</div>
 				</div>
 
-				<hr class="mb-4"/>
+				<hr class="mb-4" />
 
 				<h4>Destination</h4>
 				<div class="row">
@@ -92,7 +96,9 @@
 						<select class="form-control d-block w-100" id="destination" name="destination" required>
 							<option value="">Choose...</option>
 							{{ range .destinations }}
-							<option value="{{ .Tag }}" {{ if $.selectedDestination }}{{ if eq $.selectedDestination .Tag }}selected{{end}}{{end}}>{{ .Name }}</option>
+							<option value="{{ .Tag }}"
+								{{ if $.selectedDestination }}{{ if eq $.selectedDestination .Tag }}selected{{end}}{{end}}>{{ .Name }}
+							</option>
 							{{ end }}
 						</select>
 						<div class="invalid-feedback">
@@ -100,16 +106,37 @@
 						</div>
 					</div>
 				</div>
+				{{ if .needPhoneNumbers }}
+				<hr class="mb-4" />
 
+				<h4>Phone Numbers</h4>
+				<div class="row">
+					<div class="col-12 mb-3">
+							<div class="d-flex justify-content-center align-items-center">
+								<div class="phone-input-wrapper input-group">
+									<input class="form-control text-center phone-input" type="text"
+										id="phone-input" name="phone-input" data-inputmask="'mask': '(***)-***-****'" required>
+								</div>
+							</div>
+						<div class="invalid-feedback">
+								Please enter your phone number.
+						</div>
+						{{ else }}
+						<p class="text-center">Your phone number is: {{ .phone }} 
+							and you will be contacted for the delivery</p>
+						{{ end }}
+					</div>
+				</div>
 				{{ if .needGusID }}
-				<hr class="mb-4"/>
+				<hr class="mb-4" />
 
 				<h4>Extra Information</h4>
 				<div class="row">
 					<div class="col-12 mb-3">
 						<label for="gus-id">Gustavus ID <span class="text-danger">*</span></label>
 						<input class="form-control" type="number" id="gusID" name="gusID" required>
-						<small class="text-muted">We need your gustavus ID for identifying and charging your account at the caf. This info is saved so you don't have to enter it again next time!</small>
+						<small class="text-muted">We need your gustavus ID for identifying and charging your account at the caf.
+							This info is saved so you don't have to enter it again next time!</small>
 						<div class="invalid-feedback">
 							Please enter your Gustavus ID.
 						</div>
@@ -118,13 +145,14 @@
 				{{ end }}
 			</form>
 
-			<hr class="mb-4"/>
+			<hr class="mb-4" />
 
 			<h4 class="mb-3">Delivery Fee</h4>
 
 			<p>Your CafApp balance is <span class="text-info balance-value">{{ formatMoney .balance }}</span>.<br />
 				This order will cost <span class="text-danger">$2.50</span> in delivery fee.<br />
-				You can <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false" aria-controls="cardRedeemForm">click here to redeem a CafApp Delivery Card</a>.</p>
+				You can <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false"
+					aria-controls="cardRedeemForm">click here to redeem a CafApp Delivery Card</a>.</p>
 			<form class="collapse" id="cardRedeemForm">
 				<div class="row">
 					<div class="col-12 mb-3">
@@ -133,25 +161,30 @@
 							<div class="input-group-prepend">
 								<span class="input-group-text font-codecard">CA-</span>
 							</div>
-							<input class="form-control font-codecard" type="text" id="giftcardcode" name="giftcardcode" data-inputmask="'mask': '****-****-****'" required>
+							<input class="form-control font-codecard" type="text" id="giftcardcode" name="giftcardcode"
+								data-inputmask="'mask': '****-****-****'" required>
 							<div class="input-group-append">
 								<button class="btn btn-outline-ca-yellow4" type="submit">Redeem</button>
 							</div>
 						</div>
 						<div class="mt-2"></div>
 						<div class="text-danger d-none" id="redeem-error">asdf</div>
-						<div class="text-success d-none" id="redeem-success">Redeem Success! Your balance is now <span class="balance-value"></span></div>
+						<div class="text-success d-none" id="redeem-success">Redeem Success! Your balance is now <span
+								class="balance-value"></span></div>
 					</div>
 				</div>
 			</form>
 
 			<!-- TODO: Rewrite dis line -->
-			<p><span class="badge badge-info"> Tip </span> The cards are sold at the Bookmark for <span class="text-info">$10</span>.
-				With each delivery priced at <span class="text-info">$2.50</span>, one card will allow you to order <span class="text-info">four</span> times.</p>
+			<p><span class="badge badge-info"> Tip </span> The cards are sold at the Bookmark for <span
+					class="text-info">$10</span>.
+				With each delivery priced at <span class="text-info">$2.50</span>, one card will allow you to order <span
+					class="text-info">four</span> times.</p>
 
 			<hr class="mb-4">
-			<button class="btn btn-primary btn-lg btn-block" form="orderDetailsForm" type="submit">Continue to Checkout</button>
-        </div>
+			<button class="btn btn-primary btn-lg btn-block" form="orderDetailsForm" type="submit">Continue to
+				Checkout</button>
+		</div>
 
 	</div>
 </section>
@@ -159,30 +192,31 @@
 {{ end }}
 
 {{ define "scripts" }}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js" data-autoinit="true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js"
+	data-autoinit="true"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/jquery.inputmask.min.js"></script>
 <script type="text/javascript">
 	// disabling form submission if there are invalid fields
-	(function() {
-	'use strict';
-	window.addEventListener('load', function() {
-		// Fetch all the forms we want to apply to
-		var forms = document.getElementsByClassName('needs-validation');
-		// Loop over them and prevent submission
-		var validation = Array.prototype.filter.call(forms, function(form) {
-			form.addEventListener('submit', function(event) {
-				if (form.checkValidity() === false) {
-					event.preventDefault();
-					event.stopPropagation();
-				}
-				form.classList.add('was-validated');
-			}, false);
-		});
-		// enable input mask
-		$(":input").inputmask();
-		// bind event for card redeem form
-		$("#cardRedeemForm").submit(onRedeemSubmit);
-	}, false);
+	(function () {
+		'use strict';
+		window.addEventListener('load', function () {
+			// Fetch all the forms we want to apply to
+			var forms = document.getElementsByClassName('needs-validation');
+			// Loop over them and prevent submission
+			var validation = Array.prototype.filter.call(forms, function (form) {
+				form.addEventListener('submit', function (event) {
+					if (form.checkValidity() === false) {
+						event.preventDefault();
+						event.stopPropagation();
+					}
+					form.classList.add('was-validated');
+				}, false);
+			});
+			// enable input mask
+			$(":input").inputmask();
+			// bind event for card redeem form
+			$("#cardRedeemForm").submit(onRedeemSubmit);
+		}, false);
 	})();
 
 	// send an ajax to update the price summary whenever user change their selection
@@ -218,9 +252,9 @@
 			}),
 			contentType: "application/json; charset=utf-8",
 			dataType: "json",
-			success: function(data) {
+			success: function (data) {
 				console.log("redeem success", data);
-				$(".balance-value").text("$"+parseInt(data)/100);
+				$(".balance-value").text("$" + parseInt(data) / 100);
 				$("#redeem-success").removeClass("d-none");
 				$("#cardRedeemForm :input").prop("disabled", true);
 			},
@@ -247,12 +281,12 @@
 		$("#meal-price").html(data.meal_price)
 		$("#drink-name").html(data.drink_name)
 		$("#delivery-fee").html(data.delivery_fee)
-		$("#order-total").html("<strong>"+data.order_total+"</strong>")
+		$("#order-total").html("<strong>" + data.order_total + "</strong>")
 		$("#caf-acct-charge-amt").html(data.caf_acct_charge_amt)
 	}
 
-	$(document).ready(function(){
+	$(document).ready(function () {
 		$(":input").inputmask();
-  });
+	});
 </script>
 {{ end }}
