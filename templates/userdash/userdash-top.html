@@ -32,6 +32,13 @@
 			<div class="col text-right">Current balance:</div>
 			<div class="col text-left">{{ formatMoney .user.CurrentBalanceInCents }}</div>
 		</div>
+		<div class="row justify-content-between">
+			<div class="col text-right">Phone Number:</div>
+			<div class="col text-left" id="phone">
+				<span id="phone-number">{{ .user.PhoneNumber }}</span>
+			</div>
+			<button class="btn btn-primary" id="phone-number-edit" type="button">Edit</button>
+		</div>
 	</div>
 </section>
 
@@ -69,9 +76,45 @@
 
 <section class="container text-center mt-5">
 	<h2 class="font-weight-bold">Need help?</h2>
-	<p>If you have questions and/or problems with your order or your account, please send us an email at <span class="text-info">cafappsupport@gustavus.edu</span>.<br/>
+	<p>If you have questions and/or problems with your order or your account, please send us an email at <span
+			class="text-info">cafappsupport@gustavus.edu</span>.<br />
 		Thanks for using CafApp!
 	</p>
 </section>
 
+{{ end }}
+{{ define "scripts"}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js"
+	data-autoinit="true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/jquery.inputmask.min.js"></script>
+<script type="text/javascript">
+	$("#phone-number-edit").on("click", function () {
+		var val = $("#phone-number").html();
+		if (val) {
+			$("#phone").prepend(`<input class="txt font-codecard text-center phone-input" type="text"
+			data-inputmask="'mask': '(999)-999-9999'" value="${val}" />`);
+			$(":input").inputmask();
+			$("#phone-number").remove();
+			$(this).html('Update');
+		} else {
+			var txt = $(".txt").val();
+			$.ajax({
+				method: 'POST',
+				url: '/api/edit-phone',
+				contentType: 'application/json',
+				dataType: 'json',
+				data: JSON.stringify({phone: txt}),
+				success: function (res) {
+					$("#phone").prepend(`<span id="phone-number">${res}</span>`);
+					$(".txt").remove();
+					$(this).html('Edit');
+				},
+				fail: function (err) {
+					console.log(err);
+				}
+			})
+		}
+		return false;
+	});
+</script>
 {{ end }}

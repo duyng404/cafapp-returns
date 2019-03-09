@@ -3,6 +3,7 @@ package gin
 import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
+	"github.com/davecgh/go-spew/spew"
 	"net/http"
 	"strings"
 
@@ -112,4 +113,27 @@ func handleUserRedeemSuccess(c *gin.Context) {
 	session.Save()
 
 	renderHTML(c, 200, "userdash-redeem-success.html", data)
+}
+
+func handleEditPhoneNumbers(c *gin.Context) {
+	// bind
+	type reqStruct struct {
+		Phone string `json:"phone"`
+	}
+	var req reqStruct
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	user := getCurrentAuthUser(c)
+
+	//save to db
+	user.SaveUserPhone(req.Phone, user.ID)
+
+	// log
+	logger.Info(spew.Sdump(user))
+
+	c.JSON(200, user.PhoneNumber)
 }

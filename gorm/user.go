@@ -191,3 +191,13 @@ func PopulateByIDForAdminDash(id uint) (apiObjects.AdminUsersStruct, error) {
 	`, RedeemableCodeStatusRedeemed, id).Scan(&user).Error
 	return user, err
 }
+
+//SaveUserPhone to db
+func (u *User) SaveUserPhone(phone string, id uint) error {
+	err := DB.Raw(`
+		UPDATE users u
+		SET u.phone_number = ?
+		WHERE u.id = ?
+	`, phone, id).Scan(&u).Error
+	return err
+}
