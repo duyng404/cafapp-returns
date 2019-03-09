@@ -131,7 +131,7 @@ func handleEditPhoneNumbers(c *gin.Context) {
 
 	//save to db
 	user.SaveUserPhone(req.Phone, user.ID)
-
+	user.PopulateByID(user.ID)
 	// log
 	logger.Info(spew.Sdump(user))
 
