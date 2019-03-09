@@ -107,7 +107,7 @@
 				success: function (res) {
 					$("#phone").prepend(`<span id="phone-number">${res}</span>`);
 					$(".txt").remove();
-					$(this).html('Edit');
+					$("#phone-number-edit").html('Edit');
 				},
 				fail: function (err) {
 					console.log(err);
