@@ -142,13 +142,10 @@ func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObject
 	switch sortBy {
 	case "idDESC":
 		sortBy = "u.id DESC"
-		logger.Info(sortBy)
 	case "full_nameDESC":
 		sortBy = "u.full_name DESC"
-		logger.Info(sortBy)
 	case "gus_usernameDESC":
 		sortBy = "u.gus_username DESC"
-		logger.Info(sortBy)
 	}
 	sql.WriteString(`SELECT
 			u.*,
@@ -175,4 +172,21 @@ func GetUsersForAdmin(fn string, gususername string, sortBy string) ([]apiObject
 		err := DB.Raw(sql.String(), OrderStatusPlaced, "%"+fn+"%", "%"+gususername+"%").Order(sortBy).Scan(&tmp).Error
 		return tmp, err
 	}
+}
+
+//PopulateByIDForAdminDash get info for one user (admin)
+func PopulateByIDForAdminDash(id uint) (apiObjects.AdminUsersStruct, error) {
+	var user apiObjects.AdminUsersStruct
+	err := DB.Raw(`
+		SELECT
+			u.*,
+			(SELECT COUNT(*)
+			FROM redeemable_codes r
+			WHERE r.redeemed_by_user_id = u.id
+			AND r.status = ?) AS number_of_redeems
+		FROM users u
+		WHERE u.id = ?
+		AND u.deleted_at IS NULL
+	`, RedeemableCodeStatusRedeemed, id).Scan(&user).Error
+	return user, err
 }

@@ -75,6 +75,7 @@ func InitRoutes() *gin.Engine {
 		landing.GET("/about", handleLandingAbout)
 		landing.GET("/news", handleLandingNews)
 		landing.GET("/menu", handleLandingMenu)
+		landing.GET("/faq", handleLandingFAQ)
 	}
 
 	// login group will handle logging users in and out

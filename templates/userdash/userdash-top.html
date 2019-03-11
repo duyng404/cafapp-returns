@@ -22,7 +22,11 @@
 		</div>
 		<div class="row justify-content-between">
 			<div class="col text-right">Gustavus Student ID:</div>
+			{{ if .user.GusID }}
 			<div class="col text-left">{{ .user.GusID }}</div>
+			{{ else }}
+			<div class="col text-left text-muted">Not Set</div>
+			{{ end }}
 		</div>
 		<div class="row justify-content-between">
 			<div class="col text-right">Total Orders:</div>
@@ -30,7 +34,7 @@
 		</div>
 		<div class="row justify-content-between">
 			<div class="col text-right">Current balance:</div>
-			<div class="col text-left">{{ formatMoney .user.CurrentBalanceInCents }}</div>
+			<div class="col text-left">{{ formatMoney .user.CurrentBalanceInCents }} <span style="padding-left:15px"><a href="/redeem">Redeem cards</a></span></div>
 		</div>
 	</div>
 </section>
@@ -72,6 +76,12 @@
 	<p>If you have questions and/or problems with your order or your account, please send us an email at <span class="text-info">cafappsupport@gustavus.edu</span>.<br/>
 		Thanks for using CafApp!
 	</p>
+</section>
+
+<section class="container text-center mt-5">
+	<h2 class="font-weight-bold">Feedback</h2>
+	<p>Throughout the initial trial run, we will be evaluating statistics as well as user feedback. So if you like CafApp and have some time, we would love to hear your comments and feedback.</p>
+	You can use <a href="https://goo.gl/forms/2DnwngU1UY0PYrBn1" target="_blank">this Google Form link here</a> to take a short survey.<br/>
 </section>
 
 {{ end }}
