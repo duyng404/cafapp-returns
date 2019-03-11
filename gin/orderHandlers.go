@@ -88,6 +88,11 @@ func orderError(c *gin.Context, err string) {
 
 // GET step 1: show the menu
 func getOrderMenu(c *gin.Context) {
+	// if shop not open redirect to /menu with an error
+	isrunning, err := gorm.IsCafAppRunning()
+	if err != nil || !isrunning {
+		c.Redirect(http.StatusFound, "/menu")
+	}
 	data := make(map[string]interface{})
 	data["Title"] = "Build Your Order"
 	// check if user have any incomplete order
