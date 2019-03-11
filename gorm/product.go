@@ -16,12 +16,12 @@ type Product struct {
 	ImageURL        string `json:"image_url"`
 	Description     string `json:"description"`      // one-line description
 	DescriptionHTML string `json:"description_html"` // html formatted description
-	Status          uint   `json:"status"`
+	Type            uint   `json:"string"`
+	OnSale          bool   `json:"on_sale"`
+	SubProduct      []Product
 }
 
 const (
-	// ProductStatusCreated created, non-active
-	ProductStatusCreated = 0
 	// ProductStatusOnShelf on sale
 	ProductStatusOnShelf = 10
 	// ProductStatusAddon is on sale but not displayed on main menu
@@ -30,6 +30,10 @@ const (
 	ProductStatusDiscontinued = 90
 	// ProductStatusMisc uncategorized
 	ProductStatusMisc = 99
+
+	ProductTypeBasic    = "basic"
+	ProductTypeIncluded = "included"
+	ProductTypeComplex  = ""
 )
 
 // Create create the object
