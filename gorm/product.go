@@ -17,7 +17,7 @@ type Product struct {
 	Description     string  `json:"description"`      // DEPRECATED one-line description
 	DescriptionHTML string  `json:"description_html"` // DEPRECATED html formatted description
 	Status          int     // DEPRECATED
-	Tags            []Label `json:"tags" gorm:"many2many:product_tags;"`
+	Labels          []Label `json:"labels" gorm:"many2many:product_labels;"`
 }
 
 const (

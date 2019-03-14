@@ -1,6 +1,7 @@
 package gorm
 
 import (
+	"cafapp-returns/logger"
 	"strings"
 )
 
@@ -21,7 +22,7 @@ func initData() {
 		Name:         "2pc-chicken",
 		DisplayName:  "2 Chicken Strips",
 		PriceInCents: 250,
-		Tags:         []Label{*labelMain},
+		Labels:       []Label{*labelMain},
 	}
 	allFoods = append(allFoods, chicken2)
 
@@ -31,136 +32,116 @@ func initData() {
 		Name:         "4pc-chicken",
 		DisplayName:  "4 Chicken Strips",
 		PriceInCents: 450,
-		Tags:         []Label{*labelMain},
+		Labels:       []Label{*labelMain},
 	}
 	allFoods = append(allFoods, chicken4)
 
-	// // burger
-	// burger := Product{
-	// 	Tag:          "CB",
-	// 	Name:         fmt.Sprintf("burger"),
-	// 	PriceInCents: 715,
-	// 	Description:  fmt.Sprintf("Cheeseburger w/ lettuce & tomato, French Fries, Cooler Drink"),
-	// 	Status:       ProductStatusOnShelf,
-	// }
-	// burger.DisplayName = properFoodName("burger meal")
-	// burger.DescriptionHTML = strings.Replace(burger.Description, ", ", "<br />", -1)
-	// allFoods = append(allFoods, burger)
+	// burger
+	burger := Product{
+		Tag:          "CB",
+		Name:         "burger",
+		DisplayName:  "Cheeseburger",
+		PriceInCents: 410,
+		Labels:       []Label{*labelMain},
+	}
+	allFoods = append(allFoods, burger)
 
-	// // turkeysandwich
-	// turkeysandwich := Product{
-	// 	Tag:          "TS",
-	// 	Name:         fmt.Sprintf("turkey-sandwich"),
-	// 	PriceInCents: 835,
-	// 	Description:  fmt.Sprintf("Turkey Sub Sandwich, French Fries, Cooler Drink **Toppings: turkey, lettuce, tomato, with mayo & mustard in packets"),
-	// 	Status:       ProductStatusOnShelf,
-	// }
-	// turkeysandwich.DisplayName = properFoodName("turkey sandwich meal")
-	// turkeysandwich.DescriptionHTML = "Turkey Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: turkey, lettuce, tomato<br />* with mayo & mustard in packets"
-	// allFoods = append(allFoods, turkeysandwich)
+	// turkeysandwich
+	turkeysandwich := Product{
+		Tag:          "TS",
+		Name:         "turkey-sandwich",
+		DisplayName:  "Turkey Sandwich",
+		PriceInCents: 495,
+		Labels:       []Label{*labelMain},
+	}
+	allFoods = append(allFoods, turkeysandwich)
 
-	// // veggiesandwich
-	// veggiesandwich := Product{
-	// 	Tag:          "VS",
-	// 	Name:         fmt.Sprintf("veggie-sandwich"),
-	// 	PriceInCents: 835,
-	// 	Description:  fmt.Sprintf("Veggie Sub Sandwich, French Fries, Cooler Drink **Toppings include: hummus, cucumber, lettuce, tomato, green pepper, with mayo & mustard in packets"),
-	// 	Status:       ProductStatusOnShelf,
-	// }
-	// veggiesandwich.DisplayName = properFoodName("veggie sandwich meal")
-	// veggiesandwich.DescriptionHTML = "Veggie Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: hummus, cucumber, lettuce, tomato, green pepper<br />* with mayo & mustard in packets"
-	// allFoods = append(allFoods, veggiesandwich)
+	// veggiesandwich
+	veggiesandwich := Product{
+		Tag:          "VS",
+		Name:         "veggie-sandwich",
+		DisplayName:  "Turkey Sandwich",
+		PriceInCents: 495,
+		Labels:       []Label{*labelMain},
+	}
+	allFoods = append(allFoods, veggiesandwich)
 
-	// // peppizza
-	// peppizza := Product{
-	// 	Tag:          "PP",
-	// 	Name:         fmt.Sprintf("pep-pizza"),
-	// 	PriceInCents: 730,
-	// 	Description:  fmt.Sprintf("2 Slices of Pepperoni Pizza, French Fries, Cooler Drink"),
-	// 	Status:       ProductStatusOnShelf,
-	// }
-	// peppizza.DisplayName = properFoodName("pepperoni pizza meal")
-	// peppizza.DescriptionHTML = strings.Replace(peppizza.Description, ", ", "<br />", -1)
-	// allFoods = append(allFoods, peppizza)
+	// peppizza
+	peppizza := Product{
+		Tag:          "PP",
+		Name:         "pep-pizza",
+		DisplayName:  "Pepperoni Pizza",
+		PriceInCents: 390,
+		Labels:       []Label{*labelMain},
+	}
+	allFoods = append(allFoods, peppizza)
 
-	// // cheesepizza
-	// cheesepizza := Product{
-	// 	Tag:          "CP",
-	// 	Name:         fmt.Sprintf("cheese-pizza"),
-	// 	PriceInCents: 730,
-	// 	Description:  fmt.Sprintf("2 Slices of Cheese Pizza, French Fries, Cooler Drink"),
-	// 	Status:       ProductStatusOnShelf,
-	// }
-	// cheesepizza.DisplayName = properFoodName("cheese pizza meal")
-	// cheesepizza.DescriptionHTML = strings.Replace(cheesepizza.Description, ", ", "<br />", -1)
-	// allFoods = append(allFoods, cheesepizza)
+	// cheesepizza
+	cheesepizza := Product{
+		Tag:          "CP",
+		Name:         "cheese-pizza",
+		DisplayName:  "Cheese Pizza",
+		PriceInCents: 390,
+		Labels:       []Label{*labelMain},
+	}
+	allFoods = append(allFoods, cheesepizza)
 
-	// // coke
-	// coke := Product{
-	// 	Tag:             "CC",
-	// 	Name:            "coca-cola",
-	// 	DisplayName:     "Coca-Cola",
-	// 	PriceInCents:    0,
-	// 	Description:     "Coca-Cola",
-	// 	DescriptionHTML: "Coca-Cola",
-	// 	Status:          ProductStatusAddon,
-	// }
-	// allFoods = append(allFoods, coke)
+	// fries
+	fries := Product{
+		Tag:          "FR",
+		Name:         "fries",
+		DisplayName:  "French Fries",
+		PriceInCents: 150,
+		Labels:       []Label{*labelSides},
+	}
+	allFoods = append(allFoods, fries)
 
-	// // sprite
-	// sprite := Product{
-	// 	Tag:             "SP",
-	// 	Name:            "sprite",
-	// 	DisplayName:     "Sprite",
-	// 	PriceInCents:    0,
-	// 	Description:     "Sprite",
-	// 	DescriptionHTML: "Sprite",
-	// 	Status:          ProductStatusAddon,
-	// }
-	// allFoods = append(allFoods, sprite)
+	// chips
+	chips := Product{
+		Tag:          "CH",
+		Name:         "chips",
+		DisplayName:  "Packaged Chips",
+		PriceInCents: 125,
+		Labels:       []Label{*labelSides},
+	}
+	allFoods = append(allFoods, chips)
 
-	// // dietcoke
-	// dietcoke := Product{
-	// 	Tag:             "DC",
-	// 	Name:            "dietcoke",
-	// 	DisplayName:     "Diet Coke",
-	// 	PriceInCents:    0,
-	// 	Description:     "Diet Coke",
-	// 	DescriptionHTML: "Diet Coke",
-	// 	Status:          ProductStatusAddon,
-	// }
-	// allFoods = append(allFoods, dietcoke)
+	// coke
+	coke := Product{
+		Tag:          "CC",
+		Name:         "coke",
+		DisplayName:  "Coca-Cola",
+		PriceInCents: 165,
+		Labels:       []Label{*labelDrink},
+	}
+	allFoods = append(allFoods, coke)
 
-	// // orange
-	// orange := Product{
-	// 	Tag:             "OJ",
-	// 	Name:            "orange",
-	// 	DisplayName:     "Orange Juice",
-	// 	PriceInCents:    0,
-	// 	Description:     "Orange Juice",
-	// 	DescriptionHTML: "Orange Juice",
-	// 	Status:          ProductStatusAddon,
-	// }
-	// allFoods = append(allFoods, orange)
+	// sprite
+	sprite := Product{
+		Tag:          "SP",
+		Name:         "sprite",
+		DisplayName:  "Sprite",
+		PriceInCents: 165,
+		Labels:       []Label{*labelDrink},
+	}
+	allFoods = append(allFoods, sprite)
 
-	// // mrpibbs
-	// mrpibbs := Product{
-	// 	Tag:             "PB",
-	// 	Name:            "mrpibbs",
-	// 	DisplayName:     "Mr Pibbs",
-	// 	PriceInCents:    0,
-	// 	Description:     "Mr Pibbs",
-	// 	DescriptionHTML: "Mr Pibbs",
-	// 	Status:          ProductStatusAddon,
-	// }
-	// allFoods = append(allFoods, mrpibbs)
+	// dietcoke
+	dietcoke := Product{
+		Tag:          "DC",
+		Name:         "diet-coke",
+		DisplayName:  "Diet Coke",
+		PriceInCents: 165,
+		Labels:       []Label{*labelDrink},
+	}
+	allFoods = append(allFoods, dietcoke)
 
-	// var err error
-	// for i := range allFoods {
-	// 	err = allFoods[i].Create()
-	// 	if err != nil {
-	// 		logger.Fatal("error while generating sample data:", err)
-	// 	}
-	// }
+	var err error
+	for i := range allFoods {
+		err = allFoods[i].Create()
+		if err != nil {
+			logger.Fatal("error while generating sample data:", err)
+		}
+	}
 
 }
