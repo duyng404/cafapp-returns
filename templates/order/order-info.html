@@ -106,41 +106,39 @@
 						</div>
 					</div>
 				</div>
-				{{ if .needPhoneNumbers }}
-				<hr class="mb-4" />
 
-				<h4>Phone Numbers</h4>
-				<div class="row">
-					<div class="col-12 mb-3">
-						<label for="phone-number">Phone number</label>
-						<input class="form-control font-codecard text-center phone-input" type="text" id="phone-input" name="phone-input"
-							data-inputmask="'mask': '(999)-999-9999'" required>
-						<small>We'd like your phone number so that we can contact you for delivery!</small>
-						<div class="invalid-feedback">
-							Please enter your phone number.
-						</div>
-						{{ else }}
-						<p>Your phone number is: {{ .phone }}
-							and you will be contacted for the delivery</p>
-						{{ end }}
-					</div>
-				</div>
-				{{ if .needGusID }}
 				<hr class="mb-4" />
 
 				<h4>Extra Information</h4>
 				<div class="row">
+					{{ if .needGusID }}
 					<div class="col-12 mb-3">
 						<label for="gus-id">Gustavus ID <span class="text-danger">*</span></label>
 						<input class="form-control" type="number" id="gusID" name="gusID" required>
-						<small class="text-muted">We need your gustavus ID for identifying and charging your account at the caf.
-							This info is saved so you don't have to enter it again next time!</small>
+						<small class="text-muted">We will need your gustavus ID for identifying and charging your account at the caf.</small>
 						<div class="invalid-feedback">
 							Please enter your Gustavus ID.
 						</div>
 					</div>
+					{{ end }}
+
+					{{ if .needPhoneNumber }}
+					<div class="col-12 mb-3">
+						<label for="phone-number">Phone number <span class="text-danger">*</span></label>
+						<input class="form-control font-codecard" type="text" id="phone-input" name="phone-input"
+							data-inputmask="'mask': '(999)-999-9999'" required>
+						<small class="text-muted">We will need your phone number so that we can contact you for delivery.</small>
+						<div class="invalid-feedback">
+							Please enter your phone number.
+						</div>
+					</div>
+					{{ else }}
+					<div class="col-12 mb-3">
+						<p>Your phone number is <span class="text-info">{{ .phone }}</span> and will be contacted for this delivery.</p>
+					</div>
+					{{ end }}
+
 				</div>
-				{{ end }}
 			</form>
 
 			<hr class="mb-4" />

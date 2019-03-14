@@ -138,7 +138,7 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 
 	// does user have a phone number
 	if user.PhoneNumber == "" {
-		data["needPhoneNumbers"] = true
+		data["needPhoneNumber"] = true
 	}
 
 	// determine currently selected meal and drink
