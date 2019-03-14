@@ -93,6 +93,14 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Tag Table")
+	err = DB.AutoMigrate(&Tag{}).Error
+	if err != nil {
+		logger.Error("Error migrating tag table:", err)
+		return err
+	}
+
+	initTags()
 	initDestinations()
 	initOrderStatusCodes()
 	initGlobalVar()

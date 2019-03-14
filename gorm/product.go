@@ -16,9 +16,9 @@ type Product struct {
 	ImageURL        string `json:"image_url"`
 	Description     string `json:"description"`      // one-line description
 	DescriptionHTML string `json:"description_html"` // html formatted description
-	Type            uint   `json:"string"`
 	OnSale          bool   `json:"on_sale"`
-	SubProduct      []Product
+	Status          int    // DEPRECATED
+	Tags            []Tag  `json:"tags" gorm:"many2many:product_tags;"`
 }
 
 const (
@@ -30,10 +30,6 @@ const (
 	ProductStatusDiscontinued = 90
 	// ProductStatusMisc uncategorized
 	ProductStatusMisc = 99
-
-	ProductTypeBasic    = "basic"
-	ProductTypeIncluded = "included"
-	ProductTypeComplex  = ""
 )
 
 // Create create the object
