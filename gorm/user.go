@@ -21,6 +21,7 @@ type User struct {
 	GusID                 int    `json:"gus_id"`
 	IsAdmin               bool   `json:"-"`
 	CurrentBalanceInCents int    `json:"current_balance_in_cents"`
+	PhoneNumber           string `json:"phone_number"`
 }
 
 // GetAllUser ...
@@ -189,4 +190,14 @@ func PopulateByIDForAdminDash(id uint) (apiObjects.AdminUsersStruct, error) {
 		AND u.deleted_at IS NULL
 	`, RedeemableCodeStatusRedeemed, id).Scan(&user).Error
 	return user, err
+}
+
+//SaveUserPhone to db
+func (u *User) SaveUserPhone(phone string, id uint) error {
+	err := DB.Raw(`
+		UPDATE users u
+		SET u.phone_number = ?
+		WHERE u.id = ?
+	`, phone, id).Scan(&u).Error
+	return err
 }

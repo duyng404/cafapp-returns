@@ -113,3 +113,28 @@ func handleUserRedeemSuccess(c *gin.Context) {
 
 	renderHTML(c, 200, "userdash-redeem-success.html", data)
 }
+
+func handleEditPhoneNumbers(c *gin.Context) {
+	// bind
+	type reqStruct struct {
+		Phone string `json:"phone"`
+	}
+	var req reqStruct
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	user := getCurrentAuthUser(c)
+
+	//save to db
+	err = user.SaveUserPhone(req.Phone, user.ID)
+	if err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(200, user.PhoneNumber)
+}
