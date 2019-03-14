@@ -9,31 +9,31 @@ func properFoodName(in string) string {
 }
 
 func initData() {
-	// allFoods := []Product{}
+	labelMain, _ := GetOrCreateLabel(ProductLabelMain)
+	labelSides, _ := GetOrCreateLabel(ProductLabelSide)
+	labelDrink, _ := GetOrCreateLabel(ProductLabelDrink)
 
-	// // chicken2
-	// chicken2 := Product{
-	// 	Tag:          "C2",
-	// 	Name:         fmt.Sprintf("2-chicken"),
-	// 	PriceInCents: 590,
-	// 	Description:  fmt.Sprintf("2 Chicken Strips, French Fries, Cooler Drink"),
-	// 	Status:       ProductStatusOnShelf,
-	// }
-	// chicken2.DisplayName = properFoodName("chicken tender meal 2pc")
-	// chicken2.DescriptionHTML = strings.Replace(chicken2.Description, ", ", "<br />", -1)
-	// allFoods = append(allFoods, chicken2)
+	allFoods := []Product{}
 
-	// // chickend4
-	// chicken4 := Product{
-	// 	Tag:          "C4",
-	// 	Name:         fmt.Sprintf("4-chicken"),
-	// 	PriceInCents: 790,
-	// 	Description:  fmt.Sprintf("4 Chicken Strips, French Fries, Cooler Drink"),
-	// 	Status:       ProductStatusOnShelf,
-	// }
-	// chicken4.DisplayName = properFoodName("chicken tender meal 4pc")
-	// chicken4.DescriptionHTML = strings.Replace(chicken4.Description, ", ", "<br />", -1)
-	// allFoods = append(allFoods, chicken4)
+	// chicken2
+	chicken2 := Product{
+		Tag:          "2C",
+		Name:         "2pc-chicken",
+		DisplayName:  "2 Chicken Strips",
+		PriceInCents: 250,
+		Tags:         []Label{*labelMain},
+	}
+	allFoods = append(allFoods, chicken2)
+
+	// chicken4
+	chicken4 := Product{
+		Tag:          "4C",
+		Name:         "4pc-chicken",
+		DisplayName:  "4 Chicken Strips",
+		PriceInCents: 450,
+		Tags:         []Label{*labelMain},
+	}
+	allFoods = append(allFoods, chicken4)
 
 	// // burger
 	// burger := Product{

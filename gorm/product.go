@@ -9,16 +9,15 @@ import (
 // Product the basic product that goes on menu and orders
 type Product struct {
 	gorm.Model
-	Tag             string `json:"tag"`          // Unique tag following our internal convention
-	Name            string `json:"name"`         // Internal code names
-	DisplayName     string `json:"display_name"` // Full Display Name on frontend
-	PriceInCents    int    `json:"price_in_cents"`
-	ImageURL        string `json:"image_url"`
-	Description     string `json:"description"`      // one-line description
-	DescriptionHTML string `json:"description_html"` // html formatted description
-	OnSale          bool   `json:"on_sale"`
-	Status          int    // DEPRECATED
-	Tags            []Tag  `json:"tags" gorm:"many2many:product_tags;"`
+	Tag             string  `json:"tag"`          // Unique tag following our internal convention
+	Name            string  `json:"name"`         // Internal code names
+	DisplayName     string  `json:"display_name"` // Full Display Name on frontend
+	PriceInCents    int     `json:"price_in_cents"`
+	ImageURL        string  `json:"image_url"`
+	Description     string  `json:"description"`      // DEPRECATED one-line description
+	DescriptionHTML string  `json:"description_html"` // DEPRECATED html formatted description
+	Status          int     // DEPRECATED
+	Tags            []Label `json:"tags" gorm:"many2many:product_tags;"`
 }
 
 const (
@@ -47,7 +46,7 @@ func (p *Product) PopulateByIDOnShelf(id uint) error {
 	return DB.Where("id = ? AND status = ?", id, ProductStatusOnShelf).Last(&p).Error
 }
 
-// GetAllProductsOnShelf : get all products currently on sale
+// GetAllProductsOnShelf :DEPRECATED get all products currently on sale
 func GetAllProductsOnShelf() ([]Product, error) {
 	var res []Product
 	err := DB.Raw(`

@@ -93,14 +93,14 @@ func Migrate() error {
 		return err
 	}
 
-	logger.Info("Migrating Tag Table")
-	err = DB.AutoMigrate(&Tag{}).Error
+	logger.Info("Migrating Label Table")
+	err = DB.AutoMigrate(&Label{}).Error
 	if err != nil {
-		logger.Error("Error migrating tag table:", err)
+		logger.Error("Error migrating label table:", err)
 		return err
 	}
 
-	initTags()
+	initLabels()
 	initDestinations()
 	initOrderStatusCodes()
 	initGlobalVar()
@@ -108,7 +108,7 @@ func Migrate() error {
 	// init data
 	var tmp Product
 	err = tmp.PopulateByID(1)
-	if err != nil {
+	if err == ErrRecordNotFound {
 		logger.Info("Database is empty, generating sample data")
 		initData()
 	}
