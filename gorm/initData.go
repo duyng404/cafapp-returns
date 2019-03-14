@@ -9,7 +9,7 @@ func initData() {
 	labelSides, _ := GetOrCreateLabel(ProductLabelSide)
 	labelDrink, _ := GetOrCreateLabel(ProductLabelDrink)
 
-	allFoods := []Product{}
+	allFoods := []*Product{}
 
 	// chicken2
 	chicken2 := Product{
@@ -19,7 +19,7 @@ func initData() {
 		PriceInCents: 250,
 		Labels:       []Label{*labelMain},
 	}
-	allFoods = append(allFoods, chicken2)
+	allFoods = append(allFoods, &chicken2)
 
 	// chicken4
 	chicken4 := Product{
@@ -29,7 +29,7 @@ func initData() {
 		PriceInCents: 450,
 		Labels:       []Label{*labelMain},
 	}
-	allFoods = append(allFoods, chicken4)
+	allFoods = append(allFoods, &chicken4)
 
 	// burger
 	burger := Product{
@@ -39,7 +39,7 @@ func initData() {
 		PriceInCents: 410,
 		Labels:       []Label{*labelMain},
 	}
-	allFoods = append(allFoods, burger)
+	allFoods = append(allFoods, &burger)
 
 	// turkeysandwich
 	turkeysandwich := Product{
@@ -49,7 +49,7 @@ func initData() {
 		PriceInCents: 495,
 		Labels:       []Label{*labelMain},
 	}
-	allFoods = append(allFoods, turkeysandwich)
+	allFoods = append(allFoods, &turkeysandwich)
 
 	// veggiesandwich
 	veggiesandwich := Product{
@@ -59,7 +59,7 @@ func initData() {
 		PriceInCents: 495,
 		Labels:       []Label{*labelMain},
 	}
-	allFoods = append(allFoods, veggiesandwich)
+	allFoods = append(allFoods, &veggiesandwich)
 
 	// peppizza
 	peppizza := Product{
@@ -69,7 +69,7 @@ func initData() {
 		PriceInCents: 390,
 		Labels:       []Label{*labelMain},
 	}
-	allFoods = append(allFoods, peppizza)
+	allFoods = append(allFoods, &peppizza)
 
 	// cheesepizza
 	cheesepizza := Product{
@@ -79,7 +79,7 @@ func initData() {
 		PriceInCents: 390,
 		Labels:       []Label{*labelMain},
 	}
-	allFoods = append(allFoods, cheesepizza)
+	allFoods = append(allFoods, &cheesepizza)
 
 	// fries
 	fries := Product{
@@ -89,7 +89,7 @@ func initData() {
 		PriceInCents: 150,
 		Labels:       []Label{*labelSides},
 	}
-	allFoods = append(allFoods, fries)
+	allFoods = append(allFoods, &fries)
 
 	// chips
 	chips := Product{
@@ -99,7 +99,7 @@ func initData() {
 		PriceInCents: 125,
 		Labels:       []Label{*labelSides},
 	}
-	allFoods = append(allFoods, chips)
+	allFoods = append(allFoods, &chips)
 
 	// coke
 	coke := Product{
@@ -109,7 +109,7 @@ func initData() {
 		PriceInCents: 165,
 		Labels:       []Label{*labelDrink},
 	}
-	allFoods = append(allFoods, coke)
+	allFoods = append(allFoods, &coke)
 
 	// sprite
 	sprite := Product{
@@ -119,7 +119,7 @@ func initData() {
 		PriceInCents: 165,
 		Labels:       []Label{*labelDrink},
 	}
-	allFoods = append(allFoods, sprite)
+	allFoods = append(allFoods, &sprite)
 
 	// dietcoke
 	dietcoke := Product{
@@ -129,7 +129,7 @@ func initData() {
 		PriceInCents: 165,
 		Labels:       []Label{*labelDrink},
 	}
-	allFoods = append(allFoods, dietcoke)
+	allFoods = append(allFoods, &dietcoke)
 
 	var err error
 	for i := range allFoods {

@@ -10,12 +10,13 @@ import (
 type GlobalVar struct {
 	gorm.Model
 	CurrentOrderTagNumber int
+	ActiveMenuID          uint
 }
 
 // FirstOrCreate : first or create
 func (g *GlobalVar) FirstOrCreate() error {
 	_, err := GetGlobalVar()
-	if err == gorm.ErrRecordNotFound {
+	if err == ErrRecordNotFound {
 		return DB.Create(g).Error
 	}
 	return nil
@@ -39,6 +40,7 @@ func GetGlobalVar() (*GlobalVar, error) {
 func initGlobalVar() error {
 	var g GlobalVar
 	g.CurrentOrderTagNumber = 0
+	g.ActiveMenuID = 1
 	return g.FirstOrCreate()
 }
 

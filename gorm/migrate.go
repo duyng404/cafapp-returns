@@ -107,6 +107,13 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Menu Item Table")
+	err = DB.AutoMigrate(&MenuItem{}).Error
+	if err != nil {
+		logger.Error("Error migrating menu item table:", err)
+		return err
+	}
+
 	initLabels()
 	initDestinations()
 	initOrderStatusCodes()
