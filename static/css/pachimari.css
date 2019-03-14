@@ -7,12 +7,39 @@ body {
 	margin-bottom: 250px;
 }
 
+@media (max-width: 575.98px) {
+	.text-center-xs {
+		text-align: center;
+	}
+}
+
 #spotlight {
-	min-height: 50vh;
+	/* min-height: 30vh; */
 	background-image: url("/static/img/spotlight.jpg");
 	background-size: cover;
 	background-position: center center;
 	border-bottom: 10px #C88A12 solid;
+}
+
+@media (max-width: 575.98px) {
+	.spotlight-button-primary {
+		margin: 8px auto;
+		width: 90%;
+	}
+	.spotlight-button-secondary {
+		margin: 8px auto;
+		width: 90%;
+	}
+}
+
+.spotlight-button-primary {
+	padding-left: 48px;
+	padding-right: 48px;
+	margin: 8px;
+}
+
+.spotlight-button-secondary {
+	margin: 8px;
 }
 
 #how-container {
@@ -32,13 +59,21 @@ body {
 	margin: 0 auto;
 }
 
+footer {
+	border-top: 15px #C88A12 solid;
+	min-height: 200px;
+}
+
 #footer{
 	position: absolute;
 	bottom: 0;
-	margin: 4rem 0 0 0;
 	width: 100%;
 	height: 200px;
-	border-top: 15px #C88A12 solid;
+	/* position: relative; */
+}
+
+#footer > div {
+	margin: 0 auto;
 }
 
 #footer-inner{
@@ -50,6 +85,11 @@ body {
 #loginform {
 	/* min-height:50vh; */
 	padding-top: 10vh;
+}
+
+.faq-q {
+	font-size: 3rem;
+	font-weight: bold;
 }
 
 /* --------- User Redeem ----------- */

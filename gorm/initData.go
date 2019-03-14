@@ -42,7 +42,7 @@ func initData() {
 		Tag:          "CB",
 		Name:         fmt.Sprintf("burger"),
 		PriceInCents: 715,
-		Description:  fmt.Sprintf("Cheeseburger w/ lettuce & tomato, French Fries, Cooler Drink"),
+		Description:  fmt.Sprintf("Cheeseburger w/ lettuce & tomato (wheat roll), French Fries, Cooler Drink"),
 		Status:       ProductStatusOnShelf,
 	}
 	burger.DisplayName = properFoodName("burger meal")
@@ -54,11 +54,11 @@ func initData() {
 		Tag:          "TS",
 		Name:         fmt.Sprintf("turkey-sandwich"),
 		PriceInCents: 835,
-		Description:  fmt.Sprintf("Turkey Sub Sandwich, French Fries, Cooler Drink **Toppings: turkey, lettuce, tomato, with mayo & mustard in packets"),
+		Description:  fmt.Sprintf("Turkey Sub Sandwich, French Fries, Cooler Drink **Toppings: turkey, lettuce, tomato, with mayo & mustard in sides"),
 		Status:       ProductStatusOnShelf,
 	}
 	turkeysandwich.DisplayName = properFoodName("turkey sandwich meal")
-	turkeysandwich.DescriptionHTML = "Turkey Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: turkey, lettuce, tomato<br />* with mayo & mustard in packets"
+	turkeysandwich.DescriptionHTML = "Turkey Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: turkey, lettuce, tomato<br />* with mayo & mustard in sides"
 	allFoods = append(allFoods, turkeysandwich)
 
 	// veggiesandwich
@@ -66,11 +66,11 @@ func initData() {
 		Tag:          "VS",
 		Name:         fmt.Sprintf("veggie-sandwich"),
 		PriceInCents: 835,
-		Description:  fmt.Sprintf("Veggie Sub Sandwich, French Fries, Cooler Drink **Toppings include: hummus, cucumber, lettuce, tomato, green pepper, with mayo & mustard in packets"),
+		Description:  fmt.Sprintf("Veggie Sub Sandwich, French Fries, Cooler Drink **Toppings include: hummus, cucumber, lettuce, tomato, green bell pepper, with mayo & mustard in sides"),
 		Status:       ProductStatusOnShelf,
 	}
 	veggiesandwich.DisplayName = properFoodName("veggie sandwich meal")
-	veggiesandwich.DescriptionHTML = "Veggie Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: hummus, cucumber, lettuce, tomato, green pepper<br />* with mayo & mustard in packets"
+	veggiesandwich.DescriptionHTML = "Veggie Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: hummus, cucumber, lettuce, tomato, green bell pepper<br />* with mayo & mustard in sides"
 	allFoods = append(allFoods, veggiesandwich)
 
 	// peppizza
@@ -135,12 +135,12 @@ func initData() {
 
 	// orange
 	orange := Product{
-		Tag:             "OJ",
+		Tag:             "OS",
 		Name:            "orange",
-		DisplayName:     "Orange Juice",
+		DisplayName:     "Orange Soda",
 		PriceInCents:    0,
-		Description:     "Orange Juice",
-		DescriptionHTML: "Orange Juice",
+		Description:     "Orange Soda",
+		DescriptionHTML: "Orange Soda",
 		Status:          ProductStatusAddon,
 	}
 	allFoods = append(allFoods, orange)

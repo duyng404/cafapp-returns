@@ -3,6 +3,7 @@ package gorm
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/lithammer/shortuuid"
@@ -131,12 +132,15 @@ func (o *Order) GenerateTag() error {
 // GetOrdersForAdminViewQueue :
 func GetOrdersForAdminViewQueue() (*[]Order, error) {
 	var orders []Order
+	twentyFourHours := time.Duration(24) * time.Hour
+	twentyFourHoursFromNow := time.Now().Add(-twentyFourHours)
 	err := DB.
+		Order("tag").
 		Preload("User").
 		Preload("OrderRows").
 		Preload("OrderRows.Product").
 		Preload("Destination").
-		Where("status_code BETWEEN ? AND ?", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
+		Where("status_code >= ? AND status_code < ? AND created_at > ?", OrderStatusPlaced, OrderStatusDelivered, twentyFourHoursFromNow).Find(&orders).Error
 	return &orders, err
 }
 
