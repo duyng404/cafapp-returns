@@ -6,7 +6,12 @@
 	</div>
 </section>
 
+<section class="container-fluid text-center" id="toast-area">
+	<!-- Left empty intentionally -->
+</section>
+
 <section class="container-fluid text-center">
+
 	<h2 class="font-weight-bold">Account Details</h2>
 
 	<div class="my-4"></div>
@@ -35,9 +40,14 @@
 		<div class="row justify-content-between">
 			<div class="col text-right">Phone Number:</div>
 			<div class="col text-left" id="phone">
+				{{ if .user.PhoneNumber }}
 				<span id="phone-number">{{ .user.PhoneNumber }}</span>
+				{{ else }}
+				<span id="phone-number"><span class="text-muted">not set</span></span>
+				{{ end }}
+				<a class="px-3" href="#" role="button" id="phone-number-edit">edit</a>
 			</div>
-			<button class="btn btn-primary" id="phone-number-edit" type="button">Edit</button>
+			<input type="hidden" id="current-phone-num" value="{{ .user.PhoneNumber }}" />
 		</div>
 	</div>
 </section>
@@ -76,8 +86,8 @@
 
 <section class="container text-center mt-5">
 	<h2 class="font-weight-bold">Need help?</h2>
-	<p>If you have questions and/or problems with your order or your account, please send us an email at <span
-			class="text-info">cafappsupport@gustavus.edu</span>.<br />
+	<p>If you have questions and/or problems with your order or your account, please send us an email at
+		<span class="text-info">cafappsupport@gustavus.edu</span>.<br />
 		Thanks for using CafApp!
 	</p>
 </section>
@@ -88,33 +98,90 @@
 	data-autoinit="true"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/jquery.inputmask.min.js"></script>
 <script type="text/javascript">
-	$("#phone-number-edit").on("click", function () {
-		var val = $("#phone-number").html();
-		if (val) {
-			$("#phone").prepend(`<input class="txt font-codecard text-center phone-input" type="text"
-			data-inputmask="'mask': '(999)-999-9999'" value="${val}" />`);
-			$(":input").inputmask();
-			$("#phone-number").remove();
-			$(this).html('Update');
-		} else {
-			var txt = $(".txt").val();
+	function alert(msg, color) {
+		$("#toast-area").html("");
+		if (!msg) return
+		if (!color) color = "primary"
+		$("#toast-area").prepend(`
+			<div class="alert alert-${color} alert-dismissible fade show" role="alert">
+				${msg}
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+		`);
+	}
+
+	function clearPhone() {
+		$("#phone").html("");
+	}
+
+	function showPhoneEdit() {
+		phoneNum = $("#current-phone-num").val();
+		$("#phone").prepend(`
+			<div class="input-group input-group-sm">
+				<input class="form-control font-codecard" type="text" id="phone-number" data-inputmask="'mask': '(999)-999-9999'"/>
+				<div class="input-group-append">
+					<button class="btn btn-outline-ca-yellow4" type="button" id="phone-number-submit">Update</button>
+				</div>
+			</div>
+			<a class="px-3" href="#" role="button" id="phone-number-cancel">cancel</a>
+		`);
+		$(":input").inputmask();
+		$("#phone-number").focus().val(phoneNum);
+		setListeners();
+	}
+
+	function showPhoneNormal() {
+		phoneNum = $("#current-phone-num").val();
+		$("#phone").prepend(`
+			<span id="phone-number">${phoneNum}</span>
+			<a class="px-3" href="#" role="button" id="phone-number-edit">edit</a>
+		`);
+		setListeners();
+	}
+
+	function setListeners() {
+		$("#phone-number-edit").on("click", function () {
+			clearPhone();
+			showPhoneEdit();
+			return false;
+		});
+
+		$("#phone-number-submit").on("click", function() {
+			phoneNum = $("#phone-number").val();
 			$.ajax({
 				method: 'POST',
 				url: '/api/edit-phone',
 				contentType: 'application/json',
 				dataType: 'json',
-				data: JSON.stringify({phone: txt}),
+				data: JSON.stringify({phone: phoneNum}),
 				success: function (res) {
-					$("#phone").prepend(`<span id="phone-number">${res}</span>`);
-					$(".txt").remove();
-					$("#phone-number-edit").html('Edit');
+					console.log(res);
+					$("#current-phone-num").val(res);
+					clearPhone();
+					showPhoneNormal();
+					alert("Phone change success!")
 				},
-				fail: function (err) {
+				error: function (err) {
 					console.log(err);
+					clearPhone();
+					showPhoneNormal();
+					alert("Oh no! Phone change failed! Please try again later.")
 				}
 			})
-		}
-		return false;
-	});
+			return false;
+		});
+
+		$("#phone-number-cancel").on("click", function() {
+			clearPhone();
+			showPhoneNormal();
+			return false;
+		})
+	}
+
+	window.onload = function() {
+		setListeners();
+	};
 </script>
 {{ end }}
