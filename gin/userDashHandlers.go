@@ -30,7 +30,7 @@ func handleUserDash(c *gin.Context) {
 	renderHTML(c, 200, "userdash-top.html", data)
 }
 
-func handleOrderDetail(c *gin.Context){
+func handleOrderDetail(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["Title"] = "Order Details"
 	var order gorm.Order
@@ -42,8 +42,14 @@ func handleOrderDetail(c *gin.Context){
 		c.Redirect(http.StatusFound, "/dash")
 	}
 
-	if order.StatusCode == 60{
+	if order.StatusCode == gorm.OrderStatusDelivered {
 		data["isDelivered"] = true
+		deliver, err := gorm.GetDeliveredTime(order.ID)
+		if err != nil {
+			logger.Error("cannot display delivery time of order")
+			return
+		}
+		data["time"] = deliver
 	}
 
 	for i := range order.OrderRows {
@@ -63,12 +69,11 @@ func handleOrderDetail(c *gin.Context){
 		return
 	}
 
-
 	data["destination"] = dest.Name
 	data["deliveryFee"] = order.DeliveryFeeInCents
 	data["orderTotal"] = order.TotalInCents
 	data["cafAccountChargeAmount"] = order.CafAccountChargeAmountInCents
-	renderHTML(c,200,"userdash-detail.html",data)
+	renderHTML(c, 200, "userdash-detail.html", data)
 }
 
 func handleUserRedeem(c *gin.Context) {

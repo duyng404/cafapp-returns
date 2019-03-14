@@ -67,9 +67,9 @@
 			</div>
 			<hr />
 			{{ if .isDelivered }}
-				<p class="text-center">Order was delivered to: {{ .destination }} at {{ .CreatedAt.Format "Jan _2 3:04pm" }}</p>
+				<p class="text-center">Order was delivered to: {{ .destination }} at {{ .time.UpdatedAt.Format "Jan _2 3:04pm" }}</p>
 			{{ else }}
-				<p class="text-center">Order will be delivered to: {{ .destination }}</p>
+				<p class="text-center">Order will be delivered to {{ .destination }}</p>
 			{{ end }}
             <hr />
         </div>
