@@ -11,6 +11,7 @@ type GlobalVar struct {
 	gorm.Model
 	CurrentOrderTagNumber int
 	ActiveMenuID          uint
+	IsCafAppRunning       bool
 }
 
 // FirstOrCreate : first or create
@@ -41,6 +42,7 @@ func initGlobalVar() error {
 	var g GlobalVar
 	g.CurrentOrderTagNumber = 0
 	g.ActiveMenuID = 1
+	g.IsCafAppRunning = false
 	return g.FirstOrCreate()
 }
 
@@ -52,4 +54,25 @@ func (g *GlobalVar) GetNextOrderTag() (int, error) {
 		return 0, err
 	}
 	return g.CurrentOrderTagNumber, err
+}
+
+// TurnCafAppOn : set running to true
+func (g *GlobalVar) TurnCafAppOn() error {
+	g.IsCafAppRunning = true
+	return g.Save()
+}
+
+// TurnCafAppOff : set running to false
+func (g *GlobalVar) TurnCafAppOff() error {
+	g.IsCafAppRunning = false
+	return g.Save()
+}
+
+// IsCafAppRunning : is it running at the moment ?
+func IsCafAppRunning() (bool, error) {
+	g, err := GetGlobalVar()
+	if err != nil {
+		return false, err
+	}
+	return g.IsCafAppRunning, nil
 }

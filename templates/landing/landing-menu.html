@@ -3,7 +3,38 @@
 {{ template "basicspotlight" . }}
 
 <section class="container">
-	<h3 class="text-center">This page has yet to be implemented</h3>
+	<p class="w-75 mx-auto">We currently offer a choice of convenient combo meals, each of them with a choice of drink between Coke, Sprite, Diet Coke and Orange Soda. More food choices will come as we grow!</p>
+
+	{{ if and (.menu) (len .menu) }}
+	<div class="row mt-5">
+		<div class="col-12">
+			<div class="alert alert-warning text-center fade show">
+				<span>CafApp is currently NOT in service, so ordering has been disabled.<br />
+					We are going to have our first launch on Friday March 15th at 7pm.</span>
+			</div>
+		</div>
+
+
+		{{ range .menu }}
+		<div class="col-12 col-md-6 col-lg-4">
+			<div class="card mb-4 shadow-sm text-center">
+				<div class="card-header">
+					<h5 class="my-0 font-weight-bold">{{ .DisplayName }}</h5>
+				</div>
+				<div class="card-body">
+					<h3 class="card-title pricing-card-title">{{ formatMoney .PriceInCents }}</h3>
+					<div class="mt-3 mb-3">
+						{{ rawHTML .DescriptionHTML }}
+					</div>
+				</div>
+			</div>
+		</div>
+		{{ end }}
+
+	</div>
+	{{ else }}
+	<p>there is nothing on sale</p>
+	{{ end }}
 </section>
 
 {{ end }}

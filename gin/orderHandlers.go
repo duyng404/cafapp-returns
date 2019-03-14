@@ -88,6 +88,11 @@ func orderError(c *gin.Context, err string) {
 
 // GET step 1: show the menu
 func getOrderMenu(c *gin.Context) {
+	// if shop not open redirect to /menu with an error
+	isrunning, err := gorm.IsCafAppRunning()
+	if err != nil || !isrunning {
+		c.Redirect(http.StatusFound, "/menu")
+	}
 	data := make(map[string]interface{})
 	data["Title"] = "Build Your Order"
 	// check if user have any incomplete order
@@ -128,9 +133,17 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	// user's current balance
 	data["balance"] = user.CurrentBalanceInCents
 
+	// user's phone number
+	data["phone"] = user.PhoneNumber
+
 	// does user have gus id
 	if user.GusID == 0 {
 		data["needGusID"] = true
+	}
+
+	// does user have a phone number
+	if user.PhoneNumber == "" {
+		data["needPhoneNumber"] = true
 	}
 
 	// determine currently selected meal and drink
@@ -286,7 +299,7 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 	selectedDrink := c.PostForm("drink")
 	selectedDestination := c.PostForm("destination")
 	inputGusID := c.PostForm("gusID")
-
+	inputPhoneNumber := c.PostForm("phone-input")
 	// apply changes to meal
 	if selectedMeal != "" {
 		selectedMealInt, err := strconv.ParseUint(selectedMeal, 10, 32)
@@ -371,6 +384,18 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 			return
 		}
 		logger.Info("!!!!!! Gus User ID is", user.GusID)
+	}
+
+	//save user's phone
+	if user.PhoneNumber == "" && inputPhoneNumber != "" {
+		user.PhoneNumber = inputPhoneNumber
+		err := user.Save()
+		if err != nil {
+			logger.Error("cannot save user phone. Redirecting to edit page")
+			orderError(c, "Bad Request. Bad. BAAADD")
+			return
+		}
+		logger.Info("!!!!!! Phone number is", user.GusID)
 	}
 
 	// save order
