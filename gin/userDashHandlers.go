@@ -3,7 +3,6 @@ package gin
 import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
-	"github.com/davecgh/go-spew/spew"
 	"net/http"
 	"strings"
 
@@ -130,10 +129,12 @@ func handleEditPhoneNumbers(c *gin.Context) {
 	user := getCurrentAuthUser(c)
 
 	//save to db
-	user.SaveUserPhone(req.Phone, user.ID)
-	user.PopulateByID(user.ID)
-	// log
-	logger.Info(spew.Sdump(user))
+	err = user.SaveUserPhone(req.Phone, user.ID)
+	if err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
 
 	c.JSON(200, user.PhoneNumber)
 }
