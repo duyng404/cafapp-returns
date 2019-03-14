@@ -10,10 +10,10 @@ import (
 type MenuItem struct {
 	gorm.Model
 	DisplayName         string
-	DisplayPriceInCents string
+	DisplayPriceInCents int
 	ImageURL            string
 	Description         string
-	HTMLDescription     string
+	DescriptionHTML     string
 	StartingMain        Product
 	StartingMainID      uint
 	StartingSide        Product
