@@ -140,7 +140,7 @@ func initData() {
 	for i := range allFoods {
 		err = allFoods[i].Create()
 		if err != nil {
-			logger.Fatal("error while generating sample data:", err)
+			logger.Fatal("error while generating initial data:", err)
 		}
 	}
 
