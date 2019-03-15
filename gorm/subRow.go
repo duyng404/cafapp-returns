@@ -5,9 +5,9 @@ import "github.com/jinzhu/gorm"
 // SubRow ...
 type SubRow struct {
 	gorm.Model
-	ProductID  uint `json:"product_id"`
-	Product    *Product
-	OrderRowID uint `json:"order_row_id"`
+	ProductID  uint     `json:"product_id"`
+	Product    *Product `json:"product"`
+	OrderRowID uint     `json:"order_row_id"`
 }
 
 // Create ...

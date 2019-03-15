@@ -36,6 +36,17 @@ func (p *Product) PopulateLabels() error {
 		WHERE pl.product_id = ?`, p.ID).Scan(&p.Labels).Error
 }
 
+// GetAllProducts : get all drink products
+func GetAllProducts() ([]Product, error) {
+	var res []Product
+	err := DB.Raw(`
+		SELECT p.*
+		FROM products p
+		WHERE p.deleted_at IS NULL
+	`).Scan(&res).Error
+	return res, err
+}
+
 // GetAllDrinkProducts : get all drink products
 func GetAllDrinkProducts() ([]Product, error) {
 	var res []Product

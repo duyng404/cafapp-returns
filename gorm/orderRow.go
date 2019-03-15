@@ -12,7 +12,7 @@ type OrderRow struct {
 	MenuItemID      uint      `json:"menu_item_id"`
 	MenuItem        *MenuItem `json:"menu_item"`
 	SubtotalInCents int       `json:"subtotal_in_cents"`
-	SubRows         []SubRow
+	SubRows         []SubRow  `json:"sub_rows"`
 }
 
 // Create create the object

@@ -154,9 +154,16 @@ func GetOrdersForAdminViewQueue() (*[]Order, error) {
 	err := DB.
 		Order("tag").
 		Preload("User").
-		Preload("OrderRows").
-		Preload("OrderRows.Product").
+		Preload("OrderRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_rows.id") // Preload OrderRows and sort them by order_rows.id
+		}).
+		Preload("OrderRows.MenuItem").
+		Preload("OrderRows.SubRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sub_rows.id") // Preload OrderRows.SubRows and sort them by sub_rows.id
+		}).
+		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
+		Preload("StatusUpdates").
 		Where("status_code >= ? AND status_code < ? AND created_at > ?", OrderStatusPlaced, OrderStatusDelivered, twentyFourHoursFromNow).Find(&orders).Error
 	return &orders, err
 }

@@ -11,17 +11,17 @@ import (
 // only for displaying on frontend.
 type MenuItem struct {
 	gorm.Model
-	DisplayName         string
-	DisplayPriceInCents int
-	ImageURL            string
-	Description         string
-	DescriptionHTML     string
-	StartingMain        *Product
-	StartingMainID      uint
-	StartingSide        *Product
-	StartingSideID      uint
-	MenuID              uint
-	Menu                *Menu
+	DisplayName         string   `json:"display_name"`
+	DisplayPriceInCents int      `json:"display_price_in_cents"`
+	ImageURL            string   `json:"image_url"`
+	Description         string   `json:"description"`
+	DescriptionHTML     string   `json:"description_HTML"`
+	StartingMain        *Product `json:"starting_main"`
+	StartingMainID      uint     `json:"starting_main_id"`
+	StartingSide        *Product `json:"starting_side"`
+	StartingSideID      uint     `json:"starting_side_id"`
+	MenuID              uint     `json:"menu_id"`
+	Menu                *Menu    `json:"-"`
 }
 
 // Create create the object in db

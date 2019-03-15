@@ -124,6 +124,7 @@ func InitRoutes() *gin.Engine {
 		apiadmin.GET("/my-info", handleAdminInfo)
 		apiadmin.GET("/view-queue", handleAdminViewQueue)
 		apiadmin.GET("/destination", handleAdminGetDestinations)
+		apiadmin.GET("/product", handleAdminGetProducts)
 		apiadmin.GET("/view-redeemable-codes", handleAdminViewAllRedeemableCodes)
 		apiadmin.GET("/view-users", handleAdminViewUsers)
 		apiadmin.GET("/view-users/:userid", handleAdminViewOneUser)
