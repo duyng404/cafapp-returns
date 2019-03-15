@@ -162,3 +162,70 @@ func handlePostAdminCafAppOnOff(c *gin.Context) {
 		})
 	}
 }
+
+func handleAdminMenuStatus(c *gin.Context) {
+	gvar, err := gorm.GetGlobalVar()
+	if err != nil {
+		logger.Error("cannot get global var")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	menus, err := gorm.GetAllMenus()
+	if err != nil {
+		logger.Error("cannot get all menus")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"active_menu_id": gvar.ActiveMenuID,
+		"menus":          menus,
+	})
+}
+
+func handlePostAdminMenuStatus(c *gin.Context) {
+	type reqStruct struct {
+		SetTo uint `json:"set_to"`
+	}
+	var req reqStruct
+
+	// bind
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error("error reading request:", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	gvar, err := gorm.GetGlobalVar()
+	if err != nil {
+		logger.Error("cannot get global var")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	setTo := uint(1)
+	if gvar.ActiveMenuID == 1 {
+		setTo = 2
+	}
+	gvar.ActiveMenuID = setTo
+	err = gvar.Save()
+	if err != nil {
+		logger.Error("cannot set active menu", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	menus, err := gorm.GetAllMenus()
+	if err != nil {
+		logger.Error("cannot get all menus")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"active_menu_id": gvar.ActiveMenuID,
+		"menus":          menus,
+	})
+}
