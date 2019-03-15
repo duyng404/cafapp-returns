@@ -88,17 +88,26 @@ func orderError(c *gin.Context, err string) {
 
 // GET step 1: show the menu
 func getOrderMenu(c *gin.Context) {
-	// if shop not open redirect to /menu with an error
+	// if shop not open redirect to /menu, but would allow if user is admin and AdminTestable is enabled
+	user := getCurrentAuthUser(c)
+	gvar, err := gorm.GetGlobalVar()
+	if err != nil {
+		c.Redirect(http.StatusFound, "/menu")
+		return
+	}
 	isrunning, err := gorm.IsCafAppRunning()
+	if user.IsAdmin && gvar.AdminTestable {
+		isrunning = true
+	}
 	if err != nil || !isrunning {
 		c.Redirect(http.StatusFound, "/menu")
+		return
 	}
 
 	data := make(map[string]interface{})
 	data["Title"] = "Build Your Order"
 
 	// check if user have any incomplete order
-	user := getCurrentAuthUser(c)
 	order, err := user.GetOneIncompleteOrder()
 	if err != nil || order == nil || order.ID == 0 {
 		logger.Info("Cannot get incomplete order from user. Assuming creating a fresh one.")

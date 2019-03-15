@@ -12,6 +12,7 @@ type GlobalVar struct {
 	CurrentOrderTagNumber int
 	ActiveMenuID          uint
 	IsCafAppRunning       bool
+	AdminTestable         bool
 }
 
 // FirstOrCreate : first or create
@@ -43,6 +44,7 @@ func initGlobalVar() error {
 	g.CurrentOrderTagNumber = 0
 	g.ActiveMenuID = 1
 	g.IsCafAppRunning = false
+	g.AdminTestable = false
 	return g.FirstOrCreate()
 }
 
