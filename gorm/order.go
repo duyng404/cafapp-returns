@@ -166,16 +166,17 @@ func (o *Order) GenerateTag() error {
 	if err != nil {
 		return err
 	}
-	tag, err := g.GetNextOrderTag()
+	orderNum, err := g.GetNextOrderTag()
 	if err != nil {
 		return err
 	}
-	meal := o.GetMealRow()
-	drink := o.GetDrinkRow()
-	if meal == nil || drink == nil {
-		return errors.New("order is not completed")
+	tagString := ""
+	for i := range o.OrderRows {
+		for j := range o.OrderRows[i].SubRows {
+			tagString = tagString + o.OrderRows[i].SubRows[j].Product.Tag
+		}
 	}
-	o.Tag = fmt.Sprintf("%s-%s%s-%d", o.DestinationTag, meal.Product.Tag, drink.Product.Tag, tag)
+	o.Tag = fmt.Sprintf("%s-%s-%d", o.DestinationTag, tagString, orderNum)
 	return nil
 }
 
