@@ -128,6 +128,8 @@ func InitRoutes() *gin.Engine {
 		apiadmin.GET("/view-users", handleAdminViewUsers)
 		apiadmin.GET("/view-users/:userid", handleAdminViewOneUser)
 		apiadmin.POST("/generate-redeemable-codes", handleAdminGenerateRedeemableCodes)
+		apiadmin.GET("/cafapp-onoff", handleAdminCafAppOnOff)
+		apiadmin.POST("/cafapp-onoff", handlePostAdminCafAppOnOff)
 	}
 
 	// TODO: make a group for this and look at authentication

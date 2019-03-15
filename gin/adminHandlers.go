@@ -82,3 +82,63 @@ func handleAdminGenerateRedeemableCodes(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, codes)
 }
+
+func handleAdminCafAppOnOff(c *gin.Context) {
+	gvar, err := gorm.GetGlobalVar()
+	if err != nil {
+		logger.Error("cannot get global var")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": gvar.IsCafAppRunning,
+	})
+}
+
+func handlePostAdminCafAppOnOff(c *gin.Context) {
+	type reqStruct struct {
+		SetTo string `json:"set_to"`
+	}
+	var req reqStruct
+
+	// bind
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error("error reading request:", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	gvar, err := gorm.GetGlobalVar()
+	if err != nil {
+		logger.Error("cannot get global var")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	logger.Info("setting cafapp running status to", req.SetTo)
+
+	if req.SetTo == "on" {
+		err := gvar.TurnCafAppOn()
+		if err != nil {
+			logger.Error("cannot set running mode", err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status": gvar.IsCafAppRunning,
+		})
+	}
+
+	if req.SetTo == "off" {
+		err := gvar.TurnCafAppOff()
+		if err != nil {
+			logger.Error("cannot get running mode", err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{
+			"status": gvar.IsCafAppRunning,
+		})
+	}
+}
