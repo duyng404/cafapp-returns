@@ -2,46 +2,50 @@ package gorm
 
 import (
 	"cafapp-returns/logger"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
 
 // Destination of deliveries
 type Destination struct {
-	gorm.Model
-	Name string `json:"name"`
-	Tag  string `json:"tag"`
+	DeletedAt      *time.Time `json:"deleted_at" sql:"index"`
+	Name           string     `json:"name"`
+	Tag            string     `json:"tag" gorm:"primary_key"`
+	PickUpLocation string     `json:"pickup_location"`
 }
 
 var (
 	destinationList = []Destination{
 		Destination{
-			Name: "Norelius",
-			Tag:  "NR",
+			Name:           "Norelius",
+			Tag:            "NR",
+			PickUpLocation: "E tower, by elevator",
 		},
 		Destination{
-			Name: "Complex",
-			Tag:  "CX",
+			Name:           "Complex",
+			Tag:            "CX",
+			PickUpLocation: "Sorensen door",
 		},
 		Destination{
-			Name: "Rundstrom",
-			Tag:  "RU",
+			Name:           "Rundstrom",
+			Tag:            "RU",
+			PickUpLocation: "Parking lot",
 		},
 		Destination{
-			Name: "Uhler",
-			Tag:  "UH",
+			Name:           "Uhler",
+			Tag:            "UH",
+			PickUpLocation: "Front of building",
 		},
 		Destination{
-			Name: "Pittman/Sohre",
-			Tag:  "PS",
+			Name:           "Pittman/Sohre",
+			Tag:            "PM",
+			PickUpLocation: "Front of building, outside",
 		},
 		Destination{
-			Name: "Intl Center",
-			Tag:  "IC",
-		},
-		Destination{
-			Name: "Southwest",
-			Tag:  "SW",
+			Name:           "Southwest/IC",
+			Tag:            "SW",
+			PickUpLocation: "Front of Southwest",
 		},
 	}
 )
@@ -63,19 +67,23 @@ func GetAllDestinations() ([]Destination, error) {
 	return res, err
 }
 
-// FirstOrCreate create if not exist
-func (d *Destination) FirstOrCreate() error {
+// CreateOrUpdate create if not exist
+func (d *Destination) CreateOrUpdate() error {
 	var tmp Destination
-	if err := tmp.PopulateByTag(d.Tag); err == gorm.ErrRecordNotFound {
-		return DB.Create(&d).Error
+	err := tmp.PopulateByTag(d.Tag)
+	if err == gorm.ErrRecordNotFound {
+		return DB.Create(d).Error
+	} else if err != nil {
+		return err
+	} else {
+		return DB.Save(d).Error
 	}
-	return nil
 }
 
 // create all destinations
 func initDestinations() error {
 	for i := range destinationList {
-		err := destinationList[i].FirstOrCreate()
+		err := destinationList[i].CreateOrUpdate()
 		if err != nil {
 			logger.Error(err)
 		}

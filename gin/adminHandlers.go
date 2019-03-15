@@ -31,19 +31,35 @@ func handleAdminInfo(c *gin.Context) {
 func handleAdminGetDestinations(c *gin.Context) {
 	dest, err := gorm.GetAllDestinations()
 	if err != nil {
+		logger.Error("unable to get destinations:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"err": "internal server error",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, dest)
+}
+
+func handleAdminGetProducts(c *gin.Context) {
+	prods, err := gorm.GetAllProducts()
+	if err != nil {
+		logger.Error("unable to get products:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"err": "internal server error",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, prods)
 }
 
 func handleAdminViewQueue(c *gin.Context) {
 	orders, err := gorm.GetOrdersForAdminViewQueue()
 	if err != nil {
+		logger.Error("unable to get orders for admin:", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"err": "internal server error",
 		})
+		return
 	}
 	c.JSON(http.StatusOK, orders)
 }

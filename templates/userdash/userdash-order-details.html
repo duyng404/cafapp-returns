@@ -3,8 +3,7 @@
 {{ template "basicspotlight" . }}
 
 <section class="container">
-	<h2 class="text-center my-5"><strong>Finalize Order</strong></h2>
-	<p class="lead text-center">Review and place your order below.</p>
+	<p class="lead text-center">Here is the detailed information of your order.</p>
 
 	<div class="row justify-content-center mt-5">
 		<div class="col-md-8 col-lg-6">
@@ -104,70 +103,28 @@
 			<hr />
 
 			<p class="text-center">
-				<span class="text-danger">Important:</span>
-				Order will be delivered to {{ .destination }}<br />
-				Pick Up Location: {{ .pickupspot }}</p>
-
+				Deliver to: {{ .order.Destination.Name }}<br />
+				Pick Up Location: {{ .order.Destination.PickUpLocation }}</p>
 			<hr />
 
-			<h4 class="text-center">Disclaimer</h4>
+			<h4 class="text-center">History</h4>
 
-			<p>By clicking Place Order, you agree to bla bla bla bla bla bla:</p>
-			<ul>
-				<li>bla</li>
-				<li>bla</li>
-				<li>bLAAAHHHH</li>
-			</ul>
-			<p>Thank you for using CafApp!</p>
-
-			<div class="my-3"></div>
-
-			<form class="needs-validation" action="" method="post" novalidate>
-				<div class="form-group mb-2">
-					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="disclaimer-agree" required>
-						<label class="form-check-label" for="disclaimer-agree">
-							I have fully read, understood and AGREE to this disclaimer as stated.
-						</label>
-						<div class="invalid-feedback">
-							You must agree before placing order.
-						</div>
-					</div>
+			{{ range .order.StatusUpdates }}
+			<div class="d-flex justify-content-around align-items-center">
+				<div>
+					{{ statusCodeToText .StatusCode }}
 				</div>
-				<button class="btn btn-primary btn-lg btn-block" type="submit">Place Order</button>
-			</form>
+				<div>
+					{{ .CreatedAt.Format "Jan _2 3:04pm" }}
+				</div>
+			</div>
+			{{ end }}
 
-			<div class="my-3"></div>
+			<div class="my-4"></div>
 
-			<form action="" method="post">
-				<input type="hidden" name="goToEdit" value="goToEdit" />
-				<button class="btn btn-link btn-lg btn-block" type="submit">Or click here to edit your order</button>
-			</form>
+			<a role="button" class="btn btn-link btn-lg btn-block" href="/dash">Back to My Account</a>
 
 		</div>
 	</div>
 </section>
-
-{{ end }}
-{{ define "scripts" }}
-<script>
-// Example starter JavaScript for disabling form submissions if there are invalid fields
-(function() {
-  'use strict';
-  window.addEventListener('load', function() {
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      }, false);
-    });
-  }, false);
-})();
-</script>
 {{ end }}

@@ -109,6 +109,10 @@ func rawHTML(s string) template.HTML {
 	return template.HTML(s)
 }
 
+func addOne(a int) int {
+	return a + 1
+}
+
 func statusCodeToText(code int) (string, error) {
 	var oss gorm.OrderStatusCode
 	err := oss.PopulateByCode(code)

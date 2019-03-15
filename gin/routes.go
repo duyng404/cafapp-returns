@@ -100,7 +100,7 @@ func InitRoutes() *gin.Engine {
 		restricted.POST("/order/:stuff/:action", handleOrderPost)
 
 		restricted.GET("/dash", handleUserDash)
-		restricted.GET("/dash/:stuff", handleOrderDetail)
+		restricted.GET("/dash/order/:orderuuid", handleOrderDetail)
 		restricted.GET("/redeem", handleUserRedeem)
 		restricted.GET("/redeem-success", handleUserRedeemSuccess)
 		restricted.POST("/redeem", handleUserRedeemPost)
@@ -124,6 +124,7 @@ func InitRoutes() *gin.Engine {
 		apiadmin.GET("/my-info", handleAdminInfo)
 		apiadmin.GET("/view-queue", handleAdminViewQueue)
 		apiadmin.GET("/destination", handleAdminGetDestinations)
+		apiadmin.GET("/product", handleAdminGetProducts)
 		apiadmin.GET("/view-redeemable-codes", handleAdminViewAllRedeemableCodes)
 		apiadmin.GET("/view-users", handleAdminViewUsers)
 		apiadmin.GET("/view-users/:userid", handleAdminViewOneUser)

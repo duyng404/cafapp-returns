@@ -93,8 +93,10 @@ func getOrderMenu(c *gin.Context) {
 	if err != nil || !isrunning {
 		c.Redirect(http.StatusFound, "/menu")
 	}
+
 	data := make(map[string]interface{})
 	data["Title"] = "Build Your Order"
+
 	// check if user have any incomplete order
 	user := getCurrentAuthUser(c)
 	order, err := user.GetOneIncompleteOrder()
@@ -105,9 +107,9 @@ func getOrderMenu(c *gin.Context) {
 	}
 
 	// get all menu items from db
-	menu, err := gorm.GetAllProductsOnShelf()
+	menu, err := gorm.GetActiveMenuItems()
 	if err != nil {
-		logger.Error("could not get products to display:", err)
+		logger.Error("could not get menu items to display:", err)
 		orderError(c, "Could not load menu items")
 		return
 	}
@@ -122,70 +124,69 @@ func getMoreInfo(c *gin.Context, order gorm.Order) {
 	data := make(map[string]interface{})
 	data["Title"] = "Build Your Order"
 
-	// get current user
-	user := getCurrentAuthUser(c)
-	if user == nil {
-		logger.Error("cannot get currently logged in user")
-		orderError(c, "Authentication Error")
-		return
-	}
-
-	// user's current balance
-	data["balance"] = user.CurrentBalanceInCents
-
-	// user's phone number
-	data["phone"] = user.PhoneNumber
+	data["order"] = order
 
 	// does user have gus id
-	if user.GusID == 0 {
+	if order.User.GusID == 0 {
 		data["needGusID"] = true
 	}
 
 	// does user have a phone number
-	if user.PhoneNumber == "" {
+	if order.User.PhoneNumber == "" {
 		data["needPhoneNumber"] = true
 	}
 
-	// determine currently selected meal and drink
-	for i := range order.OrderRows {
-		if order.OrderRows[i].RowType == gorm.RowTypeNormal {
-			data["selectedMealID"] = order.OrderRows[i].ProductID
-			data["selectedMealName"] = order.OrderRows[i].Product.DisplayName
-			data["selectedMealPrice"] = order.OrderRows[i].Product.PriceInCents
-		}
-		if order.OrderRows[i].RowType == gorm.RowTypeIncluded {
-			data["selectedDrinkID"] = order.OrderRows[i].ProductID
-			data["selectedDrinkName"] = order.OrderRows[i].Product.DisplayName
+	// determine currently selected choices
+	data["meal1id"] = 0
+	data["side1id"] = 0
+	data["drink1id"] = 0
+	data["meal2id"] = 0
+	data["side2id"] = 0
+	data["drink2id"] = 0
+	pseudototal := 0
+	for i, v := range order.OrderRows {
+		data["meal"+strconv.Itoa(i+1)+"id"] = v.MenuItemID
+		pseudototal += v.MenuItem.DisplayPriceInCents
+		for _, vv := range v.SubRows {
+			if vv.Product.IsSide() {
+				data["side"+strconv.Itoa(i+1)+"id"] = vv.ProductID
+			}
+			if vv.Product.IsDrink() {
+				data["drink"+strconv.Itoa(i+1)+"id"] = vv.ProductID
+			}
 		}
 	}
 
-	// determine currently selected destination
-	if order.DestinationTag != "" {
-		data["selectedDestination"] = order.DestinationTag
-	}
-
-	// pass in the order details
-	data["deliveryFee"] = order.DeliveryFeeInCents
-	data["orderTotal"] = order.TotalInCents
-	data["cafAccountChargeAmount"] = order.CafAccountChargeAmountInCents
+	// determine pseudo total
+	pseudototal += order.DeliveryFeeInCents
+	data["pseudototal"] = pseudototal
+	data["cafAccountChargeAmount"] = pseudototal - order.DeliveryFeeInCents
 
 	// get all menu items from db
-	menu, err := gorm.GetAllProductsOnShelf()
+	menu, err := gorm.GetActiveMenuItems()
 	if err != nil {
-		logger.Error("could not get products to display:", err)
+		logger.Error("could not get menu items to display:", err)
 		orderError(c, "Database Error")
 		return
 	}
 	data["menu"] = menu
 
 	// get all drinks
-	drinks, err := gorm.GetAllAddonProducts()
+	drinks, err := gorm.GetAllDrinkProducts()
 	if err != nil {
 		logger.Error("could not get drinks to display:", err)
 		orderError(c, "Database Error")
 		return
 	}
 	data["drinks"] = drinks
+
+	sides, err := gorm.GetAllSideProducts()
+	if err != nil {
+		logger.Error("could not get sides to display:", err)
+		orderError(c, "Database Error")
+		return
+	}
+	data["sides"] = sides
 
 	// get all destinations
 	dest, err := gorm.GetAllDestinations()
@@ -203,21 +204,7 @@ func getFinalize(c *gin.Context, order gorm.Order) {
 	data := make(map[string]interface{})
 	data["Title"] = "Build Your Order"
 
-	// determine currently selected meal and drink
-	for i := range order.OrderRows {
-		if order.OrderRows[i].RowType == gorm.RowTypeNormal {
-			data["selectedMealName"] = order.OrderRows[i].Product.DisplayName
-			data["selectedMealPrice"] = order.OrderRows[i].Product.PriceInCents
-		}
-		if order.OrderRows[i].RowType == gorm.RowTypeIncluded {
-			data["selectedDrinkName"] = order.OrderRows[i].Product.DisplayName
-		}
-	}
-
-	// pass in the order details
-	data["deliveryFee"] = order.DeliveryFeeInCents
-	data["orderTotal"] = order.TotalInCents
-	data["cafAccountChargeAmount"] = order.CafAccountChargeAmountInCents
+	data["order"] = order
 
 	// dest
 	var dest gorm.Destination
@@ -228,6 +215,7 @@ func getFinalize(c *gin.Context, order gorm.Order) {
 		return
 	}
 	data["destination"] = dest.Name
+	data["pickupspot"] = dest.PickUpLocation
 
 	// error if any
 	sesh := sessions.Default(c)
@@ -253,38 +241,34 @@ func postOrderMenu(c *gin.Context) {
 	user := getCurrentAuthUser(c)
 	if user == nil {
 		logger.Error("cannot get currently logged in user")
-		// TODO handle error
+		orderError(c, "Database error")
+		return
 	}
 
 	// get selected
-	tmp := c.PostForm("selected-meal")
+	tmp := c.PostForm("selected-item")
 	selected, err := strconv.Atoi(tmp)
 	if err != nil {
 		logger.Error("error getting selected meal ("+tmp+") from POST form", err)
-		// TODO handle error
+		orderError(c, "Internal error")
+		return
 	}
 
-	// get the product from db
-	var p gorm.Product
-	err = p.PopulateByIDOnShelf(uint(selected))
+	// get the menu item
+	var mi gorm.MenuItem
+	err = mi.PopulateByID(uint(selected))
 	if err != nil {
-		logger.Error("error getting product from db", err)
-		// TODO handle error
+		logger.Error("error getting menu item from db", err)
+		orderError(c, "Database error")
+		return
 	}
 
 	// create a new order
-	row := gorm.NewOrderRowFromProduct(&p)
-	order := gorm.Order{
-		User:       user,
-		OrderRows:  []gorm.OrderRow{*row},
-		StatusCode: gorm.OrderStatusNeedInfo,
-	}
-	order.CalculateDeliveryFee()
-	order.CalculateTotal()
-	err = order.Create()
+	order, err := user.NewOrderFromMenuItem(&mi)
 	if err != nil {
 		logger.Error("error creating new order", err)
-		// TODO handle error
+		orderError(c, "Database error")
+		return
 	}
 
 	logger.Info("created order with uuid", order.UUID)
@@ -295,64 +279,132 @@ func postOrderMenu(c *gin.Context) {
 // POST step 2: user finished filling out info
 func postOrderInfo(c *gin.Context, order gorm.Order) {
 	// get from POST form
-	selectedMeal := c.PostForm("meal")
-	selectedDrink := c.PostForm("drink")
+	selectedMeal1 := c.PostForm("meal1")
+	selectedDrink1 := c.PostForm("drink1")
+	selectedMeal2 := c.PostForm("meal2")
+	selectedDrink2 := c.PostForm("drink2")
 	selectedDestination := c.PostForm("destination")
 	inputGusID := c.PostForm("gusID")
 	inputPhoneNumber := c.PostForm("phone-input")
-	// apply changes to meal
-	if selectedMeal != "" {
-		selectedMealInt, err := strconv.ParseUint(selectedMeal, 10, 32)
+	// apply changes to order row 1
+	if selectedMeal1 != "" {
+		selectedMeal1Int, err := strconv.ParseUint(selectedMeal1, 10, 32)
 		if err != nil {
 			logger.Error("invalid post form. Redirecting to edit page")
 			orderError(c, "Bad Request. Bad. BAAADD")
 			return
 		}
-		mealRow := order.GetMealRow() // potential nil pointer issue here but currently there's no way that happens
-		var newMeal gorm.Product
-		err = newMeal.PopulateByIDOnShelf(uint(selectedMealInt))
-		if err != nil {
-			logger.Error("cannot get meal product:", err)
-			orderError(c, "Database error")
-			return
-		}
-		mealRow.Product = &newMeal
-		err = mealRow.Save()
-		if err != nil {
-			logger.Error("cannot save meal row:", err)
-			orderError(c, "Database error")
-			return
-		}
-	}
-
-	// apply changes to drink
-	if selectedDrink != "" {
-		selectedDrinkInt, err := strconv.ParseUint(selectedDrink, 10, 32)
+		selectedDrink1Int, err := strconv.ParseUint(selectedDrink1, 10, 32)
 		if err != nil {
 			logger.Error("invalid post form. Redirecting to edit page")
 			orderError(c, "Bad Request. Bad. BAAADD")
 			return
 		}
-		drinkRow := order.GetDrinkRow()
+		var newMenuItem gorm.MenuItem
+		err = newMenuItem.PopulateByID(uint(selectedMeal1Int))
+		if err != nil {
+			logger.Error("cannot get menu item:", err)
+			orderError(c, "Database error")
+			return
+		}
 		var newDrink gorm.Product
-		err = newDrink.PopulateByID(uint(selectedDrinkInt))
+		err = newDrink.PopulateByID(uint(selectedDrink1Int))
 		if err != nil {
 			logger.Error("cannot get drink product:", err)
 			orderError(c, "Database error")
 			return
 		}
-		if drinkRow != nil {
-			drinkRow.Product = &newDrink
-			err = drinkRow.Save()
-			if err != nil {
-				logger.Error("cannot save drink product:", err)
-				orderError(c, "Database error")
-				return
-			}
-		} else {
-			newDrinkRow := gorm.NewOrderRowFromProduct(&newDrink)
-			order.OrderRows = append(order.OrderRows, *newDrinkRow)
+		err = order.OrderRows[0].SetMainSubRowTo(newMenuItem.StartingMain)
+		if err != nil {
+			logger.Error("cannot set main:", err)
+			orderError(c, "Database error")
+			return
 		}
+		err = order.OrderRows[0].SetSideSubRowTo(newMenuItem.StartingSide)
+		if err != nil {
+			logger.Error("cannot set side:", err)
+			orderError(c, "Database error")
+			return
+		}
+		err = order.OrderRows[0].SetDrinkSubRowTo(&newDrink)
+		if err != nil {
+			logger.Error("cannot set drink:", err)
+			orderError(c, "Database error")
+			return
+		}
+		order.OrderRows[0].MenuItem = &newMenuItem
+		err = order.OrderRows[0].Save()
+		if err != nil {
+			logger.Error("cannot save row:", err)
+			orderError(c, "Database error")
+			return
+		}
+	}
+
+	// apply changes to order row 2
+	if selectedMeal2 != "" {
+		selectedMeal2Int, err := strconv.ParseUint(selectedMeal2, 10, 32)
+		if err != nil {
+			logger.Error("invalid post form. Redirecting to edit page")
+			orderError(c, "Bad Request. Bad. BAAADD")
+			return
+		}
+		selectedDrink2Int, err := strconv.ParseUint(selectedDrink2, 10, 32)
+		if err != nil {
+			logger.Error("invalid post form. Redirecting to edit page")
+			orderError(c, "Bad Request. Bad. BAAADD")
+			return
+		}
+		var newMenuItem gorm.MenuItem
+		err = newMenuItem.PopulateByID(uint(selectedMeal2Int))
+		if err != nil {
+			logger.Error("cannot get menu item:", err)
+			orderError(c, "Database error")
+			return
+		}
+		var newDrink gorm.Product
+		err = newDrink.PopulateByID(uint(selectedDrink2Int))
+		if err != nil {
+			logger.Error("cannot get drink product:", err)
+			orderError(c, "Database error")
+			return
+		}
+		if len(order.OrderRows) == 1 {
+			newRow := gorm.OrderRow{}
+			newRow.Create()
+			order.OrderRows = append(order.OrderRows, newRow)
+		}
+		err = order.OrderRows[1].SetMainSubRowTo(newMenuItem.StartingMain)
+		if err != nil {
+			logger.Error("cannot set main:", err)
+			orderError(c, "Database error")
+			return
+		}
+		err = order.OrderRows[1].SetSideSubRowTo(newMenuItem.StartingSide)
+		if err != nil {
+			logger.Error("cannot set side:", err)
+			orderError(c, "Database error")
+			return
+		}
+		err = order.OrderRows[1].SetDrinkSubRowTo(&newDrink)
+		if err != nil {
+			logger.Error("cannot set drink:", err)
+			orderError(c, "Database error")
+			return
+		}
+		order.OrderRows[1].MenuItem = &newMenuItem
+		err = order.OrderRows[1].Save()
+		if err != nil {
+			logger.Error("cannot save row:", err)
+			orderError(c, "Database error")
+			return
+		}
+	}
+
+	// if remove meal
+	if selectedMeal2 == "" && len(order.OrderRows) == 2 {
+		order.OrderRows[1].Delete()
+		order.OrderRows = order.OrderRows[:len(order.OrderRows)-1]
 	}
 
 	// apply changes to destination
@@ -383,7 +435,6 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 			orderError(c, "Bad Request. Bad. BAAADD")
 			return
 		}
-		logger.Info("!!!!!! Gus User ID is", user.GusID)
 	}
 
 	//save user's phone
@@ -395,7 +446,6 @@ func postOrderInfo(c *gin.Context, order gorm.Order) {
 			orderError(c, "Bad Request. Bad. BAAADD")
 			return
 		}
-		logger.Info("!!!!!! Phone number is", user.GusID)
 	}
 
 	// save order
@@ -486,8 +536,10 @@ func postFinalize(c *gin.Context, order gorm.Order) {
 // be updated without reloading the page
 func handleRecalculateOrder(c *gin.Context) {
 	type reqStruct struct {
-		MealID  uint `json:"meal_id"`
-		DrinkID uint `json:"drink_id"`
+		Meal1ID  uint `json:"meal1id"`
+		Drink1ID uint `json:"drink1id"`
+		Meal2ID  uint `json:"meal2id"`
+		Drink2ID uint `json:"drink2id"`
 	}
 	var req reqStruct
 	err := c.Bind(&req)
@@ -498,48 +550,114 @@ func handleRecalculateOrder(c *gin.Context) {
 	}
 
 	// build a temporary order just to calculate the price
-	order := gorm.Order{}
-	meal := gorm.Product{}
-	drink := gorm.Product{}
-	if req.MealID != 0 {
-		err = meal.PopulateByID(req.MealID)
+	meal1 := gorm.MenuItem{}
+	drink1 := gorm.Product{}
+	meal2 := gorm.MenuItem{}
+	drink2 := gorm.Product{}
+	if req.Meal1ID != 0 {
+		err = meal1.PopulateByID(req.Meal1ID)
 		if err != nil {
 			logger.Error(err)
 			c.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
-		mealrow := gorm.NewOrderRowFromProduct(&meal)
-		order.OrderRows = append(order.OrderRows, *mealrow)
 	}
-	if req.DrinkID != 0 {
-		err = drink.PopulateByID(req.DrinkID)
+	if req.Drink1ID != 0 {
+		err = drink1.PopulateByID(req.Drink1ID)
 		if err != nil {
 			logger.Error(err)
 			c.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
-		drinkrow := gorm.NewOrderRowFromProduct(&drink)
-		order.OrderRows = append(order.OrderRows, *drinkrow)
+	}
+	if req.Meal2ID != 0 {
+		err = meal2.PopulateByID(req.Meal2ID)
+		if err != nil {
+			logger.Error(err)
+			c.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+	}
+	if req.Drink2ID != 0 {
+		err = drink2.PopulateByID(req.Drink2ID)
+		if err != nil {
+			logger.Error(err)
+			c.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+	}
+	order := gorm.Order{
+		OrderRows: []gorm.OrderRow{
+			gorm.OrderRow{
+				SubRows: []gorm.SubRow{
+					gorm.SubRow{
+						Product: meal1.StartingMain,
+					},
+					gorm.SubRow{
+						Product: meal1.StartingSide,
+					},
+					gorm.SubRow{
+						Product: &drink1,
+					},
+				},
+			},
+			gorm.OrderRow{
+				SubRows: []gorm.SubRow{
+					gorm.SubRow{
+						Product: meal2.StartingMain,
+					},
+					gorm.SubRow{
+						Product: meal2.StartingSide,
+					},
+					gorm.SubRow{
+						Product: &drink2,
+					},
+				},
+			},
+		},
 	}
 	order.CalculateDeliveryFee()
 	order.CalculateTotal()
 
 	// return
 	type resStruct struct {
-		MealName         string `json:"meal_name"`
-		MealPrice        string `json:"meal_price"`
-		DrinkName        string `json:"drink_name"`
+		Meal1Name        string `json:"meal1name"`
+		Main1Name        string `json:"main1name"`
+		Meal1Price       string `json:"meal1price"`
+		Side1Name        string `json:"side1name"`
+		Drink1Name       string `json:"drink1name"`
+		Meal2Name        string `json:"meal2name"`
+		Main2Name        string `json:"main2name"`
+		Meal2Price       string `json:"meal2price"`
+		Side2Name        string `json:"side2name"`
+		Drink2Name       string `json:"drink2name"`
 		DeliveryFee      string `json:"delivery_fee"`
 		OrderTotal       string `json:"order_total"`
 		CafAcctChargeAmt string `json:"caf_acct_charge_amt"`
 	}
 	res := resStruct{
-		MealName:         meal.DisplayName,
-		MealPrice:        formatMoney(meal.PriceInCents),
-		DrinkName:        drink.DisplayName,
-		DeliveryFee:      formatMoney(order.DeliveryFeeInCents),
-		OrderTotal:       formatMoney(order.TotalInCents),
-		CafAcctChargeAmt: formatMoney(order.CafAccountChargeAmountInCents),
+		DeliveryFee: formatMoney(order.DeliveryFeeInCents),
+		// OrderTotal:       formatMoney(order.TotalInCents),
+		OrderTotal:       formatMoney(meal1.DisplayPriceInCents + meal2.DisplayPriceInCents + order.DeliveryFeeInCents),
+		CafAcctChargeAmt: formatMoney(meal1.DisplayPriceInCents + meal2.DisplayPriceInCents),
+	}
+	if meal1.ID != 0 {
+		res.Meal1Name = meal1.DisplayName
+		res.Main1Name = meal1.StartingMain.DisplayName
+		res.Meal1Price = formatMoney(meal1.DisplayPriceInCents)
+		res.Side1Name = meal1.StartingSide.DisplayName
+	}
+	if drink1.ID != 0 {
+		res.Drink1Name = drink1.DisplayName
+	}
+	if meal2.ID != 0 {
+		res.Meal2Name = meal2.DisplayName
+		res.Main2Name = meal2.StartingMain.DisplayName
+		res.Meal2Price = formatMoney(meal2.DisplayPriceInCents)
+		res.Side2Name = meal2.StartingSide.DisplayName
+	}
+	if drink2.ID != 0 {
+		res.Drink2Name = drink2.DisplayName
 	}
 
 	c.JSON(200, res)
