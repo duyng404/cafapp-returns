@@ -10,60 +10,57 @@
 	<div class="row mt-5">
 		<div class="col-md-4 order-md-2 mb-4">
 			<h4>Summary</h4>
-			<ul class="list-group mb-3">
-
+			<ul id="summary" class="list-group mb-3">
+				{{ range .order.OrderRows }}
 				<li class="list-group-item d-flex justify-content-between lh-condensed">
 					<div>
-						<h6 id="meal-name" class="my-0">{{.selectedMealName }}</h6>
-						<small class="text-muted font-italic">Meal Combo</small>
+						<h6 id="meal-name" class="my-0">{{ .MenuItem.DisplayName }}</h6>
+						<div class="text-secondary font-italic mt-2 ml-3">
+							{{ range .SubRows }}
+							<div>{{ .Product.DisplayName }}</div>
+							{{ end }}
+						</div>
 					</div>
-					<span id="meal-price" class="text-muted">{{formatMoney .selectedMealPrice}}</span>
+					<span id="meal-price" class="text-muted">{{formatMoney .MenuItem.DisplayPriceInCents}}</span>
 				</li>
-
-				<li class="list-group-item d-flex justify-content-between lh-condensed">
-					<div>
-						<h6 id="drink-name" class="my-0">{{.selectedDrinkName }}</h6>
-						<small class="text-muted font-italic">Drink</small>
-					</div>
-					<span class="text-muted">included</span>
-				</li>
+				{{ end }}
 
 				<li class="list-group-item d-flex justify-content-between lh-condensed">
 					<span>Delivery Fee</span>
-					<span id="delivery-fee" class="text-muted">{{formatMoney .deliveryFee}}</span>
+					<span id="delivery-fee" class="text-muted">{{formatMoney .order.DeliveryFeeInCents}}</span>
 				</li>
 
 				<li class="list-group-item d-flex justify-content-between">
 					<span>Total (USD)</span>
-					<span id="order-total" class="text-yellow-3"><strong>{{formatMoney .orderTotal}}</strong></span>
+					<span id="order-total" class="text-ca-yellow3"><strong>{{formatMoney .pseudototal}}</strong></span>
 				</li>
 			</ul>
 
 			<h4>Payment</h4>
 			<ul class="list-group mb-3">
 				<li class="list-group-item d-flex justify-content-between">
-					<span>Your Caf Account</span>
-					<span id="caf-acct-charge-amt" class="text-danger">{{ formatMoney (.cafAccountChargeAmount) }}</span>
+					<span>Meal Plan Charge</span>
+					<span id="caf-acct-charge-amt" class="text-danger">{{ formatMoney .cafAccountChargeAmount }}</span>
 				</li>
 
 				<li class="list-group-item d-flex justify-content-between">
-					<span>CafApp Balance</span>
-					<span id="delivery-fee" class="text-danger">{{ formatMoney .deliveryFee }}</span>
+					<span>CafApp Charge</span>
+					<span id="delivery-fee" class="text-danger">{{ formatMoney .order.DeliveryFeeInCents }}</span>
 				</li>
 			</ul>
 		</div>
 
 		<div class="col-md-8 order-md-1">
 			<form id="orderDetailsForm" class="needs-validation" method="post" novalidate>
-				<h4>Main Items</h4>
+				<h4>Meal #1</h4>
 				<div class="row">
 					<div class="col-12 mb-3">
 						<label for="meal">Meal Combo <span class="text-danger">*</span></label>
-						<select class="form-control d-block w-100" id="meal" name="meal" required onchange="onSelectChange()">
+						<select class="form-control d-block w-100" id="meal1" name="meal1" required onchange="onSelectChange()">
 							<option value="">Choose a meal...</option>
-							{{ range .menu }}
-							<option value="{{ .ID }}" {{ if $.selectedMealID }}{{ if eq $.selectedMealID .ID }}selected{{end}}{{end}}>
-								{{ .DisplayName }} - {{ formatMoney .PriceInCents }}</option>
+							{{ range $.menu }}
+							<option value="{{ .ID }}" {{ if eq $.meal1id .StartingMainID }}selected{{end}}>
+								{{ .DisplayName }} - {{ formatMoney .DisplayPriceInCents }}</option>
 							{{ end }}
 						</select>
 						<div class="invalid-feedback">
@@ -72,18 +69,79 @@
 					</div>
 
 					<div class="col-12 mb-3">
-						<label for="drink">Cooler Drink <span class="text-danger">*</span></label>
-						<select class="form-control d-block w-100" id="drink" name="drink" required onchange="onSelectChange()">
+						<label for="meal">Drink <span class="text-danger">*</span></label>
+						<select class="form-control d-block w-100" id="drink1" name="drink1" required onchange="onSelectChange()">
 							<option value="">Choose a drink...</option>
-							{{ range .drinks }}
-							<option value="{{ .ID }}"
-								{{ if $.selectedDrinkID }}{{ if eq $.selectedDrinkID .ID }}selected{{end}}{{end}}>{{ .DisplayName }}
-							</option>
+							{{ range $.drinks }}
+							<option value="{{ .ID }}" {{ if eq $.drink1id .ID }}selected{{end}}>
+								{{ .DisplayName }}</option>
 							{{ end }}
 						</select>
 						<div class="invalid-feedback">
 							Please select a valid drink.
 						</div>
+					</div>
+
+					<div class="col-12">
+						{{ range $.sides }}
+						{{ if eq $.side1id .ID }}
+						<p><span class="font-weight-bold">{{ .DisplayName }}</span> will be included with this meal.</p>
+						{{end}}
+						{{ end }}
+					</div>
+				</div>
+
+				<hr class="mb-4" />
+
+				<div id="meal-2-enabler" class="mb-4" style="line-height: 2em">
+					<a href="#" onclick="return enableMeal2()">
+						<h5 class="text-center"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add another meal</h5>
+					</a>
+					<p class="text-center text-secondary">You can order up to two meals per delivery.</p>
+				</div>
+
+				<div id="meal-2-disabler" class="mb-4" style="line-height: 2em">
+					<a href="#" onclick="return disableMeal2()">
+						<h5 class="text-center"><i class="fa fa-minus-circle" aria-hidden="true"></i> Remove meal #2</h5>
+					</a>
+				</div>
+
+				<h4 class="meal-2-hide">Meal #2</h4>
+				<div class="row meal-2-hide">
+					<div class="col-12 mb-3">
+						<label for="meal">Meal Combo <span class="text-danger">*</span></label>
+						<select class="form-control d-block w-100" id="meal2" name="meal2" required onchange="onSelectChange()">
+							<option value="">Choose a meal...</option>
+							{{ range $.menu }}
+							<option value="{{ .ID }}" {{ if eq $.meal2id .StartingMainID }}selected{{end}}>
+								{{ .DisplayName }} - {{ formatMoney .DisplayPriceInCents }}</option>
+							{{ end }}
+						</select>
+						<div class="invalid-feedback">
+							Please select a valid meal.
+						</div>
+					</div>
+
+					<div class="col-12 mb-3">
+						<label for="meal">Drink <span class="text-danger">*</span></label>
+						<select class="form-control d-block w-100" id="drink2" name="drink2" required onchange="onSelectChange()">
+							<option value="">Choose a drink...</option>
+							{{ range $.drinks }}
+							<option value="{{ .ID }}" {{ if eq $.drink2id .ID }}selected{{end}}>
+								{{ .DisplayName }}</option>
+							{{ end }}
+						</select>
+						<div class="invalid-feedback">
+							Please select a valid drink.
+						</div>
+					</div>
+
+					<div class="col-12 mb-3">
+						{{ range $.sides }}
+						{{ if eq $.side2id .ID }}
+						<p><span class="font-weight-bold">{{ .DisplayName }}</span> will be included with this meal.</p>
+						{{end}}
+						{{ end }}
 					</div>
 				</div>
 
@@ -97,7 +155,7 @@
 							<option value="">Choose...</option>
 							{{ range .destinations }}
 							<option value="{{ .Tag }}"
-								{{ if $.selectedDestination }}{{ if eq $.selectedDestination .Tag }}selected{{end}}{{end}}>{{ .Name }}
+								{{ if $.order.DestinationTag }}{{ if eq $.order.DestinationTag .Tag }}selected{{end}}{{end}}>{{ .Name }}
 							</option>
 							{{ end }}
 						</select>
@@ -134,21 +192,22 @@
 					</div>
 					{{ else }}
 					<div class="col-12 mb-3">
-						<p>Your phone number is <span class="text-info">{{ .phone }}</span> and will be contacted for this delivery.</p>
+						<p>Your phone number is <span class="text-info">{{ .order.User.PhoneNumber }}</span> and will be contacted for this delivery.</p>
 					</div>
 					{{ end }}
-
 				</div>
+
 			</form>
 
 			<hr class="mb-4" />
 
 			<h4 class="mb-3">Delivery Fee</h4>
 
-			<p>Your CafApp balance is <span class="text-info balance-value">{{ formatMoney .balance }}</span>.<br />
+			<p>Your CafApp balance is <span class="text-info balance-value">{{ formatMoney .order.User.CurrentBalanceInCents }}</span>.<br />
 				This order will cost <span class="text-danger">$2.50</span> in delivery fee.<br />
 				You can <a data-toggle="collapse" href="#cardRedeemForm" aria-expanded="false"
 					aria-controls="cardRedeemForm">click here to redeem a CafApp Delivery Card</a>.</p>
+
 			<form class="collapse" id="cardRedeemForm">
 				<div class="row">
 					<div class="col-12 mb-3">
@@ -171,7 +230,6 @@
 				</div>
 			</form>
 
-			<!-- TODO: Rewrite dis line -->
 			<p><span class="badge badge-info"> Tip </span> The cards are sold at the Bookmark for <span
 					class="text-info">$10</span>.
 				With each delivery priced at <span class="text-info">$2.50</span>, one card will allow you to order <span
@@ -196,6 +254,11 @@
 	(function () {
 		'use strict';
 		window.addEventListener('load', function () {
+			// hide meal 2 if not enabled
+			var meal2 = $("#meal2").val();
+			var drink2 = $("#drink2").val();
+			if (meal2 === "" && drink2 === "") { disableMeal2(); }
+			else { enableMeal2(); }
 			// Fetch all the forms we want to apply to
 			var forms = document.getElementsByClassName('needs-validation');
 			// Loop over them and prevent submission
@@ -221,8 +284,10 @@
 			type: "POST",
 			url: "/api/recalculate-order",
 			data: JSON.stringify({
-				meal_id: parseInt($("#meal").children("option:selected").val()),
-				drink_id: parseInt($("#drink").children("option:selected").val()),
+				meal1id: parseInt($("#meal1").children("option:selected").val()),
+				drink1id: parseInt($("#drink1").children("option:selected").val()),
+				meal2id: parseInt($("#meal2").children("option:selected").val()),
+				drink2id: parseInt($("#drink2").children("option:selected").val()),
 			}),
 			contentType: "application/json; charset=utf-8",
 			dataType: "json",
@@ -271,13 +336,80 @@
 		});
 	}
 
+	function disableMeal2() {
+		// $(".meal-2-hide").addClass("d-none");
+		$(".meal-2-hide").fadeOut(150);
+		$("#meal-2-disabler").addClass("d-none");
+		$("#meal-2-enabler").removeClass("d-none");
+		$("#meal2").val(0);
+		$("#drink2").val(0);
+		$("#meal2").prop("disabled", true);
+		$("#drink2").prop("disabled", true);
+		onSelectChange();
+		return false;
+	}
+
+	function enableMeal2() {
+		// $(".meal-2-hide").removeClass("d-none");
+		$(".meal-2-hide").fadeIn(150);
+		$("#meal-2-disabler").removeClass("d-none");
+		$("#meal-2-enabler").addClass("d-none");
+		$("#meal2").prop("disabled", false);
+		$("#drink2").prop("disabled", false);
+		onSelectChange();
+		return false;
+	}
+
 	function updateSummary(data) {
 		console.log(data);
-		$("#meal-name").html(data.meal_name)
-		$("#meal-price").html(data.meal_price)
-		$("#drink-name").html(data.drink_name)
-		$("#delivery-fee").html(data.delivery_fee)
-		$("#order-total").html("<strong>" + data.order_total + "</strong>")
+		$("#summary").empty();
+		if (data.meal1name || data.main1name || data.side1name || data.drink1name) {
+			$("#summary").append(`
+				<li class="list-group-item d-flex justify-content-between lh-condensed">
+					<div>
+						<h6 id="meal-name" class="my-0">${data.meal1name}</h6>
+						<div class="text-secondary font-italic mt-2 ml-3">
+							<div>${data.main1name}</div>
+							<div>${data.side1name}</div>
+							<div>${data.drink1name}</div>
+						</div>
+					</div>
+					<span id="meal-price" class="text-muted">${data.meal1price}</span>
+				</li>
+			`);
+		}
+		if (data.meal2name || data.main2name || data.side2name || data.drink2name) {
+			$("#summary").append(`
+				<li class="list-group-item d-flex justify-content-between lh-condensed">
+					<div>
+						<h6 id="meal-name" class="my-0">${data.meal2name}</h6>
+						<div class="text-secondary font-italic mt-2 ml-3">
+							<div>${data.main2name}</div>
+							<div>${data.side2name}</div>
+							<div>${data.drink2name}</div>
+						</div>
+					</div>
+					<span id="meal-price" class="text-muted">${data.meal2price}</span>
+				</li>
+			`);
+		}
+		$("#summary").append(`
+			<li class="list-group-item d-flex justify-content-between lh-condensed">
+				<span>Delivery Fee</span>
+				<span id="delivery-fee" class="text-muted">${data.delivery_fee}</span>
+			</li>
+		`);
+		$("#summary").append(`
+			<li class="list-group-item d-flex justify-content-between">
+				<span>Total (USD)</span>
+				<span id="order-total" class="text-ca-yellow3"><strong>${data.order_total}</strong></span>
+			</li>
+		`);
+		// $("#meal-name").html(data.meal_name)
+		// $("#meal-price").html(data.meal_price)
+		// $("#drink-name").html(data.drink_name)
+		// $("#delivery-fee").html(data.delivery_fee)
+		// $("#order-total").html("<strong>" + data.order_total + "</strong>")
 		$("#caf-acct-charge-amt").html(data.caf_acct_charge_amt)
 	}
 

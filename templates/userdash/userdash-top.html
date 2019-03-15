@@ -6,11 +6,11 @@
 	</div>
 </section>
 
-<section class="container-fluid text-center" id="toast-area">
+<section class="container text-center" id="toast-area">
 	<!-- Left empty intentionally -->
 </section>
 
-<section class="container-fluid text-center">
+<section class="container text-center">
 
 	<h2 class="font-weight-bold">Account Details</h2>
 
@@ -39,7 +39,7 @@
 		</div>
 		<div class="row justify-content-between">
 			<div class="col text-right">Current balance:</div>
-			<div class="col text-left">{{ formatMoney .user.CurrentBalanceInCents }} <span style="padding-left:15px"><a href="/redeem">Redeem cards</a></span></div>
+			<div class="col text-left">{{ formatMoney .user.CurrentBalanceInCents }} <span class="px-3"><a href="/redeem">add</a></span></div>
 		</div>
 		<div class="row justify-content-between">
 			<div class="col text-right">Phone Number:</div>
@@ -78,7 +78,7 @@
 				<td>{{ .CreatedAt.Format "Jan _2 3:04pm" }}</td>
 				<td>{{ formatMoney .TotalInCents }}</td>
 				<td>{{ statusCodeToText .StatusCode }}</td>
-				<td><a href="/dash/{{ .UUID }}">View details</a></td>
+				<td><a href="/dash/order/{{ .UUID }}">View details</a></td>
 			</tr>
 			{{ end }}
 		</tbody>
@@ -171,7 +171,7 @@
 					$("#current-phone-num").val(res);
 					clearPhone();
 					showPhoneNormal();
-					alert("Phone change success!")
+					alert("Phone change success!", "success")
 				},
 				error: function (err) {
 					console.log(err);

@@ -33,47 +33,18 @@ func handleUserDash(c *gin.Context) {
 func handleOrderDetail(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["Title"] = "Order Details"
+	orderuuid := c.Param("orderuuid")
 	var order gorm.Order
-	stuff := c.Param("stuff")
-	err := order.PopulateByUUID(stuff)
+	err := order.PopulateByUUID(orderuuid)
 	if err != nil {
 		logger.Error("order uuid in params is not valid:", err)
 		logger.Info("boucing back to /dash")
 		c.Redirect(http.StatusFound, "/dash")
 	}
 
-	if order.StatusCode == gorm.OrderStatusDelivered {
-		data["isDelivered"] = true
-		deliver, err := gorm.GetDeliveredTime(order.ID)
-		if err != nil {
-			logger.Error("cannot display delivery time of order")
-			return
-		}
-		data["time"] = deliver
-	}
+	data["order"] = order
 
-	for i := range order.OrderRows {
-		if order.OrderRows[i].RowType == gorm.RowTypeNormal {
-			data["selectedMealName"] = order.OrderRows[i].Product.DisplayName
-			data["selectedMealPrice"] = order.OrderRows[i].Product.PriceInCents
-		}
-		if order.OrderRows[i].RowType == gorm.RowTypeIncluded {
-			data["selectedDrinkName"] = order.OrderRows[i].Product.DisplayName
-		}
-	}
-	var dest gorm.Destination
-	err2 := dest.PopulateByTag(order.DestinationTag)
-	if err2 != nil {
-		logger.Error(err2)
-		orderError(c, "Database error")
-		return
-	}
-
-	data["destination"] = dest.Name
-	data["deliveryFee"] = order.DeliveryFeeInCents
-	data["orderTotal"] = order.TotalInCents
-	data["cafAccountChargeAmount"] = order.CafAccountChargeAmountInCents
-	renderHTML(c, 200, "userdash-detail.html", data)
+	renderHTML(c, 200, "userdash-order-details.html", data)
 }
 
 func handleUserRedeem(c *gin.Context) {
@@ -175,7 +146,8 @@ func handleEditPhoneNumbers(c *gin.Context) {
 	user := getCurrentAuthUser(c)
 
 	//save to db
-	err = user.SaveUserPhone(req.Phone, user.ID)
+	user.PhoneNumber = req.Phone
+	err = user.Save()
 	if err != nil {
 		logger.Error(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
