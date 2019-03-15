@@ -5,10 +5,19 @@
 <section id="loginform" class="container text-center">
 	<img class="mb-4" src="/static/img/okhand.png" alt="ok!" width="150" height="150">
 	<h1 class="h3 mb-3 font-weight-normal">Order is placed!</h1>
-	<p class="lead">Redirecting you to meet my trusty companion, the Order Tracker ...</p>
-	<p class="lead">or you can <a href="/tracker">click here</a> if nothing happens</p>
+	<p class="lead">Redirecting you to your account ...</p>
+	<p class="lead">or you can <a href="/dash">click here</a> if nothing happens</p>
 	<div class="mt-4"></div>
 </section>
+
+{{ end }}
+
+{{ define "scripts" }}
+<script>
+	window.setTimeout(function(){
+		window.location.href = "/dash";
+	},2000)
+</script>
 
 {{ end }}
 

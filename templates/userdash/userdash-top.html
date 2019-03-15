@@ -78,7 +78,7 @@
 				<td>{{ .CreatedAt.Format "Jan _2 3:04pm" }}</td>
 				<td>{{ formatMoney .TotalInCents }}</td>
 				<td>{{ statusCodeToText .StatusCode }}</td>
-				<td><a href="">View details</a></td>
+				<td><a href="/dash/{{ .UUID }}">View details</a></td>
 			</tr>
 			{{ end }}
 		</tbody>
