@@ -70,6 +70,20 @@ func (o *Order) GetMealRow() *OrderRow {
 	return nil
 }
 
+// GetDeliveredTime : return the time when the order was delivered
+func GetDeliveredTime(id uint) (OrderStatusUpdate,error){
+	var tmp OrderStatusUpdate
+	err := DB.Raw(`
+		SELECT order_status_updates.*
+		FROM order_status_updates
+		WHERE status_code = ? AND order_id = ?
+	`, OrderStatusDelivered, id).Scan(&tmp).Error
+	if tmp.ID == 0 {
+		return tmp, ErrRecordNotFound
+	}
+	return tmp, err
+}
+
 // GetDrinkRow : return the OrderRow that is the drink part of the order
 func (o *Order) GetDrinkRow() *OrderRow {
 	for i := range o.OrderRows {
