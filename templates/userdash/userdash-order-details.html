@@ -1,0 +1,130 @@
+{{ define "content" }}
+
+{{ template "basicspotlight" . }}
+
+<section class="container">
+	<p class="lead text-center">Here is the detailed information of your order.</p>
+
+	<div class="row justify-content-center mt-5">
+		<div class="col-md-8 col-lg-6">
+			{{ if .error }}
+			<div class="alert alert-danger text-center" role="alert">
+				{{ rawHTML .error }}
+			</div>
+			{{ end }}
+
+			<hr />
+
+			{{ range .order.OrderRows }}
+				<div class="text-center mb-4">
+					<div><h5>{{ .MenuItem.DisplayName }}</h5></div>
+				</div>
+				{{ range .SubRows }}
+					{{ if .Product.IsMain }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Entree</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+					{{ if .Product.IsSide }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Side</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+					{{ if .Product.IsDrink }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Drink</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+				{{ end }}
+				<hr />
+			{{ end }}
+
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1">Delivery Fee</h5>
+				</div>
+				<div>
+					<h5 class="font-weight-bold">{{ formatMoney .order.DeliveryFeeInCents }}</h5>
+				</div>
+			</div>
+
+			<hr />
+
+
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1 font-weight-bold text-ca-yellow2">Total</h5>
+				</div>
+				<div>
+					<h5 class="font-weight-bold text-ca-yellow2">{{ formatMoney .order.TotalInCents }}</h5>
+				</div>
+			</div>
+
+			<hr />
+
+			<h4 class="text-center">Payment</h4>
+
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1">Meal Plan Charge</h5>
+				</div>
+				<div>
+					<h5 class="font-weight-bold text-danger">{{ formatMoney .order.CafAccountChargeAmountInCents }}</h5>
+				</div>
+			</div>
+
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<h5 class="my-1">CafApp Charge</h5>
+				</div>
+				<div>
+					<h5 class="font-weight-bold text-danger">{{ formatMoney .order.DeliveryFeeInCents }}</h5>
+				</div>
+			</div>
+
+			<hr />
+
+			<p class="text-center">
+				Deliver to: {{ .order.Destination.Name }}<br />
+				Pick Up Location: {{ .order.Destination.PickUpLocation }}</p>
+			<hr />
+
+			<h4 class="text-center">History</h4>
+
+			{{ range .order.StatusUpdates }}
+			<div class="d-flex justify-content-around align-items-center">
+				<div>
+					{{ statusCodeToText .StatusCode }}
+				</div>
+				<div>
+					{{ .CreatedAt.Format "Jan _2 3:04pm" }}
+				</div>
+			</div>
+			{{ end }}
+
+			<div class="my-4"></div>
+
+			<a role="button" class="btn btn-link btn-lg btn-block" href="/dash">Back to My Account</a>
+
+		</div>
+	</div>
+</section>
+{{ end }}

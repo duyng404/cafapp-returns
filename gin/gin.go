@@ -43,6 +43,7 @@ func init() {
 		"rawHTML":          rawHTML,
 		"fromTagToNumber":  fromTagToNumber,
 		"statusCodeToText": statusCodeToText,
+		"addOne":           addOne,
 	}
 	rdr = renderer.InitRdr(views, f)
 	router = InitRoutes()

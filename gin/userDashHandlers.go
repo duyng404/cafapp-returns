@@ -30,6 +30,23 @@ func handleUserDash(c *gin.Context) {
 	renderHTML(c, 200, "userdash-top.html", data)
 }
 
+func handleOrderDetail(c *gin.Context) {
+	data := make(map[string]interface{})
+	data["Title"] = "Order Details"
+	orderuuid := c.Param("orderuuid")
+	var order gorm.Order
+	err := order.PopulateByUUID(orderuuid)
+	if err != nil {
+		logger.Error("order uuid in params is not valid:", err)
+		logger.Info("boucing back to /dash")
+		c.Redirect(http.StatusFound, "/dash")
+	}
+
+	data["order"] = order
+
+	renderHTML(c, 200, "userdash-order-details.html", data)
+}
+
 func handleUserRedeem(c *gin.Context) {
 	data := make(map[string]interface{})
 	data["Title"] = "Redeem"
@@ -112,4 +129,30 @@ func handleUserRedeemSuccess(c *gin.Context) {
 	session.Save()
 
 	renderHTML(c, 200, "userdash-redeem-success.html", data)
+}
+
+func handleEditPhoneNumbers(c *gin.Context) {
+	// bind
+	type reqStruct struct {
+		Phone string `json:"phone"`
+	}
+	var req reqStruct
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	user := getCurrentAuthUser(c)
+
+	//save to db
+	user.PhoneNumber = req.Phone
+	err = user.Save()
+	if err != nil {
+		logger.Error(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(200, user.PhoneNumber)
 }

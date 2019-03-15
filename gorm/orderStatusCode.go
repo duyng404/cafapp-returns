@@ -130,19 +130,23 @@ func (s *OrderStatusCode) PopulateByCode(code int) error {
 	return DB.Where("status_code = ?", code).Last(&s).Error
 }
 
-// FirstOrCreate create if not exist
-func (s *OrderStatusCode) FirstOrCreate() error {
+// CreateOrUpdate create if not exist
+func (s *OrderStatusCode) CreateOrUpdate() error {
 	var tmp OrderStatusCode
-	if err := tmp.PopulateByCode(s.StatusCode); err == gorm.ErrRecordNotFound {
+	err := tmp.PopulateByCode(s.StatusCode)
+	if err == gorm.ErrRecordNotFound {
 		return DB.Create(&s).Error
+	} else if err != nil {
+		return err
+	} else {
+		return DB.Save(s).Error
 	}
-	return nil
 }
 
 // create all statuses
 func initOrderStatusCodes() error {
 	for i := range statusList {
-		err := statusList[i].FirstOrCreate()
+		err := statusList[i].CreateOrUpdate()
 		if err != nil {
 			logger.Error(err)
 		}

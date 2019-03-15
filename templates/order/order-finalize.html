@@ -16,43 +16,66 @@
 
 			<hr />
 
-			<div class="d-flex justify-content-between align-items-center">
-				<div>
-					<h5 class="my-1">{{ .selectedMealName }}</h5>
-					<p class="text-muted font-italic">Meal Combo</p>
+			{{ range .order.OrderRows }}
+				<div class="text-center mb-4">
+					<div><h5>{{ .MenuItem.DisplayName }}</h5></div>
 				</div>
-				<div>
-					<h5><strong>{{formatMoney .selectedMealPrice}}</strong></h5>
-				</div>
-			</div>
-
-			<div class="d-flex justify-content-between align-items-center">
-				<div>
-					<h5 class="my-1">{{ .selectedDrinkName }}</h5>
-					<p class="text-muted font-italic">Drink</p>
-				</div>
-				<div>
-					<h5 class="text-muted">included</h5>
-				</div>
-			</div>
+				{{ range .SubRows }}
+					{{ if .Product.IsMain }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Entree</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+					{{ if .Product.IsSide }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Side</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+					{{ if .Product.IsDrink }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Drink</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+				{{ end }}
+				<hr />
+			{{ end }}
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div>
 					<h5 class="my-1">Delivery Fee</h5>
 				</div>
 				<div>
-					<h5 class="font-weight-bold">{{formatMoney .deliveryFee}}</h5>
+					<h5 class="font-weight-bold">{{ formatMoney .order.DeliveryFeeInCents }}</h5>
 				</div>
 			</div>
 
 			<hr />
+
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div>
 					<h5 class="my-1 font-weight-bold text-ca-yellow2">Total</h5>
 				</div>
 				<div>
-					<h5 class="font-weight-bold text-ca-yellow2">{{formatMoney .orderTotal}}</h5>
+					<h5 class="font-weight-bold text-ca-yellow2">{{ formatMoney .order.TotalInCents }}</h5>
 				</div>
 			</div>
 
@@ -62,37 +85,60 @@
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div>
-					<h5 class="my-1">Your Caf Account</h5>
+					<h5 class="my-1">Meal Plan Charge</h5>
 				</div>
 				<div>
-					<h5 class="font-weight-bold text-danger">{{formatMoney .cafAccountChargeAmount}}</h5>
+					<h5 class="font-weight-bold text-danger">{{ formatMoney .order.CafAccountChargeAmountInCents }}</h5>
 				</div>
 			</div>
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div>
-					<h5 class="my-1">CafApp Balance</h5>
+					<h5 class="my-1">CafApp Charge</h5>
 				</div>
 				<div>
-					<h5 class="font-weight-bold text-danger">{{formatMoney .deliveryFee}}</h5>
+					<h5 class="font-weight-bold text-danger">{{ formatMoney .order.DeliveryFeeInCents }}</h5>
 				</div>
 			</div>
 
 			<hr />
 
-			<p class="text-center">Order will be delivered to: {{ .destination }}</p>
+			<p class="text-center">
+				<span class="text-danger">Important:</span>
+				Order will be delivered to {{ .destination }}<br />
+				Pick Up Location: {{ .pickupspot }}</p>
 
 			<hr />
 
 			<h4 class="text-center">Disclaimer</h4>
 
-			<p>By clicking Place Order, you agree to bla bla bla bla bla bla:</p>
+			<h5>Notice of Risk</h5>
 			<ul>
-				<li>bla</li>
-				<li>bla</li>
-				<li>bLAAAHHHH</li>
+				<li>This service can involve risk, injury, and other dangers. These dangers include, but are not limited to; food safety, cross-contamination of allergens and sensitive ingredients, etc.</li>
 			</ul>
-			<p>Thank you for using CafApp!</p>
+
+			<h5>Food Quality</h5>
+			<ul>
+				<li>As a delivery service, the Service does not take responsibility for quality of any food delivered, as it is prepared by Gustavus Dining Services.</li>
+			</ul>
+
+			<h5>Notifications</h5>
+			<ul>
+				<li>The “My Account” tab of the Service webpage (https://gustiecaf.app) will provide each user with the history of orders and their current status (such as, but not limited to; placed, prepping, out for delivery, approaching, delivered. etc.).</li>
+				<li>In the event of a failure to retrieve goods in response to the original notification a second notification will be given via call to the telephone number provided on the order. If the order is not collected at the delivery vehicle within 5 minutes of the telephone call being placed, the order, the cost of the order, and the cost of the delivery fee will be forfeited.</li>
+			</ul>
+
+			<h5>Delivery</h5>
+			<ul>
+				<li><strong>NO REFUNDS</strong> will be provided for goods and/or services</li>
+				<li>Each customer has a total of 5 minutes from the time of the second notification to collect delivered goods.</li>
+				<li>Failure to collect results in the forfeit of goods without refund, as The Service cannot store/resell foodstuffs beyond a safe limit of time.</li>
+				<li>Any value of Delivery Fee Cards will not be refunded at any time, regardless of the remaining credit available at the end of trial periods.</li>
+			</ul>
+
+			<p class="text-center"><a href="/faq#disclaimer" target="_blank">You can view the full version of the disclaimer here <i class="fa fa-external-link" aria-hidden="true"></i></a></p>
+
+			<p class="text-center">Thank you for using CafApp!</p>
 
 			<div class="my-3"></div>
 
@@ -100,7 +146,7 @@
 				<div class="form-group mb-2">
 					<div class="form-check">
 						<input class="form-check-input" type="checkbox" value="" id="disclaimer-agree" required>
-						<label class="form-check-label" for="disclaimer-agree">
+						<label class="form-check-label" for="disclaimer-agree" style="line-height: 2.3rem;">
 							I have fully read, understood and AGREE to this disclaimer as stated.
 						</label>
 						<div class="invalid-feedback">

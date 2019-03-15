@@ -101,7 +101,7 @@
 			</div>
 		</div>
 		<div class="col-12 col-sm-11">
-			<p class="text-center-xs">This will depend on how many orders are being placed each round. However, the delivery vehicle will be departing for delivery approximately every 30 minutes . If your order is prepared just as the vehicle departs, then the soonest you can expect your meal is within 15 minutes. If your meal is placed and prepared as soon as the vehicle departs, it could take upwards of 45 minutes.</p>
+			<p class="text-center-xs">This will depend on how many orders are being placed each round. However, the delivery vehicle will be departing for delivery approximately every 30 minutes . If your order is prepared just as the vehicle departs, then the soonest you can expect your meal is within 15 minutes. If your meal is placed and prepared as soon as the vehicle departs, it could take upwards of 45 minutes. But don't worry! Your food is kept warm and tasty through warmers the entire way.</p>
 		</div>
 	</div>
 
@@ -161,14 +161,84 @@
 			</div>
 		</div>
 		<div class="col-12 col-sm-11">
-			<p class="text-center-xs">The cafeteria delivery service is currently in a trial run phase, meaning we will be delivering for one month in order to collect data. Once the trial run is complete, the delivery service will be paused temporarily in order to analyze the data collected and improve our delivery process. During the trial run, limited food options will be available as well as longer waiting times. We thank you for your patience and support!</p>
+			<p class="text-center-xs">The cafeteria delivery service is currently in a trial run phase, meaning we will be delivering for two month in order to collect data. Once the trial run is complete, the delivery service will be paused temporarily in order to analyze the data collected and improve our delivery process. During the trial run, limited food options will be available as well as longer waiting times. We thank you for your patience and support!</p>
 		</div>
 	</div>
 
 	<div class="row justify-content-center">
-		<a href="/" role="button" class="btn btn-lg btn-link">Back to homepage</a>
+		<button class="btn btn-lg btn-link" onclick="topFunction()">Back to top</button>
 	</div>
 
 </section>
 
+<hr class="my-4"/>
+<a name="disclaimer"></a>
+
+<!-- Disclaimer -->
+<section class="container">
+	<div class="row justify-content-center mt-5">
+		<div class="col-md-10 col-lg-9">
+			<h2 class="text-center">CafApp Disclaimer</h2>
+
+			<div class="my-4"></div>
+
+			<h5>Notice of Risk</h5>
+			<ul><li>This service can involve risk, injury, and other dangers. These dangers include, but are not limited to; food safety, cross-contamination of allergens and sensitive ingredients, etc.</li></ul>
+
+			<h5>What services does Gustavus Enactus Cafeteria Delivery Service provide?</h5>
+			<ul><li>The Gustavus Enactus Cafeteria Delivery Service (henceforth referred to as “the Service”) provides meals (henceforth referred to as “goods”) to the student body of Gustavus Adolphus College through the Gustavus Adolphus College’s Dining Services and Gustavus Enactus directly to the dormitory buildings located along Ring Road (Norelius, Sorenson, Gibbs & North (colloquially known as  Complex), Uhler, Rundstrom, Pittman, Sohre, and Southwest).</li></ul>
+
+			<h5>Food Quality</h5>
+			<ul><li>As a delivery service, the Service does not take responsibility for quality of any food delivered, as it is prepared by Gustavus Dining Services.</li></ul>
+
+			<h5>Scheduling & short-term scheduling changes</h5>
+			<ul>
+				<li>The Service plans to be open for business on a consistent schedule, however, the Service must prioritize safety to reduce potential dangers if unfavorable circumstances arise. </li>
+				<li>The Service will be closed in the event of: Gustavus Dining Service being closed during our specified hours, road conditions not permitting safe travel along Ring Road, etc.</li>
+				<li>The Service will only be serving goods which Dining Service provides at time of order.</li>
+			</ul>
+
+			<h5>Notifications</h5>
+			<ul>
+				<li>The “My Account” tab of the Service webpage (https://gustiecaf.app) will provide each user with the history of orders and their current status (such as, but not limited to; placed, prepping, out for delivery, approaching, delivered. etc.).</li>
+				<li>In the event of a failure to retrieve goods in response to the original notification a second notification will be given via call to the telephone number provided on the order. If the order is not collected at the delivery vehicle within 5 minutes of the telephone call being placed, the order, the cost of the order, and the cost of the delivery fee will be forfeited.</li>
+			</ul>
+
+			<h5>Storage of personal information</h5>
+			<ul>
+				<li>For invoicing purposes the Service will retain some personal information provided by our customers. Personal information stored includes, but is not limited to: name of buyer, location of delivery, student account number, phone number, etc.</li>
+				<li>At no point will the Service make your information publicly available, or sell it to third parties.</li>
+			</ul>
+
+			<h5>Charges</h5>
+			<ul>
+				<li>The goods provided by the Service are charged separately from the cost of the delivery service fee.</li>
+				<li>As users are students of Gustavus Adolphus College, all costs related to goods provided by Dining Services are charged directly to the ordering party’s Dining Services account (Meal Plan).</li>
+				<li>All charges relating to the delivery of above stated goods will be charged separately, through the Gustavus Bookmark at the time of purchase of the Delivery Fee Cards.</li>
+				<li>All prices displayed by the Service do not include tax.</li>
+			</ul>
+
+			<h5>Refund policy</h5>
+			<ul>
+				<li><strong>NO REFUNDS</strong> will be provided for goods and/or services.</li>
+				<li>Each customer has a total of 5 minutes from the time of the phone call to collect delivered goods. Failure to collect aforementioned goods results in the forfeit of goods without refund, as The Service cannot store/resell foodstuffs beyond a safe limit of time.</li>
+				<li>Any value of Delivery Fee Cards will not be refunded at any time, regardless of the remaining credit available at the end of trial periods.</li>
+			</ul>
+
+			<div class="row justify-content-center">
+				<button class="btn btn-lg btn-link" onclick="topFunction()">Back to top</button>
+			</div>
+		</div>
+	</div>
+</section>
+
+{{ end }}
+
+{{ define "scripts" }}
+<script>
+function topFunction() {
+	document.body.scrollTop = 0; // For Safari
+	document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+</script>
 {{ end }}

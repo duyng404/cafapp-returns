@@ -44,6 +44,13 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Sub Row Table")
+	err = DB.AutoMigrate(&SubRow{}).Error
+	if err != nil {
+		logger.Error("Error migrating Sub Row table:", err)
+		return err
+	}
+
 	logger.Info("Migrating Destination Table")
 	err = DB.AutoMigrate(&Destination{}).Error
 	if err != nil {
@@ -93,6 +100,28 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Label Table")
+	err = DB.AutoMigrate(&Label{}).Error
+	if err != nil {
+		logger.Error("Error migrating label table:", err)
+		return err
+	}
+
+	logger.Info("Migrating Menu Table")
+	err = DB.AutoMigrate(&Menu{}).Error
+	if err != nil {
+		logger.Error("Error migrating menu table:", err)
+		return err
+	}
+
+	logger.Info("Migrating Menu Item Table")
+	err = DB.AutoMigrate(&MenuItem{}).Error
+	if err != nil {
+		logger.Error("Error migrating menu item table:", err)
+		return err
+	}
+
+	initLabels()
 	initDestinations()
 	initOrderStatusCodes()
 	initGlobalVar()
@@ -100,7 +129,7 @@ func Migrate() error {
 	// init data
 	var tmp Product
 	err = tmp.PopulateByID(1)
-	if err != nil {
+	if err == ErrRecordNotFound {
 		logger.Info("Database is empty, generating sample data")
 		initData()
 	}

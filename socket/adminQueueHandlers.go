@@ -46,6 +46,8 @@ func handleCommit(event string, committed []int) {
 		}
 		// notify all connected admins
 		updateQueueForEveryone(processed)
+		// notify all connected users as well
+		updateQueueForAllUsers(processed)
 		return
 	}
 	logger.Info("nothing to process.")

@@ -3,17 +3,23 @@
 {{ template "basicspotlight" . }}
 
 <section class="container">
-	<p class="w-75 mx-auto">We currently offer a choice of convenient combo meals, each of them with a choice of drink between Coke, Sprite, Diet Coke and Orange Soda. More food choices will come as we grow!</p>
+	<p class="w-75 mx-auto">We currently offer a choice of convenient combo meals, each of them with a choice of drink between Coke, Diet Coke and Sprite. More food choices will come as we grow! Note: at 9pm, menu items will change, fries will be substituted for chips. Prices will reflect these changes (lowered by 25 cents each).</p>
 
 	{{ if and (.menu) (len .menu) }}
 	<div class="row mt-5">
+		{{ if .CafAppRunning }}
 		<div class="col-12">
 			<div class="alert alert-warning text-center fade show">
-				<span>CafApp is currently NOT in service, so ordering has been disabled.<br />
-					We are going to have our first launch on Friday March 15th at 7pm.</span>
+				<span>CafApp is currently open! <a href="/login" class="alert-link">Click here to log in and start ordering!</a></span>
 			</div>
 		</div>
-
+		{{ else }}
+		<div class="col-12">
+			<div class="alert alert-warning text-center fade show">
+				<span>CafApp is currently NOT in service, so ordering has been disabled.</span>
+			</div>
+		</div>
+		{{ end }}
 
 		{{ range .menu }}
 		<div class="col-12 col-md-6 col-lg-4">
@@ -22,7 +28,7 @@
 					<h5 class="my-0 font-weight-bold">{{ .DisplayName }}</h5>
 				</div>
 				<div class="card-body">
-					<h3 class="card-title pricing-card-title">{{ formatMoney .PriceInCents }}</h3>
+					<h3 class="card-title pricing-card-title">{{ formatMoney .DisplayPriceInCents }}</h3>
 					<div class="mt-3 mb-3">
 						{{ rawHTML .DescriptionHTML }}
 					</div>

@@ -12,17 +12,18 @@ import (
 // Order : the most important object in our app
 type Order struct {
 	gorm.Model
-	UUID                          string       `json:"uuid" gorm:"index:uuid"`
-	Tag                           string       `json:"tag"`
-	UserID                        uint         `json:"user_id"`
-	User                          *User        `json:"user"`
-	DeliveryFeeInCents            int          `json:"delivery_fee_in_cents"`
-	CafAccountChargeAmountInCents int          `json:"caf_account_charge_amount_in_cents"`
-	TotalInCents                  int          `json:"total_in_cents"`
-	OrderRows                     []OrderRow   `json:"order_rows" gorm:"many2many:order_order_rows"`
-	DestinationTag                string       `json:"destination_tag"`
-	Destination                   *Destination `json:"destination" gorm:"foreignkey:DestinationTag,association_foreignkey:Tag"`
-	StatusCode                    int          `json:"status_code"`
+	UUID                          string              `json:"uuid" gorm:"index:uuid"`
+	Tag                           string              `json:"tag"`
+	UserID                        uint                `json:"user_id"`
+	User                          *User               `json:"user"`
+	DeliveryFeeInCents            int                 `json:"delivery_fee_in_cents"`
+	CafAccountChargeAmountInCents int                 `json:"caf_account_charge_amount_in_cents"`
+	TotalInCents                  int                 `json:"total_in_cents"`
+	OrderRows                     []OrderRow          `json:"order_rows" gorm:"many2many:order_order_rows"`
+	DestinationTag                string              `json:"destination_tag"`
+	Destination                   *Destination        `json:"destination" gorm:"foreignkey:DestinationTag,association_foreignkey:Tag"`
+	StatusCode                    int                 `json:"status_code"`
+	StatusUpdates                 []OrderStatusUpdate `jons:"order_status_updates"`
 }
 
 // Create : save the object to the db
@@ -43,10 +44,18 @@ func (o *Order) Save() error {
 
 // PopulateByID : query the db to get object by id
 func (o *Order) PopulateByID(id uint) error {
-	return DB.Preload("User").
-		Preload("OrderRows").
-		Preload("OrderRows.Product").
+	return DB.
+		Preload("User").
+		Preload("OrderRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_rows.id") // Preload OrderRows and sort them by order_rows.id
+		}).
+		Preload("OrderRows.MenuItem").
+		Preload("OrderRows.SubRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sub_rows.id") // Preload OrderRows.SubRows and sort them by sub_rows.id
+		}).
+		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
+		Preload("StatusUpdates").
 		Where("id = ?", id).Last(&o).Error
 }
 
@@ -54,36 +63,37 @@ func (o *Order) PopulateByID(id uint) error {
 func (o *Order) PopulateByUUID(uuid string) error {
 	return DB.
 		Preload("User").
-		Preload("OrderRows").
-		Preload("OrderRows.Product").
+		Preload("OrderRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_rows.id") // Preload OrderRows and sort them by order_rows.id
+		}).
+		Preload("OrderRows.MenuItem").
+		Preload("OrderRows.SubRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sub_rows.id") // Preload OrderRows.SubRows and sort them by sub_rows.id
+		}).
+		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
+		Preload("StatusUpdates").
 		Where("uuid = ?", uuid).Last(&o).Error
 }
 
-// GetMealRow : return the OrderRow that is the meal part of the order
-func (o *Order) GetMealRow() *OrderRow {
-	for i := range o.OrderRows {
-		if o.OrderRows[i].Product.Status == ProductStatusOnShelf {
-			return &o.OrderRows[i]
-		}
+// GetDeliveredTime : return the time when the order was delivered
+func GetDeliveredTime(id uint) (OrderStatusUpdate, error) {
+	var tmp OrderStatusUpdate
+	err := DB.Raw(`
+		SELECT order_status_updates.*
+		FROM order_status_updates
+		WHERE status_code = ? AND order_id = ?
+	`, OrderStatusDelivered, id).Scan(&tmp).Error
+	if tmp.ID == 0 {
+		return tmp, ErrRecordNotFound
 	}
-	return nil
-}
-
-// GetDrinkRow : return the OrderRow that is the drink part of the order
-func (o *Order) GetDrinkRow() *OrderRow {
-	for i := range o.OrderRows {
-		if o.OrderRows[i].Product.Status == ProductStatusAddon {
-			return &o.OrderRows[i]
-		}
-	}
-	return nil
+	return tmp, err
 }
 
 // GetAllOrderFromUser : return all Orders that Users have placed
 func GetAllOrderFromUser(id uint) (*[]Order, error) {
 	var orders []Order
-	err := DB.Preload("User").Preload("OrderRows").Preload("OrderRows.Product").Preload("Destination").
+	err := DB.Preload("User").Preload("OrderRows").Preload("OrderRows").Preload("Destination").
 		Where("user_id = ? AND status_code >= ?", id, OrderStatusPlaced).Find(&orders).Error
 	if err != nil {
 		return nil, err
@@ -94,7 +104,6 @@ func GetAllOrderFromUser(id uint) (*[]Order, error) {
 // CalculateDeliveryFee : calculate the delivery of a given order
 // does not save. Caller should handle that
 func (o *Order) CalculateDeliveryFee() {
-	// TODO: implement a proper rate
 	o.DeliveryFeeInCents = 250
 }
 
@@ -102,8 +111,15 @@ func (o *Order) CalculateDeliveryFee() {
 // does not save. Caller should handle that
 func (o *Order) CalculateTotal() {
 	total := 0
-	for _, v := range o.OrderRows {
-		total += v.SubtotalInCents
+	for i := range o.OrderRows {
+		subtotal := 0
+		for _, v := range o.OrderRows[i].SubRows {
+			if v.Product != nil {
+				subtotal += v.Product.PriceInCents
+			}
+		}
+		o.OrderRows[i].SubtotalInCents = subtotal
+		total += subtotal
 	}
 	o.CafAccountChargeAmountInCents = total
 	total += o.DeliveryFeeInCents
@@ -116,16 +132,17 @@ func (o *Order) GenerateTag() error {
 	if err != nil {
 		return err
 	}
-	tag, err := g.GetNextOrderTag()
+	orderNum, err := g.GetNextOrderTag()
 	if err != nil {
 		return err
 	}
-	meal := o.GetMealRow()
-	drink := o.GetDrinkRow()
-	if meal == nil || drink == nil {
-		return errors.New("order is not completed")
+	tagString := ""
+	for i := range o.OrderRows {
+		for j := range o.OrderRows[i].SubRows {
+			tagString = tagString + o.OrderRows[i].SubRows[j].Product.Tag
+		}
 	}
-	o.Tag = fmt.Sprintf("%s-%s%s-%d", o.DestinationTag, meal.Product.Tag, drink.Product.Tag, tag)
+	o.Tag = fmt.Sprintf("%s-%s-%d", o.DestinationTag, tagString, orderNum)
 	return nil
 }
 
@@ -137,9 +154,16 @@ func GetOrdersForAdminViewQueue() (*[]Order, error) {
 	err := DB.
 		Order("tag").
 		Preload("User").
-		Preload("OrderRows").
-		Preload("OrderRows.Product").
+		Preload("OrderRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_rows.id") // Preload OrderRows and sort them by order_rows.id
+		}).
+		Preload("OrderRows.MenuItem").
+		Preload("OrderRows.SubRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sub_rows.id") // Preload OrderRows.SubRows and sort them by sub_rows.id
+		}).
+		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
+		Preload("StatusUpdates").
 		Where("status_code >= ? AND status_code < ? AND created_at > ?", OrderStatusPlaced, OrderStatusDelivered, twentyFourHoursFromNow).Find(&orders).Error
 	return &orders, err
 }

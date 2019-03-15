@@ -2,167 +2,329 @@ package gorm
 
 import (
 	"cafapp-returns/logger"
-	"fmt"
-	"strings"
 )
 
-func properFoodName(in string) string {
-	return strings.Title(strings.Replace(in, "-", " ", -1))
-}
-
 func initData() {
-	allFoods := []Product{}
+	labelMain, _ := GetOrCreateLabel(ProductLabelMain)
+	labelSides, _ := GetOrCreateLabel(ProductLabelSide)
+	labelDrink, _ := GetOrCreateLabel(ProductLabelDrink)
+
+	allFoods := []*Product{}
 
 	// chicken2
 	chicken2 := Product{
-		Tag:          "C2",
-		Name:         fmt.Sprintf("2-chicken"),
-		PriceInCents: 590,
-		Description:  fmt.Sprintf("2 Chicken Strips, French Fries, Cooler Drink"),
-		Status:       ProductStatusOnShelf,
+		Tag:          "2C",
+		Name:         "2pc-chicken",
+		DisplayName:  "2 Chicken Strips",
+		PriceInCents: 250,
+		Labels:       []Label{*labelMain},
 	}
-	chicken2.DisplayName = properFoodName("chicken tender meal 2pc")
-	chicken2.DescriptionHTML = strings.Replace(chicken2.Description, ", ", "<br />", -1)
-	allFoods = append(allFoods, chicken2)
+	allFoods = append(allFoods, &chicken2)
 
-	// chickend4
+	// chicken4
 	chicken4 := Product{
-		Tag:          "C4",
-		Name:         fmt.Sprintf("4-chicken"),
-		PriceInCents: 790,
-		Description:  fmt.Sprintf("4 Chicken Strips, French Fries, Cooler Drink"),
-		Status:       ProductStatusOnShelf,
+		Tag:          "4C",
+		Name:         "4pc-chicken",
+		DisplayName:  "4 Chicken Strips",
+		PriceInCents: 450,
+		Labels:       []Label{*labelMain},
 	}
-	chicken4.DisplayName = properFoodName("chicken tender meal 4pc")
-	chicken4.DescriptionHTML = strings.Replace(chicken4.Description, ", ", "<br />", -1)
-	allFoods = append(allFoods, chicken4)
+	allFoods = append(allFoods, &chicken4)
 
 	// burger
 	burger := Product{
 		Tag:          "CB",
-		Name:         fmt.Sprintf("burger"),
-		PriceInCents: 715,
-		Description:  fmt.Sprintf("Cheeseburger w/ lettuce & tomato (wheat roll), French Fries, Cooler Drink"),
-		Status:       ProductStatusOnShelf,
+		Name:         "burger",
+		DisplayName:  "Cheeseburger",
+		PriceInCents: 410,
+		Labels:       []Label{*labelMain},
 	}
-	burger.DisplayName = properFoodName("burger meal")
-	burger.DescriptionHTML = strings.Replace(burger.Description, ", ", "<br />", -1)
-	allFoods = append(allFoods, burger)
+	allFoods = append(allFoods, &burger)
 
 	// turkeysandwich
 	turkeysandwich := Product{
 		Tag:          "TS",
-		Name:         fmt.Sprintf("turkey-sandwich"),
-		PriceInCents: 835,
-		Description:  fmt.Sprintf("Turkey Sub Sandwich, French Fries, Cooler Drink **Toppings: turkey, lettuce, tomato, with mayo & mustard in sides"),
-		Status:       ProductStatusOnShelf,
+		Name:         "turkey-sandwich",
+		DisplayName:  "Turkey Sandwich",
+		PriceInCents: 495,
+		Labels:       []Label{*labelMain},
 	}
-	turkeysandwich.DisplayName = properFoodName("turkey sandwich meal")
-	turkeysandwich.DescriptionHTML = "Turkey Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: turkey, lettuce, tomato<br />* with mayo & mustard in sides"
-	allFoods = append(allFoods, turkeysandwich)
+	allFoods = append(allFoods, &turkeysandwich)
 
 	// veggiesandwich
 	veggiesandwich := Product{
 		Tag:          "VS",
-		Name:         fmt.Sprintf("veggie-sandwich"),
-		PriceInCents: 835,
-		Description:  fmt.Sprintf("Veggie Sub Sandwich, French Fries, Cooler Drink **Toppings include: hummus, cucumber, lettuce, tomato, green bell pepper, with mayo & mustard in sides"),
-		Status:       ProductStatusOnShelf,
+		Name:         "veggie-sandwich",
+		DisplayName:  "Turkey Sandwich",
+		PriceInCents: 495,
+		Labels:       []Label{*labelMain},
 	}
-	veggiesandwich.DisplayName = properFoodName("veggie sandwich meal")
-	veggiesandwich.DescriptionHTML = "Veggie Sub Sandwich<br />French Fries<br />Cooler Drink<br />* Toppings: hummus, cucumber, lettuce, tomato, green bell pepper<br />* with mayo & mustard in sides"
-	allFoods = append(allFoods, veggiesandwich)
+	allFoods = append(allFoods, &veggiesandwich)
 
 	// peppizza
 	peppizza := Product{
 		Tag:          "PP",
-		Name:         fmt.Sprintf("pep-pizza"),
-		PriceInCents: 730,
-		Description:  fmt.Sprintf("2 Slices of Pepperoni Pizza, French Fries, Cooler Drink"),
-		Status:       ProductStatusOnShelf,
+		Name:         "pep-pizza",
+		DisplayName:  "Pepperoni Pizza",
+		PriceInCents: 390,
+		Labels:       []Label{*labelMain},
 	}
-	peppizza.DisplayName = properFoodName("pepperoni pizza meal")
-	peppizza.DescriptionHTML = strings.Replace(peppizza.Description, ", ", "<br />", -1)
-	allFoods = append(allFoods, peppizza)
+	allFoods = append(allFoods, &peppizza)
 
 	// cheesepizza
 	cheesepizza := Product{
 		Tag:          "CP",
-		Name:         fmt.Sprintf("cheese-pizza"),
-		PriceInCents: 730,
-		Description:  fmt.Sprintf("2 Slices of Cheese Pizza, French Fries, Cooler Drink"),
-		Status:       ProductStatusOnShelf,
+		Name:         "cheese-pizza",
+		DisplayName:  "Cheese Pizza",
+		PriceInCents: 390,
+		Labels:       []Label{*labelMain},
 	}
-	cheesepizza.DisplayName = properFoodName("cheese pizza meal")
-	cheesepizza.DescriptionHTML = strings.Replace(cheesepizza.Description, ", ", "<br />", -1)
-	allFoods = append(allFoods, cheesepizza)
+	allFoods = append(allFoods, &cheesepizza)
+
+	// fries
+	fries := Product{
+		Tag:          "FR",
+		Name:         "fries",
+		DisplayName:  "French Fries",
+		PriceInCents: 150,
+		Labels:       []Label{*labelSides},
+	}
+	allFoods = append(allFoods, &fries)
+
+	// chips
+	chips := Product{
+		Tag:          "CH",
+		Name:         "chips",
+		DisplayName:  "Packaged Chips",
+		PriceInCents: 125,
+		Labels:       []Label{*labelSides},
+	}
+	allFoods = append(allFoods, &chips)
 
 	// coke
 	coke := Product{
-		Tag:             "CC",
-		Name:            "coca-cola",
-		DisplayName:     "Coca-Cola",
-		PriceInCents:    0,
-		Description:     "Coca-Cola",
-		DescriptionHTML: "Coca-Cola",
-		Status:          ProductStatusAddon,
+		Tag:          "CC",
+		Name:         "coke",
+		DisplayName:  "Coca-Cola",
+		PriceInCents: 165,
+		Labels:       []Label{*labelDrink},
 	}
-	allFoods = append(allFoods, coke)
+	allFoods = append(allFoods, &coke)
 
 	// sprite
 	sprite := Product{
-		Tag:             "SP",
-		Name:            "sprite",
-		DisplayName:     "Sprite",
-		PriceInCents:    0,
-		Description:     "Sprite",
-		DescriptionHTML: "Sprite",
-		Status:          ProductStatusAddon,
+		Tag:          "SP",
+		Name:         "sprite",
+		DisplayName:  "Sprite",
+		PriceInCents: 165,
+		Labels:       []Label{*labelDrink},
 	}
-	allFoods = append(allFoods, sprite)
+	allFoods = append(allFoods, &sprite)
 
 	// dietcoke
 	dietcoke := Product{
-		Tag:             "DC",
-		Name:            "dietcoke",
-		DisplayName:     "Diet Coke",
-		PriceInCents:    0,
-		Description:     "Diet Coke",
-		DescriptionHTML: "Diet Coke",
-		Status:          ProductStatusAddon,
+		Tag:          "DC",
+		Name:         "diet-coke",
+		DisplayName:  "Diet Coke",
+		PriceInCents: 165,
+		Labels:       []Label{*labelDrink},
 	}
-	allFoods = append(allFoods, dietcoke)
-
-	// orange
-	orange := Product{
-		Tag:             "OS",
-		Name:            "orange",
-		DisplayName:     "Orange Soda",
-		PriceInCents:    0,
-		Description:     "Orange Soda",
-		DescriptionHTML: "Orange Soda",
-		Status:          ProductStatusAddon,
-	}
-	allFoods = append(allFoods, orange)
-
-	// mrpibbs
-	mrpibbs := Product{
-		Tag:             "PB",
-		Name:            "mrpibbs",
-		DisplayName:     "Mr Pibbs",
-		PriceInCents:    0,
-		Description:     "Mr Pibbs",
-		DescriptionHTML: "Mr Pibbs",
-		Status:          ProductStatusAddon,
-	}
-	allFoods = append(allFoods, mrpibbs)
+	allFoods = append(allFoods, &dietcoke)
 
 	var err error
 	for i := range allFoods {
 		err = allFoods[i].Create()
 		if err != nil {
-			logger.Fatal("error while generating sample data:", err)
+			logger.Fatal("error while generating initial data:", err)
 		}
 	}
 
+	// create menu and menu items
+
+	// menu 1: from 7pm to 9pm
+	menuOne := Menu{
+		Name:        "before-9",
+		DisplayName: "Before 9pm",
+		Description: "",
+	}
+	err = menuOne.Create()
+	if err != nil {
+		logger.Fatal("error while generating data:", err)
+	}
+
+	// menu 2: from 9pm to 10pm
+	menuTwo := Menu{
+		Name:        "after-9",
+		DisplayName: "After 9pm",
+		Description: "After 9pm, we will be offering Packaged Chips in place of French Fries. The prices will be adjusted accordingly.",
+	}
+	err = menuTwo.Create()
+	if err != nil {
+		logger.Fatal("error while generating data:", err)
+	}
+
+	allMenuItems := []MenuItem{}
+
+	chicken2meal1 := MenuItem{
+		DisplayName:         "2pc Chicken Tender Meal",
+		DisplayPriceInCents: 565,
+		Description:         "2 Chicken Strips, French Fries, Cooler Drink",
+		DescriptionHTML:     "2 Chicken Strips<br />French Fries<br />Cooler Drink",
+		StartingMain:        &chicken2,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
+	}
+	allMenuItems = append(allMenuItems, chicken2meal1)
+
+	chicken4meal1 := MenuItem{
+		DisplayName:         "4pc Chicken Tender Meal",
+		DisplayPriceInCents: 765,
+		Description:         "4 Chicken Strips, French Fries, Cooler Drink",
+		DescriptionHTML:     "4 Chicken Strips<br />French Fries<br />Cooler Drink",
+		StartingMain:        &chicken4,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
+	}
+	allMenuItems = append(allMenuItems, chicken4meal1)
+
+	burgermeal1 := MenuItem{
+		DisplayName:         "Burger Meal",
+		DisplayPriceInCents: 725,
+		Description:         "Cheeseburger (wheat bun, lettuce, tomato), French Fries, Cooler Drink",
+		DescriptionHTML:     "Cheeseburger<br />(wheat bun, lettuce, tomato)<br />French Fries<br />Cooler Drink",
+		StartingMain:        &burger,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
+	}
+	allMenuItems = append(allMenuItems, burgermeal1)
+
+	turkeysandwichmeal1 := MenuItem{
+		DisplayName:         "Turkey Sandwich Meal",
+		DisplayPriceInCents: 810,
+		Description:         "Turkey Sub Sandwich, French Fries, Cooler Drink. **Toppings: turkey, lettuce, tomato. **Sides: mayo, mustard.",
+		DescriptionHTML:     "Turkey Sub Sandwich<br />French Fries<br />Cooler Drink<br />** Toppings: turkey, lettuce, tomato.<br />** Sides: mayo, mustard.",
+		StartingMain:        &turkeysandwich,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
+	}
+	allMenuItems = append(allMenuItems, turkeysandwichmeal1)
+
+	veggiesandwichmeal1 := MenuItem{
+		DisplayName:         "Veggie Sandwich Meal",
+		DisplayPriceInCents: 810,
+		Description:         "Veggie Sub Sandwich, French Fries, Cooler Drink. **Toppings: hummus, cucumber, lettuce, tomato, green bell pepper. **Sides: mayo, mustard.",
+		DescriptionHTML:     "Veggie Sub Sandwich<br />French Fries<br />Cooler Drink<br />** Toppings: hummus, cucumber, lettuce, tomato, green bell pepper.<br />** Sides: mayo, mustard.",
+		StartingMain:        &veggiesandwich,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
+	}
+	allMenuItems = append(allMenuItems, veggiesandwichmeal1)
+
+	peppizzameal1 := MenuItem{
+		DisplayName:         "Pepperoni Pizza Meal",
+		DisplayPriceInCents: 705,
+		Description:         "2 Slices of Pepperoni Pizza, French Fries, Cooler Drink",
+		DescriptionHTML:     "2 Slices of Pepperoni Pizza<br />French Fries<br />Cooler Drink",
+		StartingMain:        &peppizza,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
+	}
+	allMenuItems = append(allMenuItems, peppizzameal1)
+
+	cheesepizzameal1 := MenuItem{
+		DisplayName:         "Cheese Pizza Meal",
+		DisplayPriceInCents: 705,
+		Description:         "2 Slices of Cheese Pizza, French Fries, Cooler Drink",
+		DescriptionHTML:     "2 Slices of Cheese Pizza<br />French Fries<br />Cooler Drink",
+		StartingMain:        &peppizza,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
+	}
+	allMenuItems = append(allMenuItems, cheesepizzameal1)
+
+	// meal2
+
+	chicken2meal2 := MenuItem{
+		DisplayName:         "2pc Chicken Tender Meal",
+		DisplayPriceInCents: 565,
+		Description:         "2 Chicken Strips, Packaged Chips, Cooler Drink",
+		DescriptionHTML:     "2 Chicken Strips<br />Packaged Chips<br />Cooler Drink",
+		StartingMain:        &chicken2,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
+	}
+	allMenuItems = append(allMenuItems, chicken2meal2)
+
+	chicken4meal2 := MenuItem{
+		DisplayName:         "4pc Chicken Tender Meal",
+		DisplayPriceInCents: 765,
+		Description:         "4 Chicken Strips, Packaged Chips, Cooler Drink",
+		DescriptionHTML:     "4 Chicken Strips<br />Packaged Chips<br />Cooler Drink",
+		StartingMain:        &chicken4,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
+	}
+	allMenuItems = append(allMenuItems, chicken4meal2)
+
+	burgermeal2 := MenuItem{
+		DisplayName:         "Burger Meal",
+		DisplayPriceInCents: 725,
+		Description:         "Cheeseburger (wheat bun, lettuce, tomato), Packaged Chips, Cooler Drink",
+		DescriptionHTML:     "Cheeseburger<br />(wheat bun, lettuce, tomato)<br />Packaged Chips<br />Cooler Drink",
+		StartingMain:        &burger,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
+	}
+	allMenuItems = append(allMenuItems, burgermeal2)
+
+	turkeysandwichmeal2 := MenuItem{
+		DisplayName:         "Turkey Sandwich Meal",
+		DisplayPriceInCents: 810,
+		Description:         "Turkey Sub Sandwich, Packaged Chips, Cooler Drink. **Toppings: turkey, lettuce, tomato. **Sides: mayo, mustard.",
+		DescriptionHTML:     "Turkey Sub Sandwich<br />Packaged Chips<br />Cooler Drink<br />** Toppings: turkey, lettuce, tomato.<br />** Sides: mayo, mustard.",
+		StartingMain:        &turkeysandwich,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
+	}
+	allMenuItems = append(allMenuItems, turkeysandwichmeal2)
+
+	veggiesandwichmeal2 := MenuItem{
+		DisplayName:         "Veggie Sandwich Meal",
+		DisplayPriceInCents: 810,
+		Description:         "Veggie Sub Sandwich, Packaged Chips, Cooler Drink. **Toppings: hummus, cucumber, lettuce, tomato, green bell pepper. **Sides: mayo, mustard.",
+		DescriptionHTML:     "Veggie Sub Sandwich<br />Packaged Chips<br />Cooler Drink<br />** Toppings: hummus, cucumber, lettuce, tomato, green bell pepper.<br />** Sides: mayo, mustard.",
+		StartingMain:        &veggiesandwich,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
+	}
+	allMenuItems = append(allMenuItems, veggiesandwichmeal2)
+
+	peppizzameal2 := MenuItem{
+		DisplayName:         "Pepperoni Pizza Meal",
+		DisplayPriceInCents: 705,
+		Description:         "2 Slices of Pepperoni Pizza, Packaged Chips, Cooler Drink",
+		DescriptionHTML:     "2 Slices of Pepperoni Pizza<br />Packaged Chips<br />Cooler Drink",
+		StartingMain:        &peppizza,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
+	}
+	allMenuItems = append(allMenuItems, peppizzameal2)
+
+	cheesepizzameal2 := MenuItem{
+		DisplayName:         "Cheese Pizza Meal",
+		DisplayPriceInCents: 705,
+		Description:         "2 Slices of Cheese Pizza, Packaged Chips, Cooler Drink",
+		DescriptionHTML:     "2 Slices of Cheese Pizza<br />Packaged Chips<br />Cooler Drink",
+		StartingMain:        &peppizza,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
+	}
+	allMenuItems = append(allMenuItems, cheesepizzameal2)
+
+	for i := range allMenuItems {
+		err = allMenuItems[i].Create()
+		if err != nil {
+			logger.Fatal("error while generating initial data:", err)
+		}
+	}
 }

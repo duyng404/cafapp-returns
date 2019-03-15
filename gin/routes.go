@@ -100,12 +100,14 @@ func InitRoutes() *gin.Engine {
 		restricted.POST("/order/:stuff/:action", handleOrderPost)
 
 		restricted.GET("/dash", handleUserDash)
+		restricted.GET("/dash/order/:orderuuid", handleOrderDetail)
 		restricted.GET("/redeem", handleUserRedeem)
 		restricted.GET("/redeem-success", handleUserRedeemSuccess)
 		restricted.POST("/redeem", handleUserRedeemPost)
 
 		restricted.GET("/tracker", handleOrderTracker)
 		restricted.GET("/admin", handleAdminDash)
+		restricted.GET("/driver", handleAdminDashDriver)
 	}
 
 	// api group for frontend interaction, will require auth
@@ -114,6 +116,8 @@ func InitRoutes() *gin.Engine {
 		api.POST("/recalculate-order", handleRecalculateOrder)
 		api.GET("/my-info", handleUserInfo)
 		api.POST("/quick-redeem", handleRedeemDeliveryCard)
+		api.POST("/edit-phone", handleEditPhoneNumbers)
+		api.GET("/view-active-orders", handleViewActiveOrders)
 	}
 
 	// api group for admin dash, will require auth with admin privilege
@@ -122,10 +126,15 @@ func InitRoutes() *gin.Engine {
 		apiadmin.GET("/my-info", handleAdminInfo)
 		apiadmin.GET("/view-queue", handleAdminViewQueue)
 		apiadmin.GET("/destination", handleAdminGetDestinations)
+		apiadmin.GET("/product", handleAdminGetProducts)
 		apiadmin.GET("/view-redeemable-codes", handleAdminViewAllRedeemableCodes)
 		apiadmin.GET("/view-users", handleAdminViewUsers)
 		apiadmin.GET("/view-users/:userid", handleAdminViewOneUser)
 		apiadmin.POST("/generate-redeemable-codes", handleAdminGenerateRedeemableCodes)
+		apiadmin.GET("/cafapp-onoff", handleAdminCafAppOnOff)
+		apiadmin.POST("/cafapp-onoff", handlePostAdminCafAppOnOff)
+		apiadmin.GET("/menu-status", handleAdminMenuStatus)
+		apiadmin.POST("/menu-status", handlePostAdminMenuStatus)
 	}
 
 	// TODO: make a group for this and look at authentication

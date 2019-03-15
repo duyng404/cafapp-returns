@@ -92,6 +92,25 @@ footer {
 	font-weight: bold;
 }
 
+.pulsing-background {
+	background-color: #c49317;
+	animation-name: color;
+	animation-duration: 4s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes color {
+	0% {
+	  background-color: #c49317;
+	}
+	50% {
+	  background-color: #ffc222;
+	}
+	100% {
+		background-color: #c49317;
+	  }
+  }
+
 /* --------- User Redeem ----------- */
 
 .redeem-input-pre {

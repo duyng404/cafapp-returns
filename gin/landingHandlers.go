@@ -50,7 +50,7 @@ func handleLandingMenu(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/order")
 		return
 	}
-	menu, err := gorm.GetAllProductsOnShelf()
+	menu, err := gorm.GetActiveMenuItems()
 	if err != nil {
 		logger.Error("could not get products to display:", err)
 	}
