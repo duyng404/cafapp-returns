@@ -107,6 +107,7 @@ func InitRoutes() *gin.Engine {
 
 		restricted.GET("/tracker", handleOrderTracker)
 		restricted.GET("/admin", handleAdminDash)
+		restricted.GET("/driver", handleAdminDashDriver)
 	}
 
 	// api group for frontend interaction, will require auth

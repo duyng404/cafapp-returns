@@ -13,6 +13,10 @@ func handleAdminDash(c *gin.Context) {
 	c.Redirect(http.StatusFound, config.AdminDashboardURL)
 }
 
+func handleAdminDashDriver(c *gin.Context) {
+	c.Redirect(http.StatusFound, config.AdminDashboardURL+"/driver")
+}
+
 func handleAdminInfo(c *gin.Context) {
 	user := getCurrentAuthUser(c)
 	token, err := user.GenerateSocketToken()
