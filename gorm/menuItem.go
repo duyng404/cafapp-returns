@@ -1,6 +1,8 @@
 package gorm
 
 import (
+	"cafapp-returns/logger"
+
 	"github.com/jinzhu/gorm"
 )
 
@@ -25,4 +27,28 @@ type MenuItem struct {
 // Create create the object in db
 func (mi *MenuItem) Create() error {
 	return DB.Create(mi).Error
+}
+
+// PopulateByID ...
+func (mi *MenuItem) PopulateByID(id uint) error {
+	return DB.Where("id = ?", id).Last(mi).Error
+}
+
+// GetActiveMenuItems ...
+func GetActiveMenuItems() ([]MenuItem, error) {
+	gvar, err := GetGlobalVar()
+	if err != nil {
+		logger.Warning(err)
+		return nil, err
+	}
+
+	var res []MenuItem
+	err = DB.Raw(`
+		SELECT *
+		FROM menu_items
+		WHERE
+			deleted_at IS NULL
+			AND menu_id = ?
+	`, gvar.ActiveMenuID).Scan(&res).Error
+	return res, err
 }

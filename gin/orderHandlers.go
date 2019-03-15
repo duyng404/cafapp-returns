@@ -93,8 +93,10 @@ func getOrderMenu(c *gin.Context) {
 	if err != nil || !isrunning {
 		c.Redirect(http.StatusFound, "/menu")
 	}
+
 	data := make(map[string]interface{})
 	data["Title"] = "Build Your Order"
+
 	// check if user have any incomplete order
 	user := getCurrentAuthUser(c)
 	order, err := user.GetOneIncompleteOrder()
@@ -105,9 +107,9 @@ func getOrderMenu(c *gin.Context) {
 	}
 
 	// get all menu items from db
-	menu, err := gorm.GetAllProductsOnShelf()
+	menu, err := gorm.GetActiveMenuItems()
 	if err != nil {
-		logger.Error("could not get products to display:", err)
+		logger.Error("could not get menu items to display:", err)
 		orderError(c, "Could not load menu items")
 		return
 	}
