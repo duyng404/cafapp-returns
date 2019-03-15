@@ -59,6 +59,7 @@ function initTrackerUI() {
 		<div id="trackerContent" class="mt-3">
 			<p>loading...</p>
 		</div>
+		<a href="/static/img/map.jpg" target="_blank">View map of pickup locations <i class="fa fa-external-link" aria-hidden="true"></i></a>
 	`);
 	setLastUpdated(moment());
 }
