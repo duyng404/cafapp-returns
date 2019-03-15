@@ -44,6 +44,13 @@ func Migrate() error {
 		return err
 	}
 
+	logger.Info("Migrating Sub Row Table")
+	err = DB.AutoMigrate(&SubRow{}).Error
+	if err != nil {
+		logger.Error("Error migrating Sub Row table:", err)
+		return err
+	}
+
 	logger.Info("Migrating Destination Table")
 	err = DB.AutoMigrate(&Destination{}).Error
 	if err != nil {

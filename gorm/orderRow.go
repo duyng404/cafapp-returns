@@ -1,57 +1,133 @@
 package gorm
 
 import (
+	"cafapp-returns/logger"
+
 	"github.com/jinzhu/gorm"
 )
 
 // OrderRow a row in an order
 type OrderRow struct {
 	gorm.Model
-	// OrderID
-	ProductID       uint     `json:"product_id"`
-	Product         *Product `json:"product"`
-	Quantity        int      `json:"quantity"`
-	SubtotalInCents int      `json:"subtotal_in_cents"`
-	RowType         int      `json:"row_type"`
+	ProductID       uint      `json:"product_id"`
+	Product         *Product  `json:"product"`
+	MenuItemID      uint      `json:"menu_item_id"`
+	MenuItem        *MenuItem `json:"menu_item"`
+	Quantity        int       `json:"quantity"`
+	SubtotalInCents int       `json:"subtotal_in_cents"`
+	RowType         string    `json:"row_type"`
+	SubRows         []SubRow
 }
 
 const (
-	// RowTypeNormal items that is to be charged normally
-	RowTypeNormal = 1
-	// RowTypeIncluded items that are included with the order
-	RowTypeIncluded = 2
+	// RowTypeNormal DEPRECATED items that is to be charged normally
+	RowTypeNormal = "1"
+	// RowTypeIncluded DEPRECATED items that are included with the order
+	RowTypeIncluded = "2"
+	// RowTypeFirstCombo ..
+	RowTypeFirstCombo = "meal1"
+	// RowTypeSecondCombo ..
+	RowTypeSecondCombo = "meal2"
 )
 
 // Create create the object
-func (o *OrderRow) Create() error {
-	return DB.Create(o).Error
+func (or *OrderRow) Create() error {
+	return DB.Create(or).Error
 }
 
 // Save save the object
-func (o *OrderRow) Save() error {
-	return DB.Save(o).Error
+func (or *OrderRow) Save() error {
+	return DB.Save(or).Error
+}
+
+// Delete ..
+func (or *OrderRow) Delete() error {
+	return DB.Delete(or).Error
 }
 
 // PopulateByID : query the db by id
-func (o *OrderRow) PopulateByID(id uint) error {
-	return DB.Where("id = ?", id).Scan(&o).Error
+func (or *OrderRow) PopulateByID(id uint) error {
+	return DB.Where("id = ?", id).Scan(&or).Error
 }
 
-// NewOrderRowFromProduct : return a pointer to a new row created from a product
+// NewOrderRowFromProduct : DEPRECATED return a pointer to a new row created from a product
 // Does not run Create(). The caller should take care of that
-func NewOrderRowFromProduct(p *Product) *OrderRow {
-	var rowtype int
-	if p.Status == ProductStatusOnShelf {
-		rowtype = RowTypeNormal
-	} else {
-		rowtype = RowTypeIncluded
-	}
+func NewOrderRowFromProduct(p *Product, rowType string) *OrderRow {
 	row := OrderRow{
 		ProductID:       p.ID,
 		Product:         p,
 		Quantity:        1,
 		SubtotalInCents: p.PriceInCents,
-		RowType:         rowtype,
+		RowType:         rowType,
 	}
 	return &row
+}
+
+// SetMainSubRowTo ..
+func (or *OrderRow) SetMainSubRowTo(p *Product) error {
+	for i := range or.SubRows {
+		if or.SubRows[i].Product.IsMain() {
+			or.SubRows[i].Product = p
+			or.SubRows[i].ProductID = p.ID
+			return or.SubRows[i].Save()
+		}
+	}
+	newSubRow := SubRow{
+		Product:    p,
+		ProductID:  p.ID,
+		OrderRowID: or.ID,
+	}
+	err := newSubRow.Create()
+	if err != nil {
+		logger.Warning(err)
+		return err
+	}
+	or.SubRows = append(or.SubRows, newSubRow)
+	return or.Save()
+}
+
+// SetSideSubRowTo ..
+func (or *OrderRow) SetSideSubRowTo(p *Product) error {
+	for i := range or.SubRows {
+		if or.SubRows[i].Product.IsSide() {
+			or.SubRows[i].Product = p
+			or.SubRows[i].ProductID = p.ID
+			return or.SubRows[i].Save()
+		}
+	}
+	newSubRow := SubRow{
+		Product:    p,
+		ProductID:  p.ID,
+		OrderRowID: or.ID,
+	}
+	err := newSubRow.Create()
+	if err != nil {
+		logger.Warning(err)
+		return err
+	}
+	or.SubRows = append(or.SubRows, newSubRow)
+	return or.Save()
+}
+
+// SetDrinkSubRowTo ..
+func (or *OrderRow) SetDrinkSubRowTo(p *Product) error {
+	for i := range or.SubRows {
+		if or.SubRows[i].Product.IsDrink() {
+			or.SubRows[i].Product = p
+			or.SubRows[i].ProductID = p.ID
+			return or.SubRows[i].Save()
+		}
+	}
+	newSubRow := SubRow{
+		Product:    p,
+		ProductID:  p.ID,
+		OrderRowID: or.ID,
+	}
+	err := newSubRow.Create()
+	if err != nil {
+		logger.Warning(err)
+		return err
+	}
+	or.SubRows = append(or.SubRows, newSubRow)
+	return or.Save()
 }

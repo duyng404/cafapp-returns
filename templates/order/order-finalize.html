@@ -16,43 +16,66 @@
 
 			<hr />
 
-			<div class="d-flex justify-content-between align-items-center">
-				<div>
-					<h5 class="my-1">{{ .selectedMealName }}</h5>
-					<p class="text-muted font-italic">Meal Combo</p>
+			{{ range .order.OrderRows }}
+				<div class="text-center mb-4">
+					<div><h5>{{ .MenuItem.DisplayName }}</h5></div>
 				</div>
-				<div>
-					<h5><strong>{{formatMoney .selectedMealPrice}}</strong></h5>
-				</div>
-			</div>
-
-			<div class="d-flex justify-content-between align-items-center">
-				<div>
-					<h5 class="my-1">{{ .selectedDrinkName }}</h5>
-					<p class="text-muted font-italic">Drink</p>
-				</div>
-				<div>
-					<h5 class="text-muted">included</h5>
-				</div>
-			</div>
+				{{ range .SubRows }}
+					{{ if .Product.IsMain }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Entree</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+					{{ if .Product.IsSide }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Side</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+					{{ if .Product.IsDrink }}
+					<div class="d-flex justify-content-between align-items-center">
+						<div>
+							<h5 class="my-1">{{ .Product.DisplayName }}</h5>
+							<p class="text-muted font-italic">Drink</p>
+						</div>
+						<div>
+							<h5><strong>{{ formatMoney .Product.PriceInCents }}</strong></h5>
+						</div>
+					</div>
+					{{ end }}
+				{{ end }}
+				<hr />
+			{{ end }}
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div>
 					<h5 class="my-1">Delivery Fee</h5>
 				</div>
 				<div>
-					<h5 class="font-weight-bold">{{formatMoney .deliveryFee}}</h5>
+					<h5 class="font-weight-bold">{{ formatMoney .order.DeliveryFeeInCents }}</h5>
 				</div>
 			</div>
 
 			<hr />
+
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div>
 					<h5 class="my-1 font-weight-bold text-ca-yellow2">Total</h5>
 				</div>
 				<div>
-					<h5 class="font-weight-bold text-ca-yellow2">{{formatMoney .orderTotal}}</h5>
+					<h5 class="font-weight-bold text-ca-yellow2">{{ formatMoney .order.TotalInCents }}</h5>
 				</div>
 			</div>
 
@@ -62,25 +85,28 @@
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div>
-					<h5 class="my-1">Your Caf Account</h5>
+					<h5 class="my-1">Meal Plan Charge</h5>
 				</div>
 				<div>
-					<h5 class="font-weight-bold text-danger">{{formatMoney .cafAccountChargeAmount}}</h5>
+					<h5 class="font-weight-bold text-danger">{{ formatMoney .order.CafAccountChargeAmountInCents }}</h5>
 				</div>
 			</div>
 
 			<div class="d-flex justify-content-between align-items-center">
 				<div>
-					<h5 class="my-1">CafApp Balance</h5>
+					<h5 class="my-1">CafApp Charge</h5>
 				</div>
 				<div>
-					<h5 class="font-weight-bold text-danger">{{formatMoney .deliveryFee}}</h5>
+					<h5 class="font-weight-bold text-danger">{{ formatMoney .order.DeliveryFeeInCents }}</h5>
 				</div>
 			</div>
 
 			<hr />
 
-			<p class="text-center">Order will be delivered to: {{ .destination }}</p>
+			<p class="text-center">
+				<span class="text-danger">Important:</span>
+				Order will be delivered to {{ .destination }}<br />
+				Pick Up Location: {{ .pickupspot }}</p>
 
 			<hr />
 

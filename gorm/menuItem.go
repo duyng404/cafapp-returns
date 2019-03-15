@@ -16,12 +16,12 @@ type MenuItem struct {
 	ImageURL            string
 	Description         string
 	DescriptionHTML     string
-	StartingMain        Product
+	StartingMain        *Product
 	StartingMainID      uint
-	StartingSide        Product
+	StartingSide        *Product
 	StartingSideID      uint
-	Menu                Menu
 	MenuID              uint
+	Menu                *Menu
 }
 
 // Create create the object in db
@@ -31,7 +31,7 @@ func (mi *MenuItem) Create() error {
 
 // PopulateByID ...
 func (mi *MenuItem) PopulateByID(id uint) error {
-	return DB.Where("id = ?", id).Last(mi).Error
+	return DB.Preload("StartingMain").Preload("StartingSide").Where("id = ?", id).Last(mi).Error
 }
 
 // GetActiveMenuItems ...

@@ -201,3 +201,39 @@ func (u *User) SaveUserPhone(phone string, id uint) error {
 	`, phone, id).Scan(&u).Error
 	return err
 }
+
+// NewOrderFromMenuItem ...
+func (u *User) NewOrderFromMenuItem(mi *MenuItem) (*Order, error) {
+	if mi.ID == 0 {
+		return nil, ErrIDZero
+	}
+
+	newOrder := Order{
+		User: u,
+		OrderRows: []OrderRow{
+			OrderRow{
+				MenuItemID: mi.ID,
+				MenuItem:   mi,
+				SubRows: []SubRow{
+					SubRow{
+						Product:   mi.StartingMain,
+						ProductID: mi.StartingMainID,
+					},
+					SubRow{
+						Product:   mi.StartingSide,
+						ProductID: mi.StartingSideID,
+					},
+				},
+			},
+		},
+		StatusCode: OrderStatusNeedInfo,
+	}
+	newOrder.CalculateDeliveryFee()
+	newOrder.CalculateTotal()
+	err := newOrder.Create()
+	if err != nil {
+		logger.Warning("error creating new order", err)
+		return nil, err
+	}
+	return &newOrder, nil
+}

@@ -170,9 +170,9 @@ func initData() {
 		DisplayPriceInCents: 565,
 		Description:         "2 Chicken Strips, French Fries, Cooler Drink",
 		DescriptionHTML:     "2 Chicken Strips<br />French Fries<br />Cooler Drink",
-		StartingMain:        chicken2,
-		StartingSide:        fries,
-		Menu:                menuOne,
+		StartingMain:        &chicken2,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
 	}
 	allMenuItems = append(allMenuItems, chicken2meal1)
 
@@ -181,9 +181,9 @@ func initData() {
 		DisplayPriceInCents: 765,
 		Description:         "4 Chicken Strips, French Fries, Cooler Drink",
 		DescriptionHTML:     "4 Chicken Strips<br />French Fries<br />Cooler Drink",
-		StartingMain:        chicken4,
-		StartingSide:        fries,
-		Menu:                menuOne,
+		StartingMain:        &chicken4,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
 	}
 	allMenuItems = append(allMenuItems, chicken4meal1)
 
@@ -192,9 +192,9 @@ func initData() {
 		DisplayPriceInCents: 725,
 		Description:         "Cheeseburger (wheat bun, lettuce, tomato), French Fries, Cooler Drink",
 		DescriptionHTML:     "Cheeseburger<br />(wheat bun, lettuce, tomato)<br />French Fries<br />Cooler Drink",
-		StartingMain:        burger,
-		StartingSide:        fries,
-		Menu:                menuOne,
+		StartingMain:        &burger,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
 	}
 	allMenuItems = append(allMenuItems, burgermeal1)
 
@@ -203,9 +203,9 @@ func initData() {
 		DisplayPriceInCents: 810,
 		Description:         "Turkey Sub Sandwich, French Fries, Cooler Drink. **Toppings: turkey, lettuce, tomato. **Sides: mayo, mustard.",
 		DescriptionHTML:     "Turkey Sub Sandwich<br />French Fries<br />Cooler Drink<br />** Toppings: turkey, lettuce, tomato.<br />** Sides: mayo, mustard.",
-		StartingMain:        turkeysandwich,
-		StartingSide:        fries,
-		Menu:                menuOne,
+		StartingMain:        &turkeysandwich,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
 	}
 	allMenuItems = append(allMenuItems, turkeysandwichmeal1)
 
@@ -214,9 +214,9 @@ func initData() {
 		DisplayPriceInCents: 810,
 		Description:         "Veggie Sub Sandwich, French Fries, Cooler Drink. **Toppings: hummus, cucumber, lettuce, tomato, green bell pepper. **Sides: mayo, mustard.",
 		DescriptionHTML:     "Veggie Sub Sandwich<br />French Fries<br />Cooler Drink<br />** Toppings: hummus, cucumber, lettuce, tomato, green bell pepper.<br />** Sides: mayo, mustard.",
-		StartingMain:        veggiesandwich,
-		StartingSide:        fries,
-		Menu:                menuOne,
+		StartingMain:        &veggiesandwich,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
 	}
 	allMenuItems = append(allMenuItems, veggiesandwichmeal1)
 
@@ -225,9 +225,9 @@ func initData() {
 		DisplayPriceInCents: 705,
 		Description:         "2 Slices of Pepperoni Pizza, French Fries, Cooler Drink",
 		DescriptionHTML:     "2 Slices of Pepperoni Pizza<br />French Fries<br />Cooler Drink",
-		StartingMain:        peppizza,
-		StartingSide:        fries,
-		Menu:                menuOne,
+		StartingMain:        &peppizza,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
 	}
 	allMenuItems = append(allMenuItems, peppizzameal1)
 
@@ -236,9 +236,9 @@ func initData() {
 		DisplayPriceInCents: 705,
 		Description:         "2 Slices of Cheese Pizza, French Fries, Cooler Drink",
 		DescriptionHTML:     "2 Slices of Cheese Pizza<br />French Fries<br />Cooler Drink",
-		StartingMain:        peppizza,
-		StartingSide:        fries,
-		Menu:                menuOne,
+		StartingMain:        &peppizza,
+		StartingSide:        &fries,
+		Menu:                &menuOne,
 	}
 	allMenuItems = append(allMenuItems, cheesepizzameal1)
 
@@ -249,9 +249,9 @@ func initData() {
 		DisplayPriceInCents: 565,
 		Description:         "2 Chicken Strips, Packaged Chips, Cooler Drink",
 		DescriptionHTML:     "2 Chicken Strips<br />Packaged Chips<br />Cooler Drink",
-		StartingMain:        chicken2,
-		StartingSide:        chips,
-		Menu:                menuTwo,
+		StartingMain:        &chicken2,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
 	}
 	allMenuItems = append(allMenuItems, chicken2meal2)
 
@@ -260,9 +260,9 @@ func initData() {
 		DisplayPriceInCents: 765,
 		Description:         "4 Chicken Strips, Packaged Chips, Cooler Drink",
 		DescriptionHTML:     "4 Chicken Strips<br />Packaged Chips<br />Cooler Drink",
-		StartingMain:        chicken4,
-		StartingSide:        chips,
-		Menu:                menuTwo,
+		StartingMain:        &chicken4,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
 	}
 	allMenuItems = append(allMenuItems, chicken4meal2)
 
@@ -271,9 +271,9 @@ func initData() {
 		DisplayPriceInCents: 725,
 		Description:         "Cheeseburger (wheat bun, lettuce, tomato), Packaged Chips, Cooler Drink",
 		DescriptionHTML:     "Cheeseburger<br />(wheat bun, lettuce, tomato)<br />Packaged Chips<br />Cooler Drink",
-		StartingMain:        burger,
-		StartingSide:        chips,
-		Menu:                menuTwo,
+		StartingMain:        &burger,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
 	}
 	allMenuItems = append(allMenuItems, burgermeal2)
 
@@ -282,9 +282,9 @@ func initData() {
 		DisplayPriceInCents: 810,
 		Description:         "Turkey Sub Sandwich, Packaged Chips, Cooler Drink. **Toppings: turkey, lettuce, tomato. **Sides: mayo, mustard.",
 		DescriptionHTML:     "Turkey Sub Sandwich<br />Packaged Chips<br />Cooler Drink<br />** Toppings: turkey, lettuce, tomato.<br />** Sides: mayo, mustard.",
-		StartingMain:        turkeysandwich,
-		StartingSide:        chips,
-		Menu:                menuTwo,
+		StartingMain:        &turkeysandwich,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
 	}
 	allMenuItems = append(allMenuItems, turkeysandwichmeal2)
 
@@ -293,9 +293,9 @@ func initData() {
 		DisplayPriceInCents: 810,
 		Description:         "Veggie Sub Sandwich, Packaged Chips, Cooler Drink. **Toppings: hummus, cucumber, lettuce, tomato, green bell pepper. **Sides: mayo, mustard.",
 		DescriptionHTML:     "Veggie Sub Sandwich<br />Packaged Chips<br />Cooler Drink<br />** Toppings: hummus, cucumber, lettuce, tomato, green bell pepper.<br />** Sides: mayo, mustard.",
-		StartingMain:        veggiesandwich,
-		StartingSide:        chips,
-		Menu:                menuTwo,
+		StartingMain:        &veggiesandwich,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
 	}
 	allMenuItems = append(allMenuItems, veggiesandwichmeal2)
 
@@ -304,9 +304,9 @@ func initData() {
 		DisplayPriceInCents: 705,
 		Description:         "2 Slices of Pepperoni Pizza, Packaged Chips, Cooler Drink",
 		DescriptionHTML:     "2 Slices of Pepperoni Pizza<br />Packaged Chips<br />Cooler Drink",
-		StartingMain:        peppizza,
-		StartingSide:        chips,
-		Menu:                menuTwo,
+		StartingMain:        &peppizza,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
 	}
 	allMenuItems = append(allMenuItems, peppizzameal2)
 
@@ -315,9 +315,9 @@ func initData() {
 		DisplayPriceInCents: 705,
 		Description:         "2 Slices of Cheese Pizza, Packaged Chips, Cooler Drink",
 		DescriptionHTML:     "2 Slices of Cheese Pizza<br />Packaged Chips<br />Cooler Drink",
-		StartingMain:        peppizza,
-		StartingSide:        chips,
-		Menu:                menuTwo,
+		StartingMain:        &peppizza,
+		StartingSide:        &chips,
+		Menu:                &menuTwo,
 	}
 	allMenuItems = append(allMenuItems, cheesepizzameal2)
 

@@ -2,15 +2,17 @@ package gorm
 
 import (
 	"cafapp-returns/logger"
+	"time"
 
 	"github.com/jinzhu/gorm"
 )
 
 // Destination of deliveries
 type Destination struct {
-	Name           string `json:"name"`
-	Tag            string `json:"tag" gorm:"primary_key"`
-	PickUpLocation string `json:"pickup_location"`
+	DeletedAt      *time.Time `json:"deleted_at" sql:"index"`
+	Name           string     `json:"name"`
+	Tag            string     `json:"tag" gorm:"primary_key"`
+	PickUpLocation string     `json:"pickup_location"`
 }
 
 var (

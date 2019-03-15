@@ -11,6 +11,7 @@ type Menu struct {
 	Name        string // internal name
 	DisplayName string // name on frontend
 	Description string
+	MenuItems   []MenuItem
 }
 
 // Create creates the object in db

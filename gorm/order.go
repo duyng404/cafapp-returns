@@ -45,7 +45,9 @@ func (o *Order) Save() error {
 func (o *Order) PopulateByID(id uint) error {
 	return DB.Preload("User").
 		Preload("OrderRows").
-		Preload("OrderRows.Product").
+		Preload("OrderRows.MenuItem").
+		Preload("OrderRows.SubRows").
+		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
 		Where("id = ?", id).Last(&o).Error
 }
@@ -54,13 +56,19 @@ func (o *Order) PopulateByID(id uint) error {
 func (o *Order) PopulateByUUID(uuid string) error {
 	return DB.
 		Preload("User").
-		Preload("OrderRows").
-		Preload("OrderRows.Product").
+		Preload("OrderRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_rows.id") // Preload OrderRows and sort them by order_rows.id
+		}).
+		Preload("OrderRows.MenuItem").
+		Preload("OrderRows.SubRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sub_rows.id") // Preload OrderRows.SubRows and sort them by sub_rows.id
+		}).
+		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
 		Where("uuid = ?", uuid).Last(&o).Error
 }
 
-// GetMealRow : return the OrderRow that is the meal part of the order
+// GetMealRow : DEPRECATED return the OrderRow that is the meal part of the order
 func (o *Order) GetMealRow() *OrderRow {
 	for i := range o.OrderRows {
 		if o.OrderRows[i].Product.Status == ProductStatusOnShelf {
@@ -71,7 +79,7 @@ func (o *Order) GetMealRow() *OrderRow {
 }
 
 // GetDeliveredTime : return the time when the order was delivered
-func GetDeliveredTime(id uint) (OrderStatusUpdate,error){
+func GetDeliveredTime(id uint) (OrderStatusUpdate, error) {
 	var tmp OrderStatusUpdate
 	err := DB.Raw(`
 		SELECT order_status_updates.*
@@ -84,7 +92,7 @@ func GetDeliveredTime(id uint) (OrderStatusUpdate,error){
 	return tmp, err
 }
 
-// GetDrinkRow : return the OrderRow that is the drink part of the order
+// GetDrinkRow : DEPRECATED return the OrderRow that is the drink part of the order
 func (o *Order) GetDrinkRow() *OrderRow {
 	for i := range o.OrderRows {
 		if o.OrderRows[i].Product.Status == ProductStatusAddon {
@@ -92,6 +100,28 @@ func (o *Order) GetDrinkRow() *OrderRow {
 		}
 	}
 	return nil
+}
+
+// GetFirstCombo returns the list of order rows that is combo1
+func (o *Order) GetFirstCombo() []OrderRow {
+	var res []OrderRow
+	for i := range o.OrderRows {
+		if o.OrderRows[i].RowType == RowTypeFirstCombo {
+			res = append(res, o.OrderRows[i])
+		}
+	}
+	return res
+}
+
+// GetSecondCombo returns the list of order rows that is combo2
+func (o *Order) GetSecondCombo() []OrderRow {
+	var res []OrderRow
+	for i := range o.OrderRows {
+		if o.OrderRows[i].RowType == RowTypeSecondCombo {
+			res = append(res, o.OrderRows[i])
+		}
+	}
+	return res
 }
 
 // GetAllOrderFromUser : return all Orders that Users have placed
@@ -108,7 +138,6 @@ func GetAllOrderFromUser(id uint) (*[]Order, error) {
 // CalculateDeliveryFee : calculate the delivery of a given order
 // does not save. Caller should handle that
 func (o *Order) CalculateDeliveryFee() {
-	// TODO: implement a proper rate
 	o.DeliveryFeeInCents = 250
 }
 
@@ -116,8 +145,15 @@ func (o *Order) CalculateDeliveryFee() {
 // does not save. Caller should handle that
 func (o *Order) CalculateTotal() {
 	total := 0
-	for _, v := range o.OrderRows {
-		total += v.SubtotalInCents
+	for i := range o.OrderRows {
+		subtotal := 0
+		for _, v := range o.OrderRows[i].SubRows {
+			if v.Product != nil {
+				subtotal += v.Product.PriceInCents
+			}
+		}
+		o.OrderRows[i].SubtotalInCents = subtotal
+		total += subtotal
 	}
 	o.CafAccountChargeAmountInCents = total
 	total += o.DeliveryFeeInCents
