@@ -100,7 +100,7 @@ func InitRoutes() *gin.Engine {
 		restricted.POST("/order/:stuff/:action", handleOrderPost)
 
 		restricted.GET("/dash", handleUserDash)
-		restricted.GET("/dash/:stuff", handleOrderDetail)
+		restricted.GET("/dash/order/:orderuuid", handleOrderDetail)
 		restricted.GET("/redeem", handleUserRedeem)
 		restricted.GET("/redeem-success", handleUserRedeemSuccess)
 		restricted.POST("/redeem", handleUserRedeemPost)

@@ -9,26 +9,11 @@ import (
 // OrderRow a row in an order
 type OrderRow struct {
 	gorm.Model
-	ProductID       uint      `json:"product_id"`
-	Product         *Product  `json:"product"`
 	MenuItemID      uint      `json:"menu_item_id"`
 	MenuItem        *MenuItem `json:"menu_item"`
-	Quantity        int       `json:"quantity"`
 	SubtotalInCents int       `json:"subtotal_in_cents"`
-	RowType         string    `json:"row_type"`
 	SubRows         []SubRow
 }
-
-const (
-	// RowTypeNormal DEPRECATED items that is to be charged normally
-	RowTypeNormal = "1"
-	// RowTypeIncluded DEPRECATED items that are included with the order
-	RowTypeIncluded = "2"
-	// RowTypeFirstCombo ..
-	RowTypeFirstCombo = "meal1"
-	// RowTypeSecondCombo ..
-	RowTypeSecondCombo = "meal2"
-)
 
 // Create create the object
 func (or *OrderRow) Create() error {
@@ -48,19 +33,6 @@ func (or *OrderRow) Delete() error {
 // PopulateByID : query the db by id
 func (or *OrderRow) PopulateByID(id uint) error {
 	return DB.Where("id = ?", id).Scan(&or).Error
-}
-
-// NewOrderRowFromProduct : DEPRECATED return a pointer to a new row created from a product
-// Does not run Create(). The caller should take care of that
-func NewOrderRowFromProduct(p *Product, rowType string) *OrderRow {
-	row := OrderRow{
-		ProductID:       p.ID,
-		Product:         p,
-		Quantity:        1,
-		SubtotalInCents: p.PriceInCents,
-		RowType:         rowType,
-	}
-	return &row
 }
 
 // SetMainSubRowTo ..

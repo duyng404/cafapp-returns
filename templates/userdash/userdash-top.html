@@ -6,11 +6,11 @@
 	</div>
 </section>
 
-<section class="container-fluid text-center" id="toast-area">
+<section class="container text-center" id="toast-area">
 	<!-- Left empty intentionally -->
 </section>
 
-<section class="container-fluid text-center">
+<section class="container text-center">
 
 	<h2 class="font-weight-bold">Account Details</h2>
 
@@ -78,7 +78,7 @@
 				<td>{{ .CreatedAt.Format "Jan _2 3:04pm" }}</td>
 				<td>{{ formatMoney .TotalInCents }}</td>
 				<td>{{ statusCodeToText .StatusCode }}</td>
-				<td><a href="/dash/{{ .UUID }}">View details</a></td>
+				<td><a href="/dash/order/{{ .UUID }}">View details</a></td>
 			</tr>
 			{{ end }}
 		</tbody>
@@ -171,7 +171,7 @@
 					$("#current-phone-num").val(res);
 					clearPhone();
 					showPhoneNormal();
-					alert("Phone change success!")
+					alert("Phone change success!", "success")
 				},
 				error: function (err) {
 					console.log(err);
