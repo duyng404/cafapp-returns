@@ -19,6 +19,7 @@ type client struct {
 	Token              string
 	SendNewOrder       func(o *gorm.Order)
 	UpdateCurrentQueue func(orders []*gorm.Order)
+	UpdateActiveOrders func(data string)
 }
 
 // socketMessage
@@ -55,7 +56,7 @@ func init() {
 				User:  user,
 			}
 			adminClients = append(adminClients, &c)
-			logger.Info("socket id", so.Id(), "registered as admin.")
+			logger.Info("socket id", so.Id(), "by user", c.User.GusUsername, "registered as admin.")
 
 			// enable admin actions
 			so.On("qfeed-commit-queue", func(committed []int) string {
@@ -102,14 +103,11 @@ func init() {
 				User:  user,
 			}
 			userClients = append(userClients, &c)
-			logger.Info("socket id", so.Id(), "registered as user.")
+			logger.Info("socket id", so.Id(), "by user", c.User.GusUsername, "registered as user.")
 
-			// enable user action
-			so.On("chatbot-request", func(request string) string {
-				response := c.handleChatbotRequest(request)
-				so.Emit("chatbot-response", response)
-				return "okbro"
-			})
+			c.UpdateActiveOrders = func(data string) {
+				so.Emit("active-orders-update", data)
+			}
 
 			return "okbro"
 		})
@@ -151,7 +149,17 @@ func NewOrderPlaced(o *gorm.Order) {
 // when one admin changes something, update it for every other admins currently connected.
 func updateQueueForEveryone(orders []*gorm.Order) {
 	for _, c := range adminClients {
-		logger.Info("sending update queue to user", c.User.GusUsername)
+		logger.Info("sending update queue to admin:", c.User.GusUsername)
 		c.UpdateCurrentQueue(orders)
+	}
+}
+
+func updateQueueForAllUsers(orders []*gorm.Order) {
+	for _, o := range orders {
+		for _, c := range userClients {
+			if c.User.ID == o.UserID {
+				c.UpdateActiveOrders("updatepls")
+			}
+		}
 	}
 }

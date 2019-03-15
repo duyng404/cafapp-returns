@@ -19,6 +19,9 @@
 		{{ if not .CafAppRunning }}
 			<div class="my-3"></div>
 			<p class="text-light"><span class="text-warning">Status:</span> CafApp is currently NOT in service.</p>
+		{{ else }}
+			<div class="my-3"></div>
+			<p class="text-light"><span class="text-success">Status:</span> CafApp is currently OPEN.</p>
 		{{ end }}
 	</div>
 </section>

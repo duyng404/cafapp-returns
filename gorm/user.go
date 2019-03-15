@@ -227,3 +227,29 @@ func (u *User) NewOrderFromMenuItem(mi *MenuItem) (*Order, error) {
 	}
 	return &newOrder, nil
 }
+
+// GetActiveOrders ...
+func (u *User) GetActiveOrders() ([]Order, error) {
+	var orders []Order
+	// err := DB.Raw(`
+	// 	SELECT *
+	// 	FROM orders o
+	// 	WHERE
+	// 		o.deleted_at IS NULL
+	// 		AND o.user_id = ?
+	// 		AND o.status_code >= ? AND o.status_code <= ?
+	// 		AND o.created_at >= now() - INTERVAL 1 DAY;
+	// `, u.ID, OrderStatusPlaced, OrderStatusDelivered).Scan(&tmp).Error
+	err := DB.Preload("Destination").Where(`
+			user_id = ?
+			AND status_code >= ? AND status_code <= ?
+			AND created_at >= now() - INTERVAL 1 DAY
+		`, u.ID, OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
+	if err != nil {
+		return orders, err
+	}
+	if len(orders) > 0 {
+		return orders, nil
+	}
+	return orders, nil
+}

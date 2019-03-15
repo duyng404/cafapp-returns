@@ -11,6 +11,24 @@
 </section>
 
 <section class="container text-center">
+	<h2 class="font-weight-bold">Live Order Tracker</h2>
+	<div class="my-4"></div>
+	<div id="orderTrackerContainer">loading...</div>
+	<!-- <div id="orderTrackerContainer">
+		<div class="d-flex justify-content-between">
+			<div id="trackerConnectivity">Connected</div>
+			<div id="trackerLastUpdated">Last Updated: time</div>
+		</div>
+		<div class="progress">
+			<div id="trackerProgressBar" class="progress-bar pulsing-background" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+		</div>
+		<div class="mt-3">
+			<h5>Your order #3 going to Norelius is Prepping (updated 3:45pm)</h5>
+		</div>
+	</div> -->
+</section>
+
+<section class="container text-center mt-5">
 
 	<h2 class="font-weight-bold">Account Details</h2>
 
@@ -107,8 +125,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/inputmask.min.js"
 	data-autoinit="true"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/3.3.4/inputmask/jquery.inputmask.min.js"></script>
-<script type="text/javascript">
-	function alert(msg, color) {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script type="text/javascript" src="/static/js/kaguyasama.js"></script>
+<!-- <script type="text/javascript">
+	function showAlert(msg, color) {
 		$("#toast-area").html("");
 		if (!msg) return
 		if (!color) color = "primary"
@@ -171,13 +192,13 @@
 					$("#current-phone-num").val(res);
 					clearPhone();
 					showPhoneNormal();
-					alert("Phone change success!", "success")
+					showAlert("Phone change success!", "success")
 				},
 				error: function (err) {
 					console.log(err);
 					clearPhone();
 					showPhoneNormal();
-					alert("Oh no! Phone change failed! Please try again later.")
+					showAlert("Oh no! Phone change failed! Please try again later.")
 				}
 			})
 			return false;
@@ -193,5 +214,5 @@
 	window.onload = function() {
 		setListeners();
 	};
-</script>
+</script> -->
 {{ end }}
