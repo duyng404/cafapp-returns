@@ -229,3 +229,14 @@ func handlePostAdminMenuStatus(c *gin.Context) {
 		"menus":          menus,
 	})
 }
+
+func handleAdminViewOrdersLast12Hours(c *gin.Context) {
+	orders, err := gorm.GetAllOrdersLast12hours()
+	if err != nil {
+		logger.Error("cannot get orders for display")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, orders)
+}
