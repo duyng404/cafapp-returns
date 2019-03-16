@@ -243,7 +243,7 @@ func (u *User) GetActiveOrders() ([]Order, error) {
 	err := DB.Preload("Destination").Where(`
 			user_id = ?
 			AND status_code >= ? AND status_code <= ?
-			AND created_at >= now() - INTERVAL 1 DAY
+			AND updated_at >= now() - INTERVAL 5 HOUR
 		`, u.ID, OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
 	if err != nil {
 		return orders, err
