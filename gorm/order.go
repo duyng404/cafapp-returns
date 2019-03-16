@@ -164,7 +164,7 @@ func GetOrdersForAdminViewQueue() (*[]Order, error) {
 		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
 		Preload("StatusUpdates").
-		Where("status_code >= ? AND status_code < ? AND created_at > ?", OrderStatusPlaced, OrderStatusDelivered, twentyFourHoursFromNow).Find(&orders).Error
+		Where("status_code >= ? AND status_code < ? AND updated_at >= now() - INTERVAL 5 HOUR", OrderStatusPlaced, OrderStatusDelivered, twentyFourHoursFromNow).Find(&orders).Error
 	return &orders, err
 }
 

@@ -3,7 +3,9 @@ package gin
 import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -61,7 +63,29 @@ func handleLandingMenu(c *gin.Context) {
 	})
 }
 
+func timein(t time.Time, name string) (time.Time, error) {
+	loc, err := time.LoadLocation(name)
+	if err == nil {
+		t = t.In(loc)
+	}
+	return t, err
+}
+
 func handleLandingFAQ(c *gin.Context) {
+
+	for _, name := range []string{
+		"",
+		"Local",
+		"America/Chicago",
+		"Greenwich",
+	} {
+		t, err := timein(time.Now(), name)
+		if err == nil {
+			fmt.Println(t.Location(), t.Format("15:04"))
+		} else {
+			fmt.Println(name, "<time unknown>")
+		}
+	}
 	renderHTML(c, 200, "landing-faq.html", gin.H{
 		"Title": "F.A.Q.",
 	})
