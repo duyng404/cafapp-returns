@@ -7,7 +7,7 @@ type OrderStatusUpdate struct {
 	gorm.Model
 	OrderID    uint
 	Order      Order
-	StatusCode int
+	StatusCode int `json:"status_code"`
 }
 
 // CreateOrderStatusUpdate whenever an order changes status, we record it so we know the time

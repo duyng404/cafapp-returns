@@ -135,6 +135,7 @@ func InitRoutes() *gin.Engine {
 		apiadmin.POST("/cafapp-onoff", handlePostAdminCafAppOnOff)
 		apiadmin.GET("/menu-status", handleAdminMenuStatus)
 		apiadmin.POST("/menu-status", handlePostAdminMenuStatus)
+		apiadmin.GET("/orders-last-12-hours", handleAdminViewOrdersLast12Hours)
 	}
 
 	// TODO: make a group for this and look at authentication

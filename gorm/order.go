@@ -3,7 +3,6 @@ package gorm
 import (
 	"errors"
 	"fmt"
-	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/lithammer/shortuuid"
@@ -23,7 +22,7 @@ type Order struct {
 	DestinationTag                string              `json:"destination_tag"`
 	Destination                   *Destination        `json:"destination" gorm:"foreignkey:DestinationTag,association_foreignkey:Tag"`
 	StatusCode                    int                 `json:"status_code"`
-	StatusUpdates                 []OrderStatusUpdate `jons:"order_status_updates"`
+	StatusUpdates                 []OrderStatusUpdate `json:"status_updates"`
 }
 
 // Create : save the object to the db
@@ -149,8 +148,6 @@ func (o *Order) GenerateTag() error {
 // GetOrdersForAdminViewQueue :
 func GetOrdersForAdminViewQueue() (*[]Order, error) {
 	var orders []Order
-	twentyFourHours := time.Duration(24) * time.Hour
-	twentyFourHoursFromNow := time.Now().Add(-twentyFourHours)
 	err := DB.
 		Order("tag").
 		Preload("User").
@@ -164,7 +161,7 @@ func GetOrdersForAdminViewQueue() (*[]Order, error) {
 		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
 		Preload("StatusUpdates").
-		Where("status_code >= ? AND status_code < ? AND updated_at >= now() - INTERVAL 5 HOUR", OrderStatusPlaced, OrderStatusDelivered, twentyFourHoursFromNow).Find(&orders).Error
+		Where("status_code >= ? AND status_code < ? AND updated_at >= now() - INTERVAL 5 HOUR", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
 	return &orders, err
 }
 
@@ -183,4 +180,24 @@ func (o *Order) SetStatusTo(s int) error {
 		return err
 	}
 	return nil
+}
+
+// GetAllOrdersLast12hours ...
+func GetAllOrdersLast12hours() ([]Order, error) {
+	var orders []Order
+	err := DB.
+		Order("tag").
+		Preload("User").
+		Preload("OrderRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_rows.id") // Preload OrderRows and sort them by order_rows.id
+		}).
+		Preload("OrderRows.MenuItem").
+		Preload("OrderRows.SubRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sub_rows.id") // Preload OrderRows.SubRows and sort them by sub_rows.id
+		}).
+		Preload("OrderRows.SubRows.Product").
+		Preload("Destination").
+		Preload("StatusUpdates").
+		Where("status_code >= ? AND status_code < ? AND updated_at >= now() - INTERVAL 12 HOUR", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
+	return orders, err
 }
