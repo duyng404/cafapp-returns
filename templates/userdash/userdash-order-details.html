@@ -110,7 +110,7 @@
 					{{ statusCodeToText .StatusCode }}
 				</div>
 				<div>
-					{{ .CreatedAt.Format "Jan _2 3:04pm" }}
+					{{ localTime .CreatedAt }}
 				</div>
 			</div>
 			{{ end }}

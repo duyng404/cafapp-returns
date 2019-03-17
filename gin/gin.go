@@ -44,6 +44,7 @@ func init() {
 		"fromTagToNumber":  fromTagToNumber,
 		"statusCodeToText": statusCodeToText,
 		"addOne":           addOne,
+		"localTime":        localTime,
 	}
 	rdr = renderer.InitRdr(views, f)
 	router = InitRoutes()
