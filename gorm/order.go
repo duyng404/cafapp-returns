@@ -219,6 +219,6 @@ func GetAllOrdersForDay(date time.Time) ([]Order, error) {
 		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
 		Preload("StatusUpdates").
-		Where("status_code >= ? AND updated_at >= ? + INTERVAL 24 HOUR", OrderStatusPlaced, date).Find(&orders).Error
+		Where("status_code >= ? AND updated_at >= ? AND updated_at <= ? + INTERVAL 24 HOUR", OrderStatusPlaced, date, date).Find(&orders).Error
 	return orders, err
 }
