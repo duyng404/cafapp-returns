@@ -3,6 +3,7 @@ package gorm
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/lithammer/shortuuid"
@@ -198,6 +199,26 @@ func GetAllOrdersLast12hours() ([]Order, error) {
 		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
 		Preload("StatusUpdates").
-		Where("status_code >= ? AND status_code < ? AND updated_at >= now() - INTERVAL 12 HOUR", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
+		Where("status_code >= ? AND status_code < ? AND updated_at >= now() - INTERVAL 24 HOUR", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
+	return orders, err
+}
+
+// GetAllOrdersForDay ...
+func GetAllOrdersForDay(date time.Time) ([]Order, error) {
+	var orders []Order
+	err := DB.
+		Order("tag").
+		Preload("User").
+		Preload("OrderRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_rows.id") // Preload OrderRows and sort them by order_rows.id
+		}).
+		Preload("OrderRows.MenuItem").
+		Preload("OrderRows.SubRows", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sub_rows.id") // Preload OrderRows.SubRows and sort them by sub_rows.id
+		}).
+		Preload("OrderRows.SubRows.Product").
+		Preload("Destination").
+		Preload("StatusUpdates").
+		Where("status_code >= ? AND status_code < ? AND updated_at >= ? + INTERVAL 24 HOUR", OrderStatusPlaced, OrderStatusDelivered, date).Find(&orders).Error
 	return orders, err
 }
