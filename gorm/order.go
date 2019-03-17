@@ -199,7 +199,7 @@ func GetAllOrdersLast12hours() ([]Order, error) {
 		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
 		Preload("StatusUpdates").
-		Where("status_code >= ? AND status_code < ? AND updated_at >= now() - INTERVAL 24 HOUR", OrderStatusPlaced, OrderStatusDelivered).Find(&orders).Error
+		Where("status_code >= ? AND updated_at >= now() - INTERVAL 24 HOUR", OrderStatusPlaced).Find(&orders).Error
 	return orders, err
 }
 
@@ -219,6 +219,6 @@ func GetAllOrdersForDay(date time.Time) ([]Order, error) {
 		Preload("OrderRows.SubRows.Product").
 		Preload("Destination").
 		Preload("StatusUpdates").
-		Where("status_code >= ? AND status_code < ? AND updated_at >= ? + INTERVAL 24 HOUR", OrderStatusPlaced, OrderStatusDelivered, date).Find(&orders).Error
+		Where("status_code >= ? AND updated_at >= ? + INTERVAL 24 HOUR", OrderStatusPlaced, date).Find(&orders).Error
 	return orders, err
 }
