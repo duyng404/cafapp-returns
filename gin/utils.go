@@ -3,10 +3,12 @@ package gin
 import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -121,6 +123,17 @@ func statusCodeToText(code int) (string, error) {
 		return "", err
 	}
 	return oss.DisplayName, nil
+}
+
+func localTime(t time.Time) string {
+	loc, err := time.LoadLocation("America/Chicago")
+	if err != nil {
+		logger.Error("localTime() failed. Defaulting to UTC. err:", err)
+	} else {
+		t = t.In(loc)
+	}
+	// logger.Info("!!!! ", fmt.Sprintf("%v%v", t.Location(), t.Format("Jan _2 3:04pm")))
+	return fmt.Sprintf("%v", t.Format("Jan _2 3:04pm"))
 }
 
 // helper func to get string from session

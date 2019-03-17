@@ -5,6 +5,7 @@ import (
 	"cafapp-returns/gorm"
 	"cafapp-returns/logger"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -239,4 +240,43 @@ func handleAdminViewOrdersLast12Hours(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, orders)
+}
+
+func handleAdminViewOrders(c *gin.Context) {
+	rawDate := c.Query("date")
+
+	if rawDate != "" {
+		date, err := time.Parse(time.RFC3339, rawDate)
+		if err != nil {
+			logger.Error("cannot parse date:", err)
+			c.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+		date = date.UTC()
+
+		orders, err := gorm.GetAllOrdersForDay(date)
+		if err != nil {
+			logger.Error("cannot get orders for display")
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		logger.Info("got", len(orders), "from db.")
+
+		c.JSON(http.StatusOK, orders)
+		return
+
+	} else {
+		orders, err := gorm.GetAllOrdersLast12hours()
+		if err != nil {
+			logger.Error("cannot get orders for display")
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		logger.Info("got", len(orders), "from db.")
+
+		c.JSON(http.StatusOK, orders)
+		return
+	}
 }
