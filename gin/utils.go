@@ -25,6 +25,8 @@ func renderHTML(c *gin.Context, code int, template string, data map[string]inter
 			data["isAdmin"] = true
 		}
 	}
+	gvar, _ := gorm.GetGlobalVar()
+	data["announcement"] = gvar.FrontpageAnnouncement
 
 	// write to a buffer
 	buf, err := rdr.RenderHTML(template, data)

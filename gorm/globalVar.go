@@ -13,6 +13,7 @@ type GlobalVar struct {
 	ActiveMenuID          uint
 	IsCafAppRunning       bool
 	AdminTestable         bool
+	FrontpageAnnouncement string
 }
 
 // FirstOrCreate : first or create
@@ -77,4 +78,10 @@ func IsCafAppRunning() (bool, error) {
 		return false, err
 	}
 	return g.IsCafAppRunning, nil
+}
+
+// SetFrontpageAnnouncement ..
+func (g *GlobalVar) SetFrontpageAnnouncement(s string) error {
+	g.FrontpageAnnouncement = s
+	return g.Save()
 }

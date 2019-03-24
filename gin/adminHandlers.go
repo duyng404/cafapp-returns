@@ -112,7 +112,8 @@ func handleAdminCafAppOnOff(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"status": gvar.IsCafAppRunning,
+		"status":       gvar.IsCafAppRunning,
+		"announcement": gvar.FrontpageAnnouncement,
 	})
 }
 
@@ -147,7 +148,8 @@ func handlePostAdminCafAppOnOff(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{
-			"status": gvar.IsCafAppRunning,
+			"status":       gvar.IsCafAppRunning,
+			"announcement": gvar.FrontpageAnnouncement,
 		})
 	}
 
@@ -159,9 +161,45 @@ func handlePostAdminCafAppOnOff(c *gin.Context) {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{
-			"status": gvar.IsCafAppRunning,
+			"status":       gvar.IsCafAppRunning,
+			"announcement": gvar.FrontpageAnnouncement,
 		})
 	}
+}
+
+func handleAdminSetAnnouncement(c *gin.Context) {
+	type reqStruct struct {
+		SetTo string `json:"set_to"`
+	}
+	var req reqStruct
+
+	// bind
+	err := c.Bind(&req)
+	if err != nil {
+		logger.Error("error reading request:", err)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	gvar, err := gorm.GetGlobalVar()
+	if err != nil {
+		logger.Error("cannot get global var")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	logger.Info("setting cafapp announcement to", req.SetTo)
+
+	err = gvar.SetFrontpageAnnouncement(req.SetTo)
+	if err != nil {
+		logger.Error("cannot set announcement", err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status":       gvar.IsCafAppRunning,
+		"announcement": gvar.FrontpageAnnouncement,
+	})
 }
 
 func handleAdminMenuStatus(c *gin.Context) {

@@ -22,6 +22,10 @@ body {
 }
 
 @media (max-width: 575.98px) {
+	.spotlight-announcement {
+		width: 90%;
+	}
+
 	.spotlight-button-primary {
 		margin: 8px auto;
 		width: 90%;
@@ -30,6 +34,10 @@ body {
 		margin: 8px auto;
 		width: 90%;
 	}
+}
+
+.spotlight-announcement {
+	max-width: 600px;
 }
 
 .spotlight-button-primary {
