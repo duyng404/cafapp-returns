@@ -137,6 +137,7 @@ func InitRoutes() *gin.Engine {
 		apiadmin.POST("/menu-status", handlePostAdminMenuStatus)
 		apiadmin.GET("/orders-last-12-hours", handleAdminViewOrdersLast12Hours)
 		apiadmin.GET("/view-orders", handleAdminViewOrders)
+		apiadmin.POST("/set-announcement", handleAdminSetAnnouncement)
 	}
 
 	// TODO: make a group for this and look at authentication

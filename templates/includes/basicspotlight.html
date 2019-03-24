@@ -4,6 +4,12 @@
 <section class="jumbotron jumbotron-fluid text-center bg-dark">
 	<div class="container">
 		<h1 class="jumbotron-heading text-ca-yellow2"><strong>{{ .Title }}</strong></h1>
+		{{ if .announcement }}
+		<div class="alert alert-primary ml-auto mr-auto spotlight-announcement" role="alert">
+			<i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+			{{ .announcement }}
+		</div>
+		{{ end }}
 	</div>
 </section>
 {{ end }}

@@ -3,8 +3,14 @@
 	<div class="container">
 		<h1 class="jumbotron-heading text-ca-yellow1"><img src="/static/favicon.png" width="50" height="50" class="d-inline-block align-middle" alt=""><strong>&nbsp;CafApp</strong></h1>
 		<h4 class="text-light">Gustavus Marketplace Delivery Service</h4>
-		<p class="text-light">By students, for students<br />Brought to you by Enactus Gustavus</p>
+		<!-- <p class="text-light">By students, for students<br />Brought to you by Enactus Gustavus</p> -->
 		<div class="my-4"></div>
+		{{ if .announcement }}
+		<div class="alert alert-primary ml-auto mr-auto spotlight-announcement" role="alert">
+			<i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;
+			{{ .announcement }}
+		</div>
+		{{ end }}
 		{{ if .loggedIn }}
 			<p class="text-center text-light">Logged in as: <span class="text-warning">{{ .currentUser.FullName }}</span></p>
 			<a href="/order" class="btn btn-primary btn-lg spotlight-button-primary">Order Now!</a><br />
