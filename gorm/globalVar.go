@@ -9,11 +9,12 @@ import (
 // GlobalVar holds the global variables. There can only be one
 type GlobalVar struct {
 	gorm.Model
-	CurrentOrderTagNumber int
-	ActiveMenuID          uint
-	IsCafAppRunning       bool
-	AdminTestable         bool
-	FrontpageAnnouncement string
+	CurrentOrderTagNumber        int
+	CurrentRedeemableBatchNumber int
+	ActiveMenuID                 uint
+	IsCafAppRunning              bool
+	AdminTestable                bool
+	FrontpageAnnouncement        string
 }
 
 // FirstOrCreate : first or create
@@ -57,6 +58,16 @@ func (g *GlobalVar) GetNextOrderTag() (int, error) {
 		return 0, err
 	}
 	return g.CurrentOrderTagNumber, err
+}
+
+// GetNextRedeemableBatchNumber : to generate redeemable batches
+func (g *GlobalVar) GetNextRedeemableBatchNumber() (int, error) {
+	g.CurrentRedeemableBatchNumber++
+	err := g.Save()
+	if err != nil {
+		return 0, err
+	}
+	return g.CurrentRedeemableBatchNumber, err
 }
 
 // TurnCafAppOn : set running to true

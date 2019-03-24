@@ -13,6 +13,7 @@ type RedeemableCode struct {
 	Code             string     `json:"code" gorm:"primary_key"`
 	CreatedAt        time.Time  `json:"created_at"`
 	AmountInCents    int        `json:"amount_in_cents"`
+	BatchNumber      int        `json:"batch_number"`
 	Status           int        `json:"status"`
 	Reason           string     `json:"reason"`
 	RedeemedAt       *time.Time `json:"redeemed_at"`
@@ -44,10 +45,18 @@ func GetAllRedeemableCodes() ([]RedeemableCode, error) {
 }
 
 // GenerateRedeemableCodes : generate a set amount of codes and save it to db
-func GenerateRedeemableCodes(amount int, reason string) ([]*RedeemableCode, error) {
+func GenerateRedeemableCodes(amount int, reason string, valueInCents int) ([]*RedeemableCode, error) {
 	// upper limit is 50
 	if amount > 50 {
 		amount = 50
+	}
+	g, err := GetGlobalVar()
+	if err != nil {
+		return nil, err
+	}
+	batchNum, err := g.GetNextRedeemableBatchNumber()
+	if err != nil {
+		return nil, err
 	}
 	var res []*RedeemableCode
 	// loop until we have enough
@@ -71,7 +80,8 @@ func GenerateRedeemableCodes(amount int, reason string) ([]*RedeemableCode, erro
 			// create object in db
 			code := RedeemableCode{
 				Code:          v,
-				AmountInCents: 1000,
+				AmountInCents: valueInCents,
+				BatchNumber:   batchNum,
 				Status:        RedeemableCodeStatusAvailable,
 				Reason:        reason,
 			}
