@@ -261,6 +261,8 @@ function showAlert(msg, color) {
 			</button>
 		</div>
 	`);
+	//fade in 3 seconds
+	setTimeout(() => $(".alert").fadeOut(),3000);
 }
 
 function clearPhone() {
