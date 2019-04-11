@@ -47,6 +47,16 @@ var (
 			Tag:            "SW",
 			PickUpLocation: "Front of Southwest",
 		},
+		Destination{
+			Name:           "Prairie View",
+			Tag:            "PV",
+			PickUpLocation: "Door facing Bjorling parking lot",
+		},
+		Destination{
+			Name:           "College View",
+			Tag:            "CV",
+			PickUpLocation: "First door",
+		},
 	}
 )
 
